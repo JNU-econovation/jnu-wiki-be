@@ -4,6 +4,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.dto.CreatedRequestDto;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.ModifiedRequestDto;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
+import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,9 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/requests")
-public class docsRequestController {
+public class DocsRequestController {
     private final DocsRequestService docsRequestService;
+    private final MemberService memberService;
 
     @Value("${jwt.secret}") // JWT 비밀 키를 application.properties에 설정하고 주입받음
     private String jwtSecret;
@@ -52,6 +54,7 @@ public class docsRequestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCreatedRequest);
     }
 
+    // 권한 확인 메서드
     private ResponseEntity<String> checkAuthorization(String authorizationHeader) {
         // Authorization 헤더에서 JWT 토큰을 추출
         String jwtToken = authorizationHeader.replace("Bearer ", "");
@@ -77,7 +80,7 @@ public class docsRequestController {
     // 유효한 유저인지 확인하는 메서드
     private boolean checkMembership(Claims claims) {
         String memberId = claims.get("memberId", String.class);
-        return docsRequestService.hasMember(memberId);
+        return memberService.hasMember(memberId);
     }
 
     // 유저의 회원가입 일자가 15일이 맞는지 확인하는 메서드
