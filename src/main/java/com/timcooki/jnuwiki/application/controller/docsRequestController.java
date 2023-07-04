@@ -25,6 +25,7 @@ public class DocsRequestController {
 
     @Value("${jwt.secret}") // JWT 비밀 키를 application.properties에 설정하고 주입받음
     private String jwtSecret;
+    // TODO : parser 말고 @AuthenticationPrinciple 사용
 
     // 문서 수정 요청 작성
     @PostMapping("/update")
