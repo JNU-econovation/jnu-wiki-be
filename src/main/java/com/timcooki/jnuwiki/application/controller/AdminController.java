@@ -4,9 +4,11 @@ import com.timcooki.jnuwiki.application.util.ApiUtils;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,30 +23,30 @@ import java.util.List;
 public class AdminController {
     private final MemberService memberService;
     private final DocsRequestService docsRequestService;
-    @Value("${jwt.secret}") // JWT 비밀 키를 application.properties 에 설정하고 주입받음
-    private String jwtSecret;
 
     // 문서 기본정보 수정 요청 목록 조회
     @GetMapping("/requests/update")
-    private Object getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails) {
+    private Object getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails,
+                                       @PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        List<DocsRequest> modifiedRequests = docsRequestService.getModifiedRequestList();
+        Page<DocsRequest> modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
         return ApiUtils.success(modifiedRequests); // 201 상태.....응답....
     }
 
     // 새 문서 생성 요청 목록 조회
     @GetMapping("/requests/new")
-    private Object getCreatedRequests(@AuthenticationPrincipal UserDetails userDetails) {
+    private Object getCreatedRequests(@AuthenticationPrincipal UserDetails userDetails,
+                                      @PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        List<DocsRequest> createRequests = docsRequestService.getCreatedRequestList();
+        Page<DocsRequest> createRequests = docsRequestService.getCreatedRequestList(pageable);
         return ApiUtils.success(createRequests);
     }
 
