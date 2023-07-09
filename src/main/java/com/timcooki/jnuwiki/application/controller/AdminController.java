@@ -1,8 +1,13 @@
 package com.timcooki.jnuwiki.application.controller;
 
-import com.timcooki.jnuwiki.application.util.ApiUtils;
-import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
+import com.timcooki.jnuwiki._core.util.ApiUtils;
+import com.timcooki.jnuwiki.domain.docs.dto.DocsCreateDto;
+import com.timcooki.jnuwiki.domain.docs.dto.DocsUpdateInfoDto;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
+import com.timcooki.jnuwiki.domain.member.dto.response.admin.CreatedRequestFindAllDto;
+import com.timcooki.jnuwiki.domain.member.dto.response.admin.CreatedRequestFindByIdDto;
+import com.timcooki.jnuwiki.domain.member.dto.response.admin.ModifiedRequestFindAllDto;
+import com.timcooki.jnuwiki.domain.member.dto.response.admin.ModifiedRequestFindByIdDto;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,28 +30,28 @@ public class AdminController {
     private final DocsRequestService docsRequestService;
 
     // 문서 기본정보 수정 요청 목록 조회
-    @GetMapping("/requests/update")
-    private Object getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails,
-                                       @PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping("/requests/update/{page}")
+    private Object getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
+                                       @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        Page<DocsRequest> modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
-        return ApiUtils.success(modifiedRequests); // 201 상태.....응답....
+        Page<ModifiedRequestFindAllDto> modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
+        return ApiUtils.success(modifiedRequests);
     }
 
     // 새 문서 생성 요청 목록 조회
-    @GetMapping("/requests/new")
-    private Object getCreatedRequests(@AuthenticationPrincipal UserDetails userDetails,
-                                      @PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping("/requests/new/{page}")
+    private Object getCreatedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
+                                      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        Page<DocsRequest> createRequests = docsRequestService.getCreatedRequestList(pageable);
+        Page<CreatedRequestFindAllDto> createRequests = docsRequestService.getCreatedRequestList(pageable);
         return ApiUtils.success(createRequests);
     }
 
@@ -61,7 +66,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsRequest modifiedRequest = docsRequestService.getOneModifiedRequest(docsRequestId);
+        ModifiedRequestFindByIdDto modifiedRequest = docsRequestService.getOneModifiedRequest(docsRequestId);
         return ApiUtils.success(modifiedRequest);
     }
 
@@ -76,13 +81,13 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsRequest modifiedRequest = docsRequestService.getOneCreatedRequest(docsRequestId);
+        CreatedRequestFindByIdDto modifiedRequest = docsRequestService.getOneCreatedRequest(docsRequestId);
         return ApiUtils.success(modifiedRequest);
     }
 
     // 새 문서 생성 요청 승락 생성
     @PostMapping("/approve/new/{docs_request_id}")
-    private Object approveCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId){
+    private Object approveCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
@@ -91,13 +96,13 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsRequest createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
+        DocsCreateDto createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
         return ApiUtils.success(createdDocs);
     }
 
     // 문서 수정 요청 승락
     @PostMapping("/approve/update/{docs_request_id}")
-    private Object approveModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId){
+    private Object approveModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
@@ -106,13 +111,13 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsRequest updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
+        DocsUpdateInfoDto updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
         return ApiUtils.success(updatedDocs);
     }
 
     // 문서 요청 반려
     @PostMapping("/reject/{docs_request_id}")
-    private Object rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId){
+    private Object rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;

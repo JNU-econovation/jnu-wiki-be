@@ -1,8 +1,8 @@
 package com.timcooki.jnuwiki.application.controller;
 
-import com.timcooki.jnuwiki.application.util.ApiUtils;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.CreatedRequestDto;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.ModifiedRequestDto;
+import com.timcooki.jnuwiki._core.util.ApiUtils;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDto;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDto;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
@@ -24,27 +24,27 @@ public class DocsRequestController {
 
     // 문서 수정 요청 작성
     @PostMapping("/update")
-    public Object writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ModifiedRequestDto modifiedRequestDto) {
+    public Object writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, ModifiedRequestWriteDto modifiedRequestWriteDto) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
-        // 문서 저장
-        DocsRequest createdRequest = docsRequestService.createModifiedRequest(modifiedRequestDto);
+        // 요청 저장
+        DocsRequest createdRequest = docsRequestService.createModifiedRequest(modifiedRequestWriteDto);
 
         // 요청 반환
-        return ApiUtils.success(createdRequest); //
+        return ApiUtils.success(createdRequest);
     }
 
     // 문서 생성 요청 작성
     @PostMapping("/new")
-    public Object writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody CreatedRequestDto createdRequestDto) {
+    public Object writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, CreatedRequestWriteDto createdRequestWriteDto) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 문서 저장
-        DocsRequest createdCreatedRequest = docsRequestService.createCreatedRequest(createdRequestDto);
+        DocsRequest createdCreatedRequest = docsRequestService.createCreatedRequest(createdRequestWriteDto);
 
         // 요청 반환
         return ApiUtils.success(createdCreatedRequest);
