@@ -1,6 +1,6 @@
-package com.timcooki.jnuwiki.application.controller;
+package com.timcooki.jnuwiki.domain.docsRequest.controller;
 
-import com.timcooki.jnuwiki._core.util.ApiUtils;
+import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDto;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDto;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;

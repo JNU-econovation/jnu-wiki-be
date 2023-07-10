@@ -1,4 +1,4 @@
-package com.timcooki.jnuwiki._core.util;
+package com.timcooki.jnuwiki.util;
 
 import org.springframework.http.HttpStatus;
 
