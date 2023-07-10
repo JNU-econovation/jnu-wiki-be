@@ -8,6 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 class ApiError {
+
     private final String message;
     private final int status;
+
 }
