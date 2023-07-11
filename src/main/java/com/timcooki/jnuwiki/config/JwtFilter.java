@@ -1,6 +1,7 @@
 package com.timcooki.jnuwiki.config;
 
 
+import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +22,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-
     private final MemberService memberService;
     private final String secretKey;
+
 
     @Override
     // 인증 필터
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // HEADER/AUTHORIZATION에서 ACCESSTOKEN을 가져온다.
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         log.info("authorization : {}", authorization);
 
@@ -39,23 +41,26 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Token 꺼내기
+        // Token 꺼내기. Bearer를 제거하고 TOKEN값을 가져온다.
         String token = authorization.split(" ")[1];
 
-        // Token Expired되었는지 여부
+        // Token Expired되었는지 여부 판단.
         if (JwtUtil.isExpired(token, secretKey)){
             log.error("Token이 만료되었습니다.");
             filterChain.doFilter(request,response);
             return;
         }
 
-        // MemberName Token에서 꺼내기
-        String memberName = JwtUtil.getMemberName(token, secretKey);
-        log.info("memberName: {}", memberName);
+        // MemberEmail을 Token에서 꺼낸다.
+        String memberEmail = JwtUtil.getMemberName(token, secretKey);
+        log.info("memberEmail: {}", memberEmail);
+        // MemberRole을 Token에서 꺼낸다.
+        String memberRole = JwtUtil.getMemberRole(token, secretKey);
+        log.info("memberRole: {}", memberRole);
 
         // 권한 부여 ( List.of에 들어간 MEMBER는 나중에 DB에 들어가있는 사용자 ROLE임
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(memberName, null, List.of(new SimpleGrantedAuthority("MEMBER")));
+                new UsernamePasswordAuthenticationToken(memberEmail, null, List.of(new SimpleGrantedAuthority("ROLE_"+memberRole)));
 
         // Detail 넣어줌
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
