@@ -8,13 +8,21 @@ import java.util.Date;
 
 public class JwtUtil {
 
+    public static String getMemberRole(String token, String secretKey){
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("memberRole", String.class);
+    }
+
     // 사용자 이름 토큰에서 빼내기
     public static String getMemberName(String token, String secretKey){
         return Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
-                .get("memberName", String.class);
+                .get("memberEmail", String.class);
     }
 
     // 토큰 만료시간 체크
@@ -28,14 +36,15 @@ public class JwtUtil {
     }
 
     // Toekn 생성
-    public static String createJwt(String memberName, String secretKey, Long expiredMs){
+    public static String createJwt(String memberEmail,String memberRole, String secretKey, Long expiredMs){
         /*
         jwt는 원하는 정보를 담아둘 수 있는 Claims를 제공한다.
          */
         Claims claims = Jwts.claims();
-        claims.put("memberName", memberName);
+        claims.put("memberEmail", memberEmail);
+        claims.put("memberRole", memberRole);
 
-        return Jwts.builder()
+        return "Bearer " + Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료시간
