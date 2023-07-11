@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
+import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindAllReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindByIdReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
@@ -7,9 +8,6 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReq
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.CreatedRequestFindAllDto;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.ModifiedRequestFindAllDto;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.ModifiedRequestFindByIdDto;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -98,7 +96,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        com.timcooki.jnuwiki.domain.docs.dto.DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
+        DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
         return ApiUtils.success(createdDocs);
     }
 
