@@ -1,12 +1,16 @@
 package com.timcooki.jnuwiki.domain.member.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-@AllArgsConstructor
-public class ModifyMemberInfoReqDTO {
+public record ModifyMemberInfoReqDTO(
+        String nickname,
+        String password
+) {
+    @Builder
+    public ModifyMemberInfoReqDTO{
 
-    private String nickname;
-    private String password;
+    }
 }
+
+
+

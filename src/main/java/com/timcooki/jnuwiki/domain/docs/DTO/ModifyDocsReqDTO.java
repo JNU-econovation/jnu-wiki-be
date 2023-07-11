@@ -1,11 +1,14 @@
 package com.timcooki.jnuwiki.domain.docs.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class ModifyDocsReqDTO {
+import lombok.Builder;
 
-    private String docsContent;
+public record ModifyDocsReqDTO(
+        String docsContent
+) {
+    @Builder
+    public ModifyDocsReqDTO{
+
+    }
 }
+

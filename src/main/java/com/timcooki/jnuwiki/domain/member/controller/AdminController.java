@@ -1,13 +1,13 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
+import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindAllReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindByIdReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReqDTO;
 import com.timcooki.jnuwiki.util.ApiUtils;
-import com.timcooki.jnuwiki.domain.docs.dto.DocsCreateDto;
-import com.timcooki.jnuwiki.domain.docs.dto.DocsUpdateInfoDto;
+import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.CreatedRequestFindAllDto;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.CreatedRequestFindByIdDto;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.ModifiedRequestFindAllDto;
-import com.timcooki.jnuwiki.domain.member.dto.response.admin.ModifiedRequestFindByIdDto;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,7 +38,7 @@ public class AdminController {
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        Page<ModifiedRequestFindAllDto> modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
+        Page<ModifiedFindAllReqDTO> modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
         return ApiUtils.success(modifiedRequests);
     }
 
@@ -51,7 +51,7 @@ public class AdminController {
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        Page<CreatedRequestFindAllDto> createRequests = docsRequestService.getCreatedRequestList(pageable);
+        Page<CreatedFindAllReqDTO> createRequests = docsRequestService.getCreatedRequestList(pageable);
         return ApiUtils.success(createRequests);
     }
 
@@ -66,7 +66,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        ModifiedRequestFindByIdDto modifiedRequest = docsRequestService.getOneModifiedRequest(docsRequestId);
+        ModifiedFindByIdReqDTO modifiedRequest = docsRequestService.getOneModifiedRequest(docsRequestId);
         return ApiUtils.success(modifiedRequest);
     }
 
@@ -81,7 +81,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        CreatedRequestFindByIdDto modifiedRequest = docsRequestService.getOneCreatedRequest(docsRequestId);
+        CreatedFindByIdReqDTO modifiedRequest = docsRequestService.getOneCreatedRequest(docsRequestId);
         return ApiUtils.success(modifiedRequest);
     }
 
@@ -96,7 +96,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsCreateDto createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
+        DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
         return ApiUtils.success(createdDocs);
     }
 
@@ -111,7 +111,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsUpdateInfoDto updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
+        DocsUpdateInfoDTO updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
         return ApiUtils.success(updatedDocs);
     }
 

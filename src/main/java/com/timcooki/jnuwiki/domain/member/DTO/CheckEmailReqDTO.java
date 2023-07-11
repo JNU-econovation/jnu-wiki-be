@@ -1,11 +1,13 @@
 package com.timcooki.jnuwiki.domain.member.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class CheckEmailReqDTO {
+import lombok.Builder;
 
-    private String email;
+public record CheckEmailReqDTO(
+        String email
+) {
+    @Builder
+    public CheckEmailReqDTO{
+
+    }
 }
