@@ -2,7 +2,9 @@ package com.timcooki.jnuwiki.domain.member.controller;
 
 import com.timcooki.jnuwiki.domain.member.DTO.*;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.util.ApiUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class MemberController {
+    private final MemberService memberService;
 
     @PostMapping("/members/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
