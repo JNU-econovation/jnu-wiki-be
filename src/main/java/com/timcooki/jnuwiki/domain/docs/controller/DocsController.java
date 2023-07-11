@@ -85,15 +85,15 @@ public class DocsController {
     @PostMapping("/docs")
     public ResponseEntity<?> docsCreate(@RequestBody DocsCreateReqDTO docsCreateReqDTO){
 
-        return ResponseEntity.ok(ApiUtils.success(new DocsCreateResDTO(
-            13L,
-            "팬도로시",
-            "CAFE",
-            new ArrayList<>(List.of(1,3)),
-            "content",
-            "cookie",
-            LocalDateTime.now()
-        )));
+        return ResponseEntity.ok(ApiUtils.success(DocsCreateResDTO.builder()
+                .docsId(13L)
+                .docsName("팬도로시")
+                .docsCategory("CAFE")
+                .docsLocation(new ArrayList<>(List.of(1, 3)))
+                .docsCreatedBy("cookie")
+                .docsContent("content")
+                .docsCreatedAt(LocalDateTime.now())
+                .build()));
     }
 
 }
