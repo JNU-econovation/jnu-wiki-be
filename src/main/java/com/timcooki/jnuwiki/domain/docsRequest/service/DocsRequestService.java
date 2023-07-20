@@ -10,15 +10,26 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindByIdReqD
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
 
+import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
+import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
+import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class DocsRequestService {
 
+    private DocsRequestRepository docsRequestRepository;
+
     public DocsRequest createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
     }
 
-    public DocsRequest createCreatedRequest(CreatedRequestWriteDTO createdRequestDto) {
+    public void createNewDocsRequest(CreatedRequestWriteDTO createdRequestDto) {
+        DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
+
+        DocsRequest docsRequest = mapper.toEntity(createdRequestDto);
+        docsRequestRepository.save(docsRequest);
     }
     
     public Page<ModifiedFindAllReqDTO> getModifiedRequestList(Pageable pageable) {

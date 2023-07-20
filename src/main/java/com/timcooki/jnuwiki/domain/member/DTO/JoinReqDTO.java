@@ -4,7 +4,7 @@ import lombok.Builder;
 
 public record JoinReqDTO(
         String email,
-        String nickname,
+        String nickName,
         String password
 ) {
     @Builder

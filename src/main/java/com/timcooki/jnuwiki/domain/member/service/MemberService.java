@@ -2,10 +2,13 @@ package com.timcooki.jnuwiki.domain.member.service;
 
 import com.timcooki.jnuwiki.domain.member.DTO.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
+import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-
     private final MemberRepository memberRepository;
     private final Validator validator;
 
@@ -56,7 +58,12 @@ public class MemberService {
         if(!validator.isValidPassword(joinReqDTO.password())){
             throw new IllegalArgumentException("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+joinReqDTO.password());
         }
-        memberRepository.save(joinReqDTO.toEntity());
+        // TODO - MapStruct Test 필요
+        MemberMapper mapper = Mappers.getMapper(MemberMapper.class);
+
+        Member member = mapper.toEntity(joinReqDTO, MemberRole.USER);
+
+        memberRepository.save(member);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
