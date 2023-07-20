@@ -1,16 +1,18 @@
 package com.timcooki.jnuwiki.domain.docs.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-public class ModifyDocsResDTO {
+public record ModifyDocsResDTO(
+        Long id,
+        String docsContent,
+        String docsModifiedBy,
+        LocalDateTime docsModifiedAt
+) {
+    @Builder
+    public ModifyDocsResDTO{
 
-    private Long id;
-    private String docsContent;
-    private String docsModifiedBy;
-    private LocalDateTime docsModifiedAt;
+    }
 }
+

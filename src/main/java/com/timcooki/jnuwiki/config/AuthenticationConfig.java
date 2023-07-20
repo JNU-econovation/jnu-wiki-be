@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.config;
 
+import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +29,9 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/members/join","/api/v1/members/login").permitAll() // login은 항상 가능
-                .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated() // 그 외 모든 POST요청 막음
+                .antMatchers("/members/join","/members/login").permitAll() // login은 항상 가능
+                .antMatchers(HttpMethod.POST, "/**").authenticated() // 그 외 모든 POST요청 막음
+                // TODO - PATCH, PUT, DELETE도 추가
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT사용하는 경우만 사용

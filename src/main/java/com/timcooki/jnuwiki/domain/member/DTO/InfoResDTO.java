@@ -1,12 +1,14 @@
 package com.timcooki.jnuwiki.domain.member.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-@AllArgsConstructor
-public class InfoResDTO {
-    private Long id;
-    private String nickname;
-    private String password;
+public record InfoResDTO(
+         Long id,
+         String nickname,
+         String password
+) {
+    @Builder
+    public InfoResDTO{
+        
+    }
 }

@@ -1,23 +1,26 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
 import com.timcooki.jnuwiki.domain.member.DTO.*;
-import com.timcooki.jnuwiki.domain.member.DTO.Dummy.Token;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.util.ApiUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class MemberController {
+    private final MemberService memberService;
 
     @PostMapping("/members/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
 
+        /*
         // TODO Dummy Data - fail1: 이메일 형식 오류
         if(loginReqDTO.getEmail().equals("fail1")){
             return ResponseEntity.status(400).body(ApiUtils.error("이메일 형식으로 작성해주세요.:"+loginReqDTO.getEmail(), HttpStatus.BAD_REQUEST));
@@ -30,17 +33,17 @@ public class MemberController {
         if(loginReqDTO.getEmail().equals("fail3")){
             return ResponseEntity.status(401).body(ApiUtils.error("이메일과 비밀번호를 확인해주세요.", HttpStatus.BAD_REQUEST));
         }
+         */
 
-        // TODO Dummy Data - Success: 로그인 성공시
-        Token tokens = new Token("Bearer Access토큰값");
 
-        return ResponseEntity.ok().body(ApiUtils.success(new LoginResDTO(tokens)));
+        return memberService.login(loginReqDTO.email(), loginReqDTO.password());
 
     }
 
     @PostMapping("/members/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO){
 
+        /*
         // TODO Dummy Data - fail1: 이메일 형식 오류
         if(joinReqDTO.getEmail().equals("fail1")){
             return ResponseEntity.status(400).body(ApiUtils.error("이메일 형식으로 작성해주세요.:"+joinReqDTO.getEmail(), HttpStatus.BAD_REQUEST));
@@ -53,6 +56,8 @@ public class MemberController {
         if(joinReqDTO.getEmail().equals("fail3")){
             return ResponseEntity.status(400).body(ApiUtils.error("동일한 이메일이 존재합니다:"+joinReqDTO.getEmail(),HttpStatus.BAD_REQUEST));
         }
+
+         */
 
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
@@ -79,12 +84,12 @@ public class MemberController {
         // findById로 member 찾기.
 
         // TODO Dummy Data - fail1: 400 중복된 닉네임
-        if(modifyMemberInfoReqDTO.getNickname().equals("fail1")){
+        if(modifyMemberInfoReqDTO.nickname().equals("fail1")){
             return ResponseEntity.status(400).body(ApiUtils.error("중복된 닉네임 입니다.:"+modifyMemberInfoReqDTO.getNickname(), HttpStatus.BAD_REQUEST));
         }
 
         // TODO Dummy Data - fail2: 400 비밀번호 형식 오류
-        if(modifyMemberInfoReqDTO.getPassword().equals("fail2")){
+        if(modifyMemberInfoReqDTO.password().equals("fail2")){
             return ResponseEntity.status(400).body(ApiUtils.error("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+modifyMemberInfoReqDTO.getPassword(), HttpStatus.BAD_REQUEST));
         }
 
