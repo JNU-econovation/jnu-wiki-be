@@ -23,6 +23,7 @@ public class DocsRequestService {
     private DocsRequestRepository docsRequestRepository;
 
     public DocsRequest createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+        return null;
     }
 
     public void createNewDocsRequest(CreatedRequestWriteDTO createdRequestDto) {
@@ -31,7 +32,7 @@ public class DocsRequestService {
         DocsRequest docsRequest = mapper.toEntity(createdRequestDto);
         docsRequestRepository.save(docsRequest);
     }
-    
+    /*
     public Page<ModifiedFindAllReqDTO> getModifiedRequestList(Pageable pageable) {
     }
 
@@ -55,4 +56,6 @@ public class DocsRequestService {
 
     public boolean hasRequest(String docsRequestId) {
     }
+
+     */
 }
