@@ -32,6 +32,18 @@ public class DocsRequestService {
         DocsRequest docsRequest = mapper.toEntity(createdRequestDto);
         docsRequestRepository.save(docsRequest);
     }
+
+    public void rejectRequest(Long docsRequestId) {
+        // 요청 존재 확인
+        Optional<DocsRequest> docsRequest = docsRequestRepository.findById(docsRequestId);
+        if(docsRequest.isEmpty()){
+            throw new RuntimeException("존재하지 않는 요청입니다.");
+        }else {
+            docsRequestRepository.deleteById(docsRequestId);
+        }
+    }
+
+
     /*
     public Page<ModifiedFindAllReqDTO> getModifiedRequestList(Pageable pageable) {
     }

@@ -48,16 +48,16 @@ public class AdminController {
 
     // 문서 요청 반려
     @PostMapping("/reject/{docs_request_id}")
-    private Object rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
+    private ResponseEntity<?> rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
 
-
-        // 요청 존재 확인
-        Object checkRequest = checkValidRequest(docsRequestId);
-        if (checkRequest != null) return checkRequest;
-
-        docsRequestService.rejectRequest(docsRequestId);
-        return ApiUtils.success("요청이 반려되었습니다.");
+        try {
+            docsRequestService.rejectRequest(docsRequestId);
+            return ResponseEntity.ok(ApiUtils.success("요청이 반려되었습니다."));
+        }catch (Exception e){
+            return ResponseEntity.status(400).body(ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST));
+        }
     }
+
     // 문서 기본정보 수정 요청 목록 조회
     @GetMapping("/requests/update/{page}")
     private Object getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
