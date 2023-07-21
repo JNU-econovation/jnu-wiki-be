@@ -2,6 +2,8 @@ package com.timcooki.jnuwiki.domain.docsRequest.service;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
+import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docsArchive.repository.DocsArchiveRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
@@ -20,13 +22,22 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
+@RequiredArgsConstructor
 public class DocsRequestService {
 
-    private DocsRequestRepository docsRequestRepository;
+    private final DocsRequestRepository docsRequestRepository;
+
+    // TODO: 머지 후 docsRepository의 메서드 오류뜨는지 확인 - 쿠키가 레포 구현했길래 안함
+    private final DocsRepository docsRepository;
+
+    private final DocsArchiveRepository docsArchiveRepository;
 
     public void createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
@@ -77,7 +88,33 @@ public class DocsRequestService {
     public DocsCreateDTO createDocsFromRequest(String docsRequestId) {
     }
 
-    public DocsUpdateInfoDTO updateDocsFromRequest(String docsRequestId) {
+    public DocsUpdateInfoDTO updateDocsFromRequest(Long docsRequestId) {
+        // 승락받은 요청 조회
+        DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).get();
+
+        // 수정할 문서 조회
+        Long docsId = modifiedRequest.getDocs().getDocsId();
+        Docs docs = docsRepository.findById(docsId).get();
+
+        // 수정전 문서는 아카이브 레포에 저장
+        docsArchiveRepository.save(docs);
+
+        // 요청에 따라 업데이트
+        docs.updateBasicInfo(
+                modifiedRequest.getDocsName(),
+                modifiedRequest.getDocsLocation(),
+                modifiedRequest.getDocsCategory());
+
+        docsRepository.deleteById(docsRequestId); // 처리된 요청 삭제
+
+        return DocsUpdateInfoDTO.builder()
+                .id(docs.getDocsId())
+                .docsRequestName(docs.getDocsName())
+                .docsRequestLocation(docs.getDocsLocation())
+                .docsContent(docs.getDocsContent())
+                .docsRequestCategory(docs.getDocsCategory())
+                .docsCreatedAt(LocalDateTime.now())
+                .build();
     }
 
     public void rejectRequest(String docsRequestId) {
