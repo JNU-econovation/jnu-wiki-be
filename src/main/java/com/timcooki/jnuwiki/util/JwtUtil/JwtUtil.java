@@ -9,6 +9,7 @@ import java.util.Date;
 public class JwtUtil {
 
     // 액세스 토큰 만료 시간 지정
+    // TODO - 만료시간 변경
     private static final Long accessTokenExpiredMS = 1000 * 60 * 3L; // 3분
 
     public static String getMemberRole(String token, String secretKey){

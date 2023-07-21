@@ -29,7 +29,7 @@ public class AuthenticationConfig {
     private final JwtFilter filter;
 
 
-    // 인증 범위 정해놓기
+    // 인증 범위 정해놓기 // TODO - ADMIN ROLE 추가
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception{
         return httpSecurity
