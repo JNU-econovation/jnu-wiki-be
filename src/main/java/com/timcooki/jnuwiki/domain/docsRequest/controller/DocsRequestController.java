@@ -9,6 +9,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +26,16 @@ public class DocsRequestController {
 
     // 문서 수정 요청 작성
     @PostMapping("/update")
-    public Object writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+    public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, ModifiedRequestWriteDTO modifiedRequestWriteDto) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 저장
-        DocsRequest createdRequest = docsRequestService.createModifiedRequest(modifiedRequestWriteDto);
+        docsRequestService.createModifiedRequest(modifiedRequestWriteDto);
 
         // 요청 반환
-        return ApiUtils.success(createdRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new CreatedResponseWriteDTO("요청이 저장되었습니다.")));
     }
 
     // 문서 생성 요청 작성
