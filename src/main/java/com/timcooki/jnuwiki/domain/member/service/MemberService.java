@@ -1,17 +1,17 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
+import com.timcooki.jnuwiki.domain.member.DTO.CheckEmailReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.CheckNicknameReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.LoginReqDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -133,5 +132,13 @@ public class MemberService {
 
         // 아이디에 대응되는 비밀번호가 맞는지 확인
         return loginMember.getPassword().equals(passwordEncoder.encode(password));
+    }
+
+    public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO){
+        return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
+    }
+
+    public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO){
+        return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
     }
 }
