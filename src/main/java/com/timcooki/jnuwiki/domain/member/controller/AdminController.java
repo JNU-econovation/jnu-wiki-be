@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+geimport org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,15 +32,15 @@ public class AdminController {
 
     // 문서 기본정보 수정 요청 목록 조회
     @GetMapping("/requests/update/{page}")
-    private Object getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
+    private ResponseEntity<?> getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
                                        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 목록 조회
-        Page<ModifiedFindAllReqDTO> modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
-        return ApiUtils.success(modifiedRequests);
+        ModifiedFindAllReqDTO modifiedRequests = docsRequestService.getModifiedRequestList(pageable);
+        return ResponseEntity.ok().body(ApiUtils.success(modifiedRequests));
     }
 
     // 새 문서 생성 요청 목록 조회
@@ -57,7 +58,7 @@ public class AdminController {
 
     // 문서 기본 정보 수정 요청 상세 조회
     @GetMapping("/requests/update/{docs_request_id}")
-    private Object getOneModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
+    private Object getOneModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
@@ -102,7 +103,7 @@ public class AdminController {
 
     // 문서 수정 요청 승락
     @PostMapping("/approve/update/{docs_request_id}")
-    private Object approveModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
+    private ResponseEntity<?> approveModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
@@ -112,7 +113,7 @@ public class AdminController {
         if (checkRequest != null) return checkRequest;
 
         DocsUpdateInfoDTO updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
-        return ApiUtils.success(updatedDocs);
+        return ResponseEntity.ok().body(ApiUtils.success(updatedDocs));
     }
 
     // 문서 요청 반려
@@ -148,7 +149,7 @@ public class AdminController {
     }
 
     // 요청 존재 확인 메서드
-    private Object checkValidRequest(String docsRequestId) {
+    private Object checkValidRequest(Long docsRequestId) {
         // 요청 확인
         boolean isExist = checkExistRequest(docsRequestId);
         if (!isExist) {
@@ -159,7 +160,7 @@ public class AdminController {
     }
 
     // 존재하는 요청인지 확인하는 메서드
-    private boolean checkExistRequest(String docsRequestId) {
+    private boolean checkExistRequest(Long docsRequestId) {
         return docsRequestService.hasRequest(docsRequestId);
     }
 
