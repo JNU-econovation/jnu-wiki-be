@@ -13,6 +13,7 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqD
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
+import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -21,17 +22,26 @@ import org.springframework.data.domain.Pageable;
 public class DocsRequestService {
 
     private DocsRequestRepository docsRequestRepository;
+    private final MemberRepository memberRepository;
 
-    public DocsRequest createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
-        return null;
-    }
+    public void createNewDocsRequest(UserDetails userDetails, CreatedRequestWriteDTO createdRequestDto) {
 
-    public void createNewDocsRequest(CreatedRequestWriteDTO createdRequestDto) {
+        // 권한 확인(회원가입 15일)
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        if (ChronoUnit.DAYS.between(member.getCreatedAt(), LocalDate.now())>15){
+            throw new RuntimeException("회원가입 후 15일이 지난 회원만 요청이 가능합니다.");//403 forbidden
+        }
+
+
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
         DocsRequest docsRequest = mapper.toEntity(createdRequestDto);
         docsRequestRepository.save(docsRequest);
     }
+    public DocsRequest createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+        return null;
+    }
+
 
     public void rejectRequest(Long docsRequestId) {
         // 요청 존재 확인

@@ -24,6 +24,19 @@ public class DocsRequestController {
     private final DocsRequestService docsRequestService;
     private final MemberService memberService;
 
+    // 문서 생성 요청 작성
+    @PostMapping("/new")
+    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, CreatedRequestWriteDTO createdRequestWriteDto) {
+        // TODO - CustomUserDetails | findByEmail
+
+
+        // 문서 저장
+        docsRequestService.createNewDocsRequest(userDetails, createdRequestWriteDto);
+
+        // 요청 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new CreatedResponseWriteDTO("요청이 저장되었습니다.")));
+    }
+
     // 문서 수정 요청 작성
     @PostMapping("/update")
     public Object writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, ModifiedRequestWriteDTO modifiedRequestWriteDto) {
