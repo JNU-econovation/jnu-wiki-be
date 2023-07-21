@@ -5,6 +5,8 @@ import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
+import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
+import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindAllReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindByIdReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReqDTO;
@@ -22,7 +24,11 @@ public class DocsRequestService {
 
     private DocsRequestRepository docsRequestRepository;
 
-    public DocsRequest createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+    public void createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+        DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
+
+        DocsRequest docsRequest = mapper.modifiedDTOToEntity(modifiedRequestWriteDto);
+        docsRequestRepository.save(docsRequest);
     }
 
     public void createNewDocsRequest(CreatedRequestWriteDTO createdRequestDto) {
