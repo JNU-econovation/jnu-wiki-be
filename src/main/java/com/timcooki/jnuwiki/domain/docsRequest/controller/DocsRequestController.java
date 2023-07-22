@@ -9,6 +9,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -51,20 +52,7 @@ public class DocsRequestController {
         return ApiUtils.success(createdRequest);
     }
 
-    // 문서 생성 요청 작성
-    @PostMapping("/new")
-    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, CreatedRequestWriteDTO createdRequestWriteDto) {
-        // TODO - CustomUserDetails | findByEmail
-        // 권한 확인
-        Object checkAuthorization = checkAuthorization(userDetails);
-        if (checkAuthorization != null) return checkAuthorization;
 
-        // 문서 저장
-        DocsRequest createdCreatedRequest = docsRequestService.createCreatedRequest(createdRequestWriteDto);
-
-        // 요청 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new CreatedResponseWriteDTO("요청이 저장되었습니다.")));
-    }
 
     // 권한 확인 메서드
     private Object checkAuthorization(UserDetails userDetails) {
