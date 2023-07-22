@@ -1,7 +1,5 @@
 package com.timcooki.jnuwiki.domain.docsRequest.service;
 
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
@@ -11,8 +9,6 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReq
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
-import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -21,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 
 public class DocsRequestService {
 
-    private DocsRequestRepository docsRequestRepository;
+    private final DocsRequestRepository docsRequestRepository;
     private final MemberRepository memberRepository;
 
     public void createNewDocsRequest(UserDetails userDetails, CreatedRequestWriteDTO createdRequestDto) {

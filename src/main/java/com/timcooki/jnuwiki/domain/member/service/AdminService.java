@@ -1,7 +1,6 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
