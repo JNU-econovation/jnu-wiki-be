@@ -1,6 +1,6 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
-import com.timcooki.jnuwiki.domain.docs.DTO.InfoEditResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.InfoEditResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;

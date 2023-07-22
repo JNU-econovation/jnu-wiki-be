@@ -1,4 +1,4 @@
-package com.timcooki.jnuwiki.domain.docs.DTO;
+package com.timcooki.jnuwiki.domain.docs.DTO.request;
 
 
 import lombok.Builder;

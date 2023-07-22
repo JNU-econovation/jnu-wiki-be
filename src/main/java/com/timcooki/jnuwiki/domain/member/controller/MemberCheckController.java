@@ -1,7 +1,7 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
-import com.timcooki.jnuwiki.domain.member.DTO.CheckEmailReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.CheckNicknameReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.CheckEmailReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.CheckNicknameReqDTO;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

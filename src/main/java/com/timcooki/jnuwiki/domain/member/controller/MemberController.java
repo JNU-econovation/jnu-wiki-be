@@ -1,6 +1,9 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
-import com.timcooki.jnuwiki.domain.member.DTO.*;
+import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.InfoResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.util.ApiUtils;
