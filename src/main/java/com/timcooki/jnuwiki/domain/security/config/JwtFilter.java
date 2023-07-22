@@ -1,15 +1,17 @@
-package com.timcooki.jnuwiki.config;
+package com.timcooki.jnuwiki.domain.security.config;
 
 
-import com.timcooki.jnuwiki.domain.member.service.MemberService;
+import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -17,13 +19,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final MemberService memberService;
-    private final String secretKey;
+    private final MemberSecurityService memberSecurityService;
+    //@Value("${jwt.secret}")
+    private final String secretKey="test.test";
 
 
     @Override
@@ -32,7 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // HEADER/AUTHORIZATION에서 ACCESSTOKEN을 가져온다.
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("authorization : {}", authorization);
 
         // toekn이 없는경우 || 토근이 Bearer로 시작하지 않는 경우
         if(authorization==null || !authorization.startsWith("Bearer ")){
@@ -52,15 +54,17 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // MemberEmail을 Token에서 꺼낸다.
-        String memberEmail = JwtUtil.getMemberName(token, secretKey);
+        String memberEmail = JwtUtil.getMemberEmail(token, secretKey);
         log.info("memberEmail: {}", memberEmail);
-        // MemberRole을 Token에서 꺼낸다.
+        // MemberRole을 Token에서 꺼낸다. // TODO - 삭제(log용)
         String memberRole = JwtUtil.getMemberRole(token, secretKey);
         log.info("memberRole: {}", memberRole);
 
-        // 권한 부여 ( List.of에 들어간 MEMBER는 나중에 DB에 들어가있는 사용자 ROLE임
+
+        UserDetails userDetails = memberSecurityService.loadUserByUsername(memberEmail);
+        // 권한 부여
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(memberEmail, null, List.of(new SimpleGrantedAuthority("ROLE_"+memberRole)));
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         // Detail 넣어줌
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
