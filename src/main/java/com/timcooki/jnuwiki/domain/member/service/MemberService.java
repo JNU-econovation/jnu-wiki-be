@@ -1,6 +1,6 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
-import com.timcooki.jnuwiki.domain.member.DTO.JoinReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;

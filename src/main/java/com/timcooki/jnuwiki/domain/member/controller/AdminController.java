@@ -1,11 +1,11 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
+import com.timcooki.jnuwiki.domain.docs.DTO.response.InfoEditResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
 import com.timcooki.jnuwiki.util.ApiUtils;
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -111,7 +111,7 @@ public class AdminController {
         Object checkRequest = checkValidRequest(docsRequestId);
         if (checkRequest != null) return checkRequest;
 
-        DocsUpdateInfoDTO updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
+        InfoEditResDTO updatedDocs = docsRequestService.updateDocsFromRequest(docsRequestId);
         return ResponseEntity.ok().body(ApiUtils.success(updatedDocs));
     }
 

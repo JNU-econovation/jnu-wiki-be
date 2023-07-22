@@ -1,6 +1,9 @@
 package com.timcooki.jnuwiki.domain.docs.controller;
 
-import com.timcooki.jnuwiki.domain.docs.DTO.*;
+import com.timcooki.jnuwiki.domain.docs.DTO.request.ContentEditReqDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.ContentEditResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -62,14 +65,6 @@ public class DocsController {
                 "cookie",
                 LocalDateTime.now()
         )));
-    }
-
-    @PatchMapping("/docs/{docs_id}")
-    public ResponseEntity<?> docsUpdate(@PathVariable String docs_id,
-                                        @RequestBody DocsUpdateReqDTO docsUpdateReqDTO){
-
-        return ResponseEntity.ok(ApiUtils.success(null);
-
     }
 
     @PostMapping("/docs")

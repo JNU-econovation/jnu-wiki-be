@@ -1,7 +1,7 @@
 package com.timcooki.jnuwiki.domain.docsRequest.service;
 
-import com.timcooki.jnuwiki.domain.docs.DTO.NewApproveResDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.InfoEditResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.NewApproveResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docsArchive.repository.DocsArchiveRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
@@ -85,7 +85,7 @@ public class DocsRequestService {
     public NewApproveResDTO createDocsFromRequest(String docsRequestId) {
     }
 
-    public DocsUpdateInfoDTO updateDocsFromRequest(Long docsRequestId) {
+    public InfoEditResDTO updateDocsFromRequest(Long docsRequestId) {
         // 승락받은 요청 조회
         DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).get();
 
@@ -104,13 +104,13 @@ public class DocsRequestService {
 
         docsRepository.deleteById(docsRequestId); // 처리된 요청 삭제
 
-        return DocsUpdateInfoDTO.builder()
-                .id(docs.getDocsId())
-                .docsRequestName(docs.getDocsName())
-                .docsRequestLocation(docs.getDocsLocation())
+        return InfoEditResDTO.builder()
+                .docsId(docs.getDocsId())
+                .docsName(docs.getDocsName())
+                .docsLocation(docs.getDocsLocation())
                 .docsContent(docs.getDocsContent())
-                .docsRequestCategory(docs.getDocsCategory())
-                .docsCreatedAt(LocalDateTime.now())
+                .docsCategory(docs.getDocsCategory())
+                .docsModifiedAt(LocalDateTime.now())
                 .build();
     }
 
