@@ -36,6 +36,9 @@ public class DocsController {
     public ResponseEntity<?> modifyDocs(@PathVariable Long docs_id,
                                         @RequestBody ContentEditReqDTO contentEditReqDTO,
                                         @AuthenticationPrincipal Member member){
+        ContentEditResDTO contentEditDocs = docsService.updateDocs(docs_id, contentEditReqDTO);
+
+        return ResponseEntity.ok().body(ApiUtils.success(contentEditDocs));
     }
 
     @GetMapping("/docs/{docs_id}")

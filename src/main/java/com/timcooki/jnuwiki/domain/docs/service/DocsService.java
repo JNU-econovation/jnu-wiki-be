@@ -36,5 +36,16 @@ public class DocsService {
     }
 
     public ContentEditResDTO updateDocs(Long docsId, ContentEditReqDTO contentEditReqDTO) {
+        Docs docs = docsRepository.findById(docsId).orElseThrow(
+                () -> new RuntimeException("존재하지 않는 문서입니다.")
+        );
+
+        docs.updateContent(contentEditReqDTO.docsContent());
+
+        return new ContentEditResDTO(
+                docs.getDocsId(),
+                docs.getDocsContent(),
+                docs.getModifiedAt()
+        );
     }
 }

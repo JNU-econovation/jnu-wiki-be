@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -42,7 +43,7 @@ public class Docs {
 
     @LastModifiedDate
     @Column(name = "modified_at")
-    private LocalDate modifiedAt;
+    private LocalDateTime modifiedAt;
 
     @Column(name = "docs_category", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -60,5 +61,10 @@ public class Docs {
         this.docsName = docsName;
         this.docsLocation = docsLocation;
         this.docsCategory = docsCategory;
+    }
+
+    public void updateContent(String docsContent) {
+        this.docsContent = docsContent;
+        this.modifiedAt = LocalDateTime.now();
     }
 }
