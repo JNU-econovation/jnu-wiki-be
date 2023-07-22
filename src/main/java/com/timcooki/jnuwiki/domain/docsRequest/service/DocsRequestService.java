@@ -3,25 +3,32 @@ package com.timcooki.jnuwiki.domain.docsRequest.service;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.InfoEditResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.NewApproveResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsArchive.repository.DocsArchiveRepository;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
+import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +37,11 @@ public class DocsRequestService {
 
     private final DocsRequestRepository docsRequestRepository;
 
-    // TODO: 머지 후 docsRepository의 메서드 오류뜨는지 확인 - 쿠키가 레포 구현했길래 안함
     private final DocsRepository docsRepository;
 
     private final DocsArchiveRepository docsArchiveRepository;
+
+    private final MemberRepository memberRepository;
 
     public void createModifiedRequest(EditWriteReqDTO modifiedRequestWriteDto) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
@@ -42,10 +50,18 @@ public class DocsRequestService {
         docsRequestRepository.save(docsRequest);
     }
 
-    public void createNewDocsRequest(NewWriteReqDTO createdRequestDto) {
+    public void createNewDocsRequest(UserDetails userDetails, NewWriteReqDTO newWriteReqDTO) {
+
+        // 권한 확인(회원가입 15일)
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        if (ChronoUnit.DAYS.between(member.getCreatedAt(), LocalDate.now())>15){
+            throw new RuntimeException("회원가입 후 15일이 지난 회원만 요청이 가능합니다.");//403 forbidden
+        }
+
+
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        DocsRequest docsRequest = mapper.toEntity(createdRequestDto);
+        DocsRequest docsRequest = mapper.toEntity(newWriteReqDTO);
         docsRequestRepository.save(docsRequest);
     }
 
@@ -113,7 +129,14 @@ public class DocsRequestService {
                 .build();
     }
 
-    public void rejectRequest(String docsRequestId) {
+    public void rejectRequest(Long docsRequestId) {
+        // 요청 존재 확인
+        Optional<DocsRequest> docsRequest = docsRequestRepository.findById(docsRequestId);
+        if(docsRequest.isEmpty()){
+            throw new RuntimeException("존재하지 않는 요청입니다.");
+        }else {
+            docsRequestRepository.deleteById(docsRequestId);
+        }
     }
 
     public boolean hasRequest(String docsRequestId) {

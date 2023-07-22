@@ -11,6 +11,7 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
+import com.timcooki.jnuwiki.domain.member.service.AdminService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ import java.util.Collection;
 public class AdminController {
     private final MemberService memberService;
     private final DocsRequestService docsRequestService;
+    private final AdminService adminService;
 
     // 문서 기본정보 수정 요청 목록 조회
     @GetMapping("/requests/update/{page}")
@@ -90,19 +92,18 @@ public class AdminController {
         return ApiUtils.success(modifiedRequest);
     }
 
+    // TODO - 예외처리 수정
     // 새 문서 생성 요청 승락 생성
     @PostMapping("/approve/new/{docs_request_id}")
-    private Object approveCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
-        // 권한 확인
-        Object checkAuthorization = checkAuthorization(userDetails);
-        if (checkAuthorization != null) return checkAuthorization;
+    private ResponseEntity<?> approveCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
 
-        // 요청 존재 확인
-        Object checkRequest = checkValidRequest(docsRequestId);
-        if (checkRequest != null) return checkRequest;
 
-        DocsCreateResDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
-        return ApiUtils.success(createdDocs);
+        try{
+            return ResponseEntity.ok(ApiUtils.success(adminService.approveNewDocs(userDetails, docsRequestId)));
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(ApiUtils.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+
     }
 
     // 문서 수정 요청 승락
@@ -122,17 +123,14 @@ public class AdminController {
 
     // 문서 요청 반려
     @PostMapping("/reject/{docs_request_id}")
-    private Object rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") String docsRequestId) {
-        // 권한 확인
-        Object checkAuthorization = checkAuthorization(userDetails);
-        if (checkAuthorization != null) return checkAuthorization;
+    private ResponseEntity<?> rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
 
-        // 요청 존재 확인
-        Object checkRequest = checkValidRequest(docsRequestId);
-        if (checkRequest != null) return checkRequest;
-
-        docsRequestService.rejectRequest(docsRequestId);
-        return ApiUtils.success("요청이 반려되었습니다.");
+        try {
+            docsRequestService.rejectRequest(docsRequestId);
+            return ResponseEntity.ok(ApiUtils.success("요청이 반려되었습니다."));
+        }catch (Exception e){
+            return ResponseEntity.status(400).body(ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST));
+        }
     }
 
     // 권한 확인 메서드
