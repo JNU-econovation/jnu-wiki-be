@@ -64,14 +64,6 @@ public class DocsController {
         )));
     }
 
-    @PatchMapping("/docs/{docs_id}")
-    public ResponseEntity<?> docsUpdate(@PathVariable String docs_id,
-                                        @RequestBody DocsUpdateReqDTO docsUpdateReqDTO){
-
-        return ResponseEntity.ok(ApiUtils.success(null);
-
-    }
-
     @PostMapping("/docs")
     public ResponseEntity<?> docsCreate(@RequestBody DocsCreateReqDTO docsCreateReqDTO){
 
