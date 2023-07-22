@@ -66,10 +66,5 @@ public class DocsController {
                 LocalDateTime.now()
         )));
     }
-
-    @PostMapping("/docs")
-    public ResponseEntity<?> docsCreate(@RequestBody DocsCreateReqDTO docsCreateReqDTO){
-
-        return ResponseEntity.ok(ApiUtils.success(null);
-    }
+    
 }
