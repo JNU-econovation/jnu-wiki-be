@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.domain.docsRequest.controller;
 
+
 import com.timcooki.jnuwiki.domain.docsRequest.dto.response.NewWriteResDTO;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
@@ -7,12 +8,15 @@ import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
+import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

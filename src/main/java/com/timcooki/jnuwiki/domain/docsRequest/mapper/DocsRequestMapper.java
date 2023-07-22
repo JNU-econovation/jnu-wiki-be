@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.domain.docsRequest.mapper;
 
+
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;

@@ -1,6 +1,7 @@
 jwt:
   secret: test.test
 
+
 spring:
   h2:
     console:
@@ -8,12 +9,12 @@ spring:
       #path:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
   datasource:
-    #url: jdbc:h2:tcp://localhost/~/
+    url: jdbc:h2:tcp://localhost/~/jnuwiki
     username: sa
     driver-class-name: org.h2.Driver

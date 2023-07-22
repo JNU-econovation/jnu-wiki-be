@@ -38,6 +38,20 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 }
 
+// mapstruct 기본 Component Model 변경
+compileJava {
+	options.compilerArgs += ['--enable-preview', '-Amapstruct.defaultComponentModel=spring']
+}
+compileTestJava {
+	options.compilerArgs += ['--enable-preview', '-Amapstruct.defaultComponentModel=spring']
+}
+test {
+	useJUnitPlatform()
+	jvmArgs(['--enable-preview', '-Amapstruct.defaultComponentModel=spring'])
+}
+
+
+// TODO: gradle 알아보기
 tasks.named('test') {
 	useJUnitPlatform()
 }

@@ -14,7 +14,6 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
-
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
