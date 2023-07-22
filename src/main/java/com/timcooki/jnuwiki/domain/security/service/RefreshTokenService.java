@@ -33,7 +33,7 @@ public class RefreshTokenService {
     public ResponseEntity<?> renewToken(String refreshToken){
         Member member = findByToken(refreshToken).map(this::verifyExpiration)
                 .map(RefreshToken::getMember)
-                .orElseThrow(() -> new RuntimeException("Refresh token is not in database"));
+                .orElseThrow(() -> new RuntimeException("인증되지 않은 토큰입니다."));
 
         String accessToken = JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
         return ResponseEntity.ok()

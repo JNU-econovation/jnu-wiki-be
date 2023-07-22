@@ -1,17 +1,14 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
-import com.timcooki.jnuwiki.domain.member.DTO.JoinReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.LoginReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.*;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -41,15 +37,6 @@ public class MemberService {
         String email= loginReqDTO.email();
         String password = loginReqDTO.password();
 
-        // id, password 유효성 검증
-        /*
-        if (!validationMember(email, password)) {
-            // TODO: Exception 변경
-            throw new RuntimeException("맞는 아이디와 비밀번호가 아닙니다.");
-        }
-
-         */
-
         // AuthenticationManger에게 인증 진행 위임
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
@@ -59,7 +46,9 @@ public class MemberService {
         if(authentication.isAuthenticated()){
             // 리프레시 토큰 발급
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, memberRepository.findByEmail(email));
-            String memberRole = memberRepository.findByEmail(email).get().getRole().toString();
+            Member member = memberRepository.findByEmail(email).get();
+            Long memberId = member.getMemberId();
+            String memberRole = member.getRole().toString();
 
             String token = JwtUtil.createJwt(email,memberRole, secretKey);
 
@@ -67,9 +56,16 @@ public class MemberService {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
             httpHeaders.set(HttpHeaders.SET_COOKIE, refreshToken.getToken());
+
+            // DTO 생성
+            LoginResDTO loginResDTO = LoginResDTO.builder()
+                    .id(memberId)
+                    .role(memberRole)
+                    .build();
+
             return ResponseEntity.ok()
                     .headers(httpHeaders)
-                    .body(ApiUtils.success(null));
+                    .body(ApiUtils.success(loginResDTO));
 
         }else {// 인증 오류시
             // TODO - 401변경 양식맞추기
@@ -133,5 +129,13 @@ public class MemberService {
 
         // 아이디에 대응되는 비밀번호가 맞는지 확인
         return loginMember.getPassword().equals(passwordEncoder.encode(password));
+    }
+
+    public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO){
+        return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
+    }
+
+    public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO){
+        return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
     }
 }
