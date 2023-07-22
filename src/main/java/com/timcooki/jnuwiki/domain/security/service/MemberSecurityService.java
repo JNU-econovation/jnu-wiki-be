@@ -2,7 +2,7 @@ package com.timcooki.jnuwiki.domain.security.service;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
-import com.timcooki.jnuwiki.domain.security.config.MemberDetails;
+import com.timcooki.jnuwiki.config.MemberDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

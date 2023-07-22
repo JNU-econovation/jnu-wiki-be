@@ -1,4 +1,4 @@
-package com.timcooki.jnuwiki.domain.security.config;
+package com.timcooki.jnuwiki.config;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
