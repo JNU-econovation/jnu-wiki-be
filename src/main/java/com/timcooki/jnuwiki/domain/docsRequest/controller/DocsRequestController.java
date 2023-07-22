@@ -32,7 +32,7 @@ public class DocsRequestController {
     @PostMapping("/update")
     public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, EditWriteReqDTO modifiedRequestWriteDto) {
         // 권한 확인
-        Object checkAuthorization = checkAuthorization(userDetails);
+        ResponseEntity<?> checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 요청 저장
@@ -60,9 +60,10 @@ public class DocsRequestController {
 
         // 회원 가입 일수 확인
         // TODO: UserDetails 구현 완료되고 나서 getCreatedAt() 에러 해결되는지 확인
-        boolean isWithin15Days = checkMembershipDuration(userDetails.getCreatedAt());
-        if (!isWithin15Days) {
-            return ApiUtils.error("회원가입 후 15일이 지나야 요청이 가능합니다.", HttpStatus.FORBIDDEN);
+        try{
+            docsRequestService.checkMemberDuration(userDetails);
+        }catch (Exception e){
+            return ResponseEntity.status(403).body(ApiUtils.error(e.getMessage(), HttpStatus.FORBIDDEN));
         }
         return null;
     }

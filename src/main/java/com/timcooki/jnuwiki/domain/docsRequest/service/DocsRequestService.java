@@ -30,10 +30,6 @@ public class DocsRequestService {
 
     private final DocsRequestRepository docsRequestRepository;
 
-    private final DocsRepository docsRepository;
-
-    private final DocsArchiveRepository docsArchiveRepository;
-
     private final MemberRepository memberRepository;
 
     public void createModifiedRequest(EditWriteReqDTO modifiedRequestWriteDto) {
@@ -102,40 +98,16 @@ public class DocsRequestService {
         return editReadResDTO;
     }
 
-    public NewReadResDTO getOneCreatedRequest(String docsRequestId) {
+    public NewReadResDTO getOneCreatedRequest(Long docsRequestId) {
+        DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
+
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).get();
+
+        NewReadResDTO newReadResDTO = mapper.newEntityToDTO(docsRequest);
+
+        return newReadResDTO;
     }
 
-    public NewApproveResDTO createDocsFromRequest(String docsRequestId) {
-    }
-
-    public InfoEditResDTO updateDocsFromRequest(Long docsRequestId) {
-        // 승락받은 요청 조회
-        DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).get();
-
-        // 수정할 문서 조회
-        Long docsId = modifiedRequest.getDocs().getDocsId();
-        Docs docs = docsRepository.findById(docsId).get();
-
-        // 수정전 문서는 아카이브 레포에 저장
-        docsArchiveRepository.save(docs);
-
-        // 요청에 따라 업데이트
-        docs.updateBasicInfo(
-                modifiedRequest.getDocsName(),
-                modifiedRequest.getDocsLocation(),
-                modifiedRequest.getDocsCategory());
-
-        docsRepository.deleteById(docsRequestId); // 처리된 요청 삭제
-
-        return InfoEditResDTO.builder()
-                .docsId(docs.getDocsId())
-                .docsName(docs.getDocsName())
-                .docsLocation(docs.getDocsLocation())
-                .docsContent(docs.getDocsContent())
-                .docsCategory(docs.getDocsCategory())
-                .docsModifiedAt(LocalDateTime.now())
-                .build();
-    }
 
     public void rejectRequest(Long docsRequestId) {
         // 요청 존재 확인

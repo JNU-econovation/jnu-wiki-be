@@ -5,6 +5,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
 import org.mapstruct.Mapper;
 
 @Mapper
