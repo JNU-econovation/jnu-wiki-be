@@ -2,7 +2,6 @@ package com.timcooki.jnuwiki.domain.docsRequest.service;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.InfoEditResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.NewApproveResDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docsArchive.repository.DocsArchiveRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
