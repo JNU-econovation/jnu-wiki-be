@@ -27,7 +27,7 @@ public class Docs {
     private String docsName;
 
     @Column(name = "docs_location", nullable = false)
-    private String docsLocation;
+    private DocsLocation docsLocation;
 
     @Column(name = "docs_content")
     private String docsContent;
@@ -49,14 +49,14 @@ public class Docs {
     private DocsCategory docsCategory;
 
     @Builder
-    public Docs(String docsName, String docsLocation, Member createdBy, DocsCategory docsCategory) {
+    public Docs(String docsName, DocsLocation docsLocation, Member createdBy, DocsCategory docsCategory) {
         this.docsName = docsName;
         this.docsLocation = docsLocation;
         this.createdBy = createdBy;
         this.docsCategory = docsCategory;
     }
 
-    public void updateBasicInfo(String docsName, String docsLocation, DocsCategory docsCategory) {
+    public void updateBasicInfo(String docsName, DocsLocation docsLocation, DocsCategory docsCategory) {
         this.docsName = docsName;
         this.docsLocation = docsLocation;
         this.docsCategory = docsCategory;

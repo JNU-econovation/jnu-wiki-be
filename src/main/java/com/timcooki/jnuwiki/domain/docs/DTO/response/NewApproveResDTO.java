@@ -1,4 +1,4 @@
-package com.timcooki.jnuwiki.domain.docs.DTO;
+package com.timcooki.jnuwiki.domain.docs.DTO.response;
 
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
@@ -6,15 +6,15 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record DocsCreateDTO(
+public record NewApproveResDTO(
     Long id,
-    String docsRequestName,
-    DocsCategory docsRequestCategory,
-    DocsLocation docsRequestLocation,
+    String docsName,
+    DocsCategory docsCategory,
+    DocsLocation docsLocation,
     LocalDateTime docsCreatedAt
 ){
     @Builder
-    public DocsCreateDTO{
+    public NewApproveResDTO {
 
     }
 }

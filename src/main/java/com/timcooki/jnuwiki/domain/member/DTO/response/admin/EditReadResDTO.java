@@ -1,21 +1,23 @@
-package com.timcooki.jnuwiki.domain.docs.DTO;
+package com.timcooki.jnuwiki.domain.member.DTO.response.admin;
 
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
+import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record DocsUpdateInfoDTO(
+public record EditReadResDTO(
         Long id,
-        String docsRequestName,
+        DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
+        String docsRequestName,
         DocsLocation docsRequestLocation,
-        String docsContent,
-        LocalDateTime docsCreatedAt
+        LocalDateTime docsRequestedAt
 ) {
     @Builder
-    public DocsUpdateInfoDTO {
+    public EditReadResDTO {
 
     }
+
 }
