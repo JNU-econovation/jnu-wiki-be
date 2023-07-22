@@ -6,7 +6,6 @@ import com.timcooki.jnuwiki.domain.member.entity.Member;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record ReadResDTO(
         Long id,
