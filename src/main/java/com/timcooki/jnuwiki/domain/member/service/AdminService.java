@@ -5,7 +5,6 @@ import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ApproveNewDocsResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class AdminService {
 
     // TODO - 예외처리 수정
     // 새 문서 요청 승락
-    public ApproveNewDocsResDTO approveNewDocs(UserDetails userDetails, Long docsRequestId){
+    public NewApproveResDTO approveNewDocs(UserDetails userDetails, Long docsRequestId){
         // 권한 확인
         if(!findByEmail(userDetails.getUsername())){
             throw new RuntimeException("로그인이 필요한 기능입니다."); // 401
@@ -55,12 +54,12 @@ public class AdminService {
 
         return ApproveNewDocsResDTO.builder()
                 .id(docs.getDocsId())
-                .docsCategory(docs.getDocsCategory().toString())
+                .docsCategory(docs.getDocsCategory())
                 .docsName(docs.getDocsName())
                 .docsLocation(List.of(docs.getDocsLocation()))
                 .build();
 
-        DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
+        //DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
     }
 
 

@@ -8,7 +8,6 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 public record NewReadResDTO(
-        Long id,
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
         String docsRequestName,

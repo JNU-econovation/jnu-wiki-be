@@ -9,9 +9,8 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface DocsRequestMapper {
-    DocsRequest toEntity(NewWriteReqDTO newWriteReqDTO);
-
-    DocsRequest modifiedDTOToEntity(EditWriteReqDTO editWriteReqDto);
-
-    EditReadResDTO toDTO(DocsRequest docsRequest);
+    DocsRequest newDTOToEntity(NewWriteReqDTO newWriteReqDTO);
+    DocsRequest editDTOToEntity(EditWriteReqDTO editWriteReqDto);
+    EditReadResDTO editEntityToDTO(DocsRequest docsRequest);
+    NewReadResDTO newEntityToDTO(DocsRequest docsRequest);
 }
