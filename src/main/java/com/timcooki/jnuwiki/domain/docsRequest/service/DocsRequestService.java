@@ -1,23 +1,20 @@
 package com.timcooki.jnuwiki.domain.docsRequest.service;
 
-import com.timcooki.jnuwiki.domain.docs.DTO.DocsCreateDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.NewApproveResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.DocsUpdateInfoDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docsArchive.repository.DocsArchiveRepository;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindAllReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindByIdReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
 
-import com.timcooki.jnuwiki.domain.member.entity.Member;
-import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
@@ -39,14 +36,14 @@ public class DocsRequestService {
 
     private final DocsArchiveRepository docsArchiveRepository;
 
-    public void createModifiedRequest(ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+    public void createModifiedRequest(EditWriteReqDTO modifiedRequestWriteDto) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
         DocsRequest docsRequest = mapper.modifiedDTOToEntity(modifiedRequestWriteDto);
         docsRequestRepository.save(docsRequest);
     }
 
-    public void createNewDocsRequest(CreatedRequestWriteDTO createdRequestDto) {
+    public void createNewDocsRequest(NewWriteReqDTO createdRequestDto) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
         DocsRequest docsRequest = mapper.toEntity(createdRequestDto);
@@ -55,37 +52,37 @@ public class DocsRequestService {
 
     // 기본정보 수정 요청 목록 조회
     // TODO: 테스트 코드 작성
-    public ModifiedFindAllReqDTO getModifiedRequestList(Pageable pageable) {
+    public EditListReadResDTO getModifiedRequestList(Pageable pageable) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
         List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable);
 
-        List<ModifiedFindByIdReqDTO> modifiedList = docsRequests.stream()
+        List<EditReadResDTO> modifiedList = docsRequests.stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
 
-        return ModifiedFindAllReqDTO.builder()
+        return EditListReadResDTO.builder()
                 .modifiedRequestList(modifiedList)
                 .build();
     }
 
-    public Page<CreatedFindAllReqDTO> getCreatedRequestList(Pageable pageable) {
+    public Page<NewListReadResDTO> getCreatedRequestList(Pageable pageable) {
     }
 
-    public ModifiedFindByIdReqDTO getOneModifiedRequest(Long docsRequestId) {
+    public EditReadResDTO getOneModifiedRequest(Long docsRequestId) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
         DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).get();
 
-        ModifiedFindByIdReqDTO modifiedFindByIdReqDTO = mapper.toDTO(docsRequest);
+        EditReadResDTO editReadResDTO = mapper.toDTO(docsRequest);
 
-        return modifiedFindByIdReqDTO;
+        return editReadResDTO;
     }
 
-    public CreatedFindByIdReqDTO getOneCreatedRequest(String docsRequestId) {
+    public NewReadResDTO getOneCreatedRequest(String docsRequestId) {
     }
 
-    public DocsCreateDTO createDocsFromRequest(String docsRequestId) {
+    public NewApproveResDTO createDocsFromRequest(String docsRequestId) {
     }
 
     public DocsUpdateInfoDTO updateDocsFromRequest(Long docsRequestId) {

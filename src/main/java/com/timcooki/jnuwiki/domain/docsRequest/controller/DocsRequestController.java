@@ -1,9 +1,9 @@
 package com.timcooki.jnuwiki.domain.docsRequest.controller;
 
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedResponseWriteDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteResDTO;
 import com.timcooki.jnuwiki.util.ApiUtils;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
@@ -26,7 +26,7 @@ public class DocsRequestController {
 
     // 문서 수정 요청 작성
     @PostMapping("/update")
-    public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, ModifiedRequestWriteDTO modifiedRequestWriteDto) {
+    public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, EditWriteReqDTO modifiedRequestWriteDto) {
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
@@ -35,22 +35,22 @@ public class DocsRequestController {
         docsRequestService.createModifiedRequest(modifiedRequestWriteDto);
 
         // 요청 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new CreatedResponseWriteDTO("요청이 저장되었습니다.")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new NewWriteResDTO("요청이 저장되었습니다.")));
     }
 
     // 문서 생성 요청 작성
     @PostMapping("/new")
-    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, CreatedRequestWriteDTO createdRequestWriteDto) {
+    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, NewWriteReqDTO newWriteReqDto) {
         // TODO - CustomUserDetails | findByEmail
         // 권한 확인
         Object checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
 
         // 문서 저장
-        DocsRequest createdCreatedRequest = docsRequestService.createCreatedRequest(createdRequestWriteDto);
+        DocsRequest createdCreatedRequest = docsRequestService.createCreatedRequest(newWriteReqDto);
 
         // 요청 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new CreatedResponseWriteDTO("요청이 저장되었습니다.")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new NewWriteResDTO("요청이 저장되었습니다.")));
     }
 
     // 권한 확인 메서드

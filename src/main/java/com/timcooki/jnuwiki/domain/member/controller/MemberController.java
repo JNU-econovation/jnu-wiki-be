@@ -79,18 +79,18 @@ public class MemberController {
     // TODO AuthenticationPrincipal - SecurityContextHolder/Authentication도 고려
     @PostMapping("/members/modify/change")
     public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal Member member,
-                                        @RequestBody ModifyMemberInfoReqDTO modifyMemberInfoReqDTO){
+                                        @RequestBody EditReqDTO editReqDTO){
 
         // findById로 member 찾기.
 
         // TODO Dummy Data - fail1: 400 중복된 닉네임
-        if(modifyMemberInfoReqDTO.nickname().equals("fail1")){
-            return ResponseEntity.status(400).body(ApiUtils.error("중복된 닉네임 입니다.:"+modifyMemberInfoReqDTO.getNickname(), HttpStatus.BAD_REQUEST));
+        if(editReqDTO.nickname().equals("fail1")){
+            return ResponseEntity.status(400).body(ApiUtils.error("중복된 닉네임 입니다.:"+ editReqDTO.getNickname(), HttpStatus.BAD_REQUEST));
         }
 
         // TODO Dummy Data - fail2: 400 비밀번호 형식 오류
-        if(modifyMemberInfoReqDTO.password().equals("fail2")){
-            return ResponseEntity.status(400).body(ApiUtils.error("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+modifyMemberInfoReqDTO.getPassword(), HttpStatus.BAD_REQUEST));
+        if(editReqDTO.password().equals("fail2")){
+            return ResponseEntity.status(400).body(ApiUtils.error("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+ editReqDTO.getPassword(), HttpStatus.BAD_REQUEST));
         }
 
         // TODO Dummy Data - fail3: 401 인증 오류

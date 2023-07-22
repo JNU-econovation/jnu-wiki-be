@@ -1,18 +1,16 @@
 package com.timcooki.jnuwiki.domain.docsRequest.mapper;
 
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface DocsRequestMapper {
-    DocsRequest toEntity(CreatedRequestWriteDTO createdRequestWriteDTO);
+    DocsRequest toEntity(NewWriteReqDTO newWriteReqDTO);
 
-    DocsRequest modifiedDTOToEntity(ModifiedRequestWriteDTO modifiedRequestWriteDto);
+    DocsRequest modifiedDTOToEntity(EditWriteReqDTO editWriteReqDto);
 
-    ModifiedFindByIdReqDTO toDTO(DocsRequest docsRequest);
+    EditReadResDTO toDTO(DocsRequest docsRequest);
 }

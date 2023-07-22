@@ -2,11 +2,11 @@ package com.timcooki.jnuwiki.domain.docsRequest.dto.request;
 
 import lombok.Builder;
 
-public record CreatedResponseWriteDTO(
-        String message;
+public record NewWriteResDTO(
+        String message
 ) {
     @Builder
-    public CreatedResponseWriteDTO{
+    public NewWriteResDTO {
 
     }
 }

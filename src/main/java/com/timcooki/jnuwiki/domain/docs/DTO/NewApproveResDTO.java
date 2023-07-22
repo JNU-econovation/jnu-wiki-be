@@ -6,15 +6,15 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record DocsCreateDTO(
+public record NewApproveResDTO(
     Long id,
-    String docsRequestName,
-    DocsCategory docsRequestCategory,
-    DocsLocation docsRequestLocation,
+    String docsName,
+    DocsCategory docsCategory,
+    DocsLocation docsLocation,
     LocalDateTime docsCreatedAt
 ){
     @Builder
-    public DocsCreateDTO{
+    public NewApproveResDTO {
 
     }
 }

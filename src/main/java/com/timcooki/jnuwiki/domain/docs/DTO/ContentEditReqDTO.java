@@ -3,11 +3,11 @@ package com.timcooki.jnuwiki.domain.docs.DTO;
 
 import lombok.Builder;
 
-public record ModifyDocsReqDTO(
+public record ContentEditReqDTO(
         String docsContent
 ) {
     @Builder
-    public ModifyDocsReqDTO{
+    public ContentEditReqDTO {
 
     }
 }

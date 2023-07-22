@@ -7,7 +7,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record ModifiedFindByIdReqDTO(
+public record NewReadResDTO(
         Long id,
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
@@ -16,8 +16,7 @@ public record ModifiedFindByIdReqDTO(
         LocalDateTime docsRequestedAt
 ) {
     @Builder
-    public ModifiedFindByIdReqDTO {
+    public NewReadResDTO {
 
     }
-
 }
