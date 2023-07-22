@@ -39,7 +39,7 @@ public class Docs {
 
     @CreatedDate
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "modified_at")

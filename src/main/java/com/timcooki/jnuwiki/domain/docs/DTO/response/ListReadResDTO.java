@@ -6,6 +6,7 @@ import com.timcooki.jnuwiki.domain.member.entity.Member;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record ListReadResDTO(
         Long id,
@@ -15,7 +16,7 @@ public record ListReadResDTO(
          DocsLocation docsLocation,
          String docsContent,
          Member docsCreatedBy,
-         LocalDate docsCreatedAt
+         LocalDateTime docsCreatedAt
 ) {
     @Builder
     public ListReadResDTO {

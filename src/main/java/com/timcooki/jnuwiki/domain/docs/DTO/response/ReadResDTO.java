@@ -1,5 +1,8 @@
 package com.timcooki.jnuwiki.domain.docs.DTO.response;
 
+import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
+import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
+import com.timcooki.jnuwiki.domain.member.entity.Member;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -8,11 +11,10 @@ import java.util.List;
 public record ReadResDTO(
         Long id,
         String docsName,
-        // TODO 변경 - ENUM
-         String docsCategory,
-         List<Integer> docsLocation,
+         DocsCategory docsCategory,
+         DocsLocation docsLocation,
          String docsContent,
-         String docsCreatedBy,
+         Member docsCreatedBy,
          LocalDateTime docsCreatedAt
 ) {
     @Builder

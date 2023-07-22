@@ -43,7 +43,7 @@ public class DocsController {
 
     @GetMapping("/docs/{docs_id}")
     public ResponseEntity<?> docsFindOne(@PathVariable Long docs_id){
-
+        ReadResDTO readDTO = docsService.getOneDocs(docs_id);
+        return ResponseEntity.ok().body(ApiUtils.success(readDTO));
     }
-    
 }

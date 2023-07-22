@@ -3,6 +3,7 @@ package com.timcooki.jnuwiki.domain.docs.service;
 import com.timcooki.jnuwiki.domain.docs.DTO.request.ContentEditReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ContentEditResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,22 @@ public class DocsService {
                 docs.getDocsId(),
                 docs.getDocsContent(),
                 docs.getModifiedAt()
+        );
+    }
+
+    public ReadResDTO getOneDocs(Long docsId) {
+        Docs docs = docsRepository.findById(docsId).orElseThrow(
+                () -> new RuntimeException("존재하지 않는 문서입니다.")
+        );
+
+        return new ReadResDTO(
+                docs.getDocsId(),
+                docs.getDocsName(),
+                docs.getDocsCategory(),
+                docs.getDocsLocation(),
+                docs.getDocsContent(),
+                docs.getCreatedBy(),
+                docs.getCreatedAt()
         );
     }
 }
