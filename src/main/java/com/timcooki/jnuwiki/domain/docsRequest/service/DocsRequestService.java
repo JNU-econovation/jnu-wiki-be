@@ -3,18 +3,22 @@ package com.timcooki.jnuwiki.domain.docsRequest.service;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.CreatedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.ModifiedRequestWriteDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindAllReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.CreatedFindByIdReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindByIdReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.admin.ModifiedFindAllReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
+import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class DocsRequestService {
 
     private final DocsRequestRepository docsRequestRepository;
