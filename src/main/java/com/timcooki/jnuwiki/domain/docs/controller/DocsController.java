@@ -9,8 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -24,13 +22,13 @@ public class DocsController {
         // TODO Dummy Data - fail1: 400 BAD_REQUEST / 어떤 경우에 400이 뜨는지 체크
 
 
-        return ResponseEntity.ok().body(ApiUtils.success(new DocsInfoResDTO(1L, "팬도로시", "CAFE", null, "내용", "cookie", null)));
+        return ResponseEntity.ok().body(ApiUtils.success(new ListReadResDTO(1L, "팬도로시", "CAFE", null, "내용", "cookie", null)));
     }
 
     // 문서 수정
     @PutMapping("/docs/{docs_id}")
     public ResponseEntity<?> modifyDocs(@PathVariable Long docs_id,
-                                        @RequestBody ModifyDocsReqDTO modifyDocsReqDTO,
+                                        @RequestBody ContentEditReqDTO contentEditReqDTO,
                                         @AuthenticationPrincipal Member member){
 
         // TODO Dummy Data - fail1 : 400/잘못된 조회
@@ -39,7 +37,7 @@ public class DocsController {
 
         // TODO Dummy Data - success : 200/문서 수정
 
-        return ResponseEntity.ok().body(ApiUtils.success(new ModifyDocsResDTO(
+        return ResponseEntity.ok().body(ApiUtils.success(new ContentEditResDTO(
                 2L,
                 "팀 쿠키",
                 "cookie",
@@ -55,7 +53,7 @@ public class DocsController {
 
         // TODO Dummy Data - success : 성공한 경우
 
-        return ResponseEntity.ok(ApiUtils.success(new DocsFindOneResDTO(
+        return ResponseEntity.ok(ApiUtils.success(new ReadResDTO(
                 13L,
                 "팬도로시",
                 "CAFE",
@@ -70,30 +68,13 @@ public class DocsController {
     public ResponseEntity<?> docsUpdate(@PathVariable String docs_id,
                                         @RequestBody DocsUpdateReqDTO docsUpdateReqDTO){
 
-        return ResponseEntity.ok(ApiUtils.success(new DocsUpdateResDTO(
-                13L,
-                "팬도로시",
-                "CAFE",
-                new ArrayList<>(List.of(1,3)),
-                "Content",
-                "cookie",
-                LocalDateTime.now()
-        )));
+        return ResponseEntity.ok(ApiUtils.success(null);
 
     }
 
     @PostMapping("/docs")
     public ResponseEntity<?> docsCreate(@RequestBody DocsCreateReqDTO docsCreateReqDTO){
 
-        return ResponseEntity.ok(ApiUtils.success(DocsCreateResDTO.builder()
-                .docsId(13L)
-                .docsName("팬도로시")
-                .docsCategory("CAFE")
-                .docsLocation(new ArrayList<>(List.of(1, 3)))
-                .docsCreatedBy("cookie")
-                .docsContent("content")
-                .docsCreatedAt(LocalDateTime.now())
-                .build()));
+        return ResponseEntity.ok(ApiUtils.success(null);
     }
-
 }

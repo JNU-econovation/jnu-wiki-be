@@ -5,7 +5,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import lombok.Builder;
 
-public record ModifiedRequestWriteDTO(
+public record EditWriteReqDTO(
         Long id,
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
@@ -13,7 +13,7 @@ public record ModifiedRequestWriteDTO(
         DocsLocation docsRequestLocation
 ) {
     @Builder
-    public ModifiedRequestWriteDTO{
+    public EditWriteReqDTO {
 
     }
 }

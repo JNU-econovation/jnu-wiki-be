@@ -2,6 +2,7 @@ package com.timcooki.jnuwiki.domain.docsRequest.entity;
 
 
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class DocsRequest {
     private String docsName;
 
     @Column(name = "docs_location", nullable = false)
-    private String docsLocation;
+    private DocsLocation docsLocation;
 
     @ManyToOne
     // TODO : join column 에 createdBy 적용 가능 확인
@@ -52,7 +53,7 @@ public class DocsRequest {
     private Docs docs;
 
     @Builder
-    public DocsRequest(Long requestId, DocsRequestType docsRequestType, DocsCategory docsCategory, String docsName, String docsLocation, Member docsRequestedBy, Docs docs) {
+    public DocsRequest(Long requestId, DocsRequestType docsRequestType, DocsCategory docsCategory, String docsName, DocsLocation docsLocation, Member docsRequestedBy, Docs docs) {
         this.docsRequestType = docsRequestType;
         this.docsCategory = docsCategory;
         this.docsName = docsName;

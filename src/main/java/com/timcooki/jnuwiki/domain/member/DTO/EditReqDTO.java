@@ -2,12 +2,12 @@ package com.timcooki.jnuwiki.domain.member.DTO;
 
 import lombok.Builder;
 
-public record ModifyMemberInfoReqDTO(
+public record EditReqDTO(
         String nickname,
         String password
 ) {
     @Builder
-    public ModifyMemberInfoReqDTO{
+    public EditReqDTO {
 
     }
 }
