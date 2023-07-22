@@ -42,17 +42,15 @@ public class DocsRequestController {
 
     // 문서 생성 요청 작성
     @PostMapping("/new")
-    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, NewWriteReqDTO newWriteReqDto) {
+    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, NewWriteReqDTO newWriteReqDTO) {
         // TODO - CustomUserDetails | findByEmail
-        // 권한 확인
-        Object checkAuthorization = checkAuthorization(userDetails);
-        if (checkAuthorization != null) return checkAuthorization;
+
 
         // 문서 저장
-        DocsRequest createdCreatedRequest = docsRequestService.createCreatedRequest(newWriteReqDto);
+        docsRequestService.createNewDocsRequest(userDetails, newWriteReqDTO);
 
         // 요청 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new NewWriteResDTO("요청이 저장되었습니다.")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new CreatedResponseWriteDTO("요청이 저장되었습니다.")));
     }
 
     // 권한 확인 메서드
