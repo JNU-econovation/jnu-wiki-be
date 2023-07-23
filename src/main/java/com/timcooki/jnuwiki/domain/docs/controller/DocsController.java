@@ -34,6 +34,9 @@ public class DocsController {
     public ResponseEntity<?> modifyDocs(@PathVariable Long docs_id,
                                         @RequestBody ContentEditReqDTO contentEditReqDTO,
                                         @AuthenticationPrincipal Member member){
+        // 권한 확인
+
+
         ContentEditResDTO contentEditDocs = docsService.updateDocs(docs_id, contentEditReqDTO);
 
         return ResponseEntity.ok().body(ApiUtils.success(contentEditDocs));
