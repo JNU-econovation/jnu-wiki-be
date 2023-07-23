@@ -1,10 +1,9 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
-import com.timcooki.jnuwiki.domain.member.DTO.request.CheckEmailReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.CheckNicknameReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.mapper.MemberMapper;
@@ -22,8 +21,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -143,5 +146,27 @@ public class MemberService {
 
     public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO){
         return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
+    }
+
+    public ReadResDTO getInfo(UserDetails userDetails) {
+        Member memberOptional = memberRepository.findByEmail(userDetails.getUsername()).get();
+        // TODO - mapStruct 사용
+        ReadResDTO resDTO = ReadResDTO.builder()
+                .id(memberOptional.getMemberId())
+                .nickName(memberOptional.getNickName())
+                .password(memberOptional.getPassword())
+                .build();
+        return resDTO;
+    }
+
+    @Transactional
+    public void editInfo(UserDetails userDetails,  EditReqDTO editReqDTO){
+
+        if(memberRepository.findByNickName(editReqDTO.nickname()).isPresent()){
+            throw new RuntimeException("중복된 닉네임 입니다.:nickname");
+        }
+
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        member.update(editReqDTO.nickname(), editReqDTO.password());
     }
 }

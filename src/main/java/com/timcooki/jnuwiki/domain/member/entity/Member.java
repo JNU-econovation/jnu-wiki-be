@@ -46,6 +46,11 @@ public class Member {
         else return false;
     }
 
+    public void update(String nickname, String password) {
+        this.nickName = nickname;
+        this.password = password;
+    }
+
     @Builder
     public Member(String email, String password, String nickName, MemberRole role) {
         this.email = email;

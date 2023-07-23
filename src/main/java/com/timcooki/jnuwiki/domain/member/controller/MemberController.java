@@ -4,6 +4,7 @@ import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.InfoResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -87,42 +89,25 @@ public class MemberController {
 
     // TODO AuthenticationPrincipal - SecurityContextHolder/Authentication도 고려
     @GetMapping("/members/info")
-    public ResponseEntity<?> info(@AuthenticationPrincipal Member member){
+    public ResponseEntity<?> info(@AuthenticationPrincipal UserDetails userDetails){
+        ReadResDTO member = memberService.getInfo(userDetails);
 
-        // TODO Dummy Data - fail1: 잘못된 인증
-        if(member.getMemberId()!=1){
-            return ResponseEntity.status(401).body(ApiUtils.error("잘못된 인증입니다.", HttpStatus.UNAUTHORIZED));
-        }
-
-        InfoResDTO members = new InfoResDTO(member.getMemberId(), member.getNickName(), member.getPassword());
-        return ResponseEntity.ok().body(ApiUtils.success(members));
+        return ResponseEntity.ok().body(ApiUtils.success(member));
     }
 
     // TODO AuthenticationPrincipal - SecurityContextHolder/Authentication도 고려
     @PostMapping("/members/modify/change")
-    public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal Member member,
+    public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal UserDetails userDetails,
                                         @RequestBody EditReqDTO editReqDTO){
 
-        // findById로 member 찾기.
+        memberService.editInfo(userDetails, editReqDTO);
 /*
-        // TODO Dummy Data - fail1: 400 중복된 닉네임
-        if(modifyMemberInfoReqDTO.nickname().equals("fail1")){
-            return ResponseEntity.status(400).body(ApiUtils.error("중복된 닉네임 입니다.:"+modifyMemberInfoReqDTO.getNickname(), HttpStatus.BAD_REQUEST));
-        }
-
         // TODO Dummy Data - fail2: 400 비밀번호 형식 오류
         if(modifyMemberInfoReqDTO.password().equals("fail2")){
             return ResponseEntity.status(400).body(ApiUtils.error("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+modifyMemberInfoReqDTO.getPassword(), HttpStatus.BAD_REQUEST));
         }
-
-        // TODO Dummy Data - fail3: 401 인증 오류
-
-
  */
-
         // 수정사항 update / Param : nickname, password
-
-
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
