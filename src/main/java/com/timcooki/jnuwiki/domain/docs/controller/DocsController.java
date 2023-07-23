@@ -47,4 +47,10 @@ public class DocsController {
         ReadResDTO readDTO = docsService.getOneDocs(docs_id);
         return ResponseEntity.ok().body(ApiUtils.success(readDTO));
     }
+
+    @GetMapping("/docs/search")
+    public ResponseEntity<?> docsSearch(@RequestParam(value = "search") String search){
+
+        return ResponseEntity.ok(ApiUtils.success(docsService.searchLike(search)));
+    }
 }

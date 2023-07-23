@@ -4,9 +4,14 @@ import com.timcooki.jnuwiki.domain.docs.DTO.request.ContentEditReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ContentEditResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.SearchReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docs.mapper.DocsMapper;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
+import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -64,5 +69,16 @@ public class DocsService {
                 docs.getCreatedBy(),
                 docs.getCreatedAt()
         );
+    }
+
+    public List<SearchReadResDTO> searchLike(String search) {
+        List<Docs> docsList = docsRepository.searchLike(search);
+
+        DocsMapper mapper = Mappers.getMapper(DocsMapper.class);
+
+        List<SearchReadResDTO> res = docsList.stream().map(mapper::entityToDTO).toList();
+
+        return res;
+
     }
 }
