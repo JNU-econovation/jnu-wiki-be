@@ -8,7 +8,8 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 public record EditReadResDTO(
-        Long docsId,
+        Long docsRequestId,
+        Long docsId, // 수정하려는 문서의 id 값
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
         String docsRequestName,

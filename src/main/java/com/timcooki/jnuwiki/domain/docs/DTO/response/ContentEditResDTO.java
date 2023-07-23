@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 public record ContentEditResDTO(
         Long id,
         String docsContent,
-        String docsModifiedBy,
         LocalDateTime docsModifiedAt
 ) {
     @Builder
