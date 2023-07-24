@@ -35,7 +35,7 @@ public class DocsRequest {
     @Column(name = "docs_name", nullable = false)
     private String docsName;
 
-    @Column(name = "docs_location", nullable = false)
+    @Embedded
     private DocsLocation docsLocation;
 
     @ManyToOne
