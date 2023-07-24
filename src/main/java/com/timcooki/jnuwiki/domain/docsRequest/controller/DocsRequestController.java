@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +31,7 @@ public class DocsRequestController {
 
     // 문서 수정 요청 작성
     @PostMapping("/update")
-    public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, EditWriteReqDTO modifiedRequestWriteDto) {
+    public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody EditWriteReqDTO modifiedRequestWriteDto) {
         // 권한 확인
         ResponseEntity<?> checkAuthorization = checkAuthorization(userDetails);
         if (checkAuthorization != null) return checkAuthorization;
@@ -44,7 +45,7 @@ public class DocsRequestController {
 
     // 문서 생성 요청 작성
     @PostMapping("/new")
-    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, NewWriteReqDTO newWriteReqDTO) {
+    public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody NewWriteReqDTO newWriteReqDTO) {
         // TODO - CustomUserDetails | findByEmail
 
 
