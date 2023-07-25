@@ -45,10 +45,10 @@ compileJava {
 compileTestJava {
 	options.compilerArgs += ['--enable-preview', '-Amapstruct.defaultComponentModel=spring']
 }
-test {
-	useJUnitPlatform()
-	jvmArgs(['--enable-preview', '-Amapstruct.defaultComponentModel=spring'])
-}
+//test {
+//	useJUnitPlatform()
+//	jvmArgs(['--enable-preview', '-Amapstruct.defaultComponentModel=spring'])
+//}
 
 
 // TODO: gradle 알아보기
