@@ -15,11 +15,7 @@ public class Validator {
                     "A-Z]{2,7}$";
 
     private final String PASSWORD_REGEX =
-            "^(?=.*[a-z])" +
-                    "(?=.*[A-Z])" +
-                    "(?=.*\\d)" +
-                    "(?=.*[$@$!%*?&])" +
-                    "[A-Za-z\\d$@$!%*?&]{8,16}";
+            "^((?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W]).{8,20})$";
 
     public boolean isValidEmail(String email) {
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
