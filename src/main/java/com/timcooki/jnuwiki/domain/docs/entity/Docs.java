@@ -26,8 +26,7 @@ public class Docs {
     @Column(name = "docs_name", nullable = false)
     private String docsName;
 
-    @OneToOne
-    @JoinColumn(name = "docs_location_id")
+    @Embedded
     private DocsLocation docsLocation;
 
     @Column(name = "docs_content")

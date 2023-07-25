@@ -47,9 +47,9 @@ public class AdminService {
         // 문서 등록
         Docs docs = Docs.builder()
                 .createdBy(member)
-                .docsCategory(docsRequest.get().getDocsCategory())
-                .docsLocation(docsRequest.get().getDocsLocation())
-                .docsName(docsRequest.get().getDocsName())
+                .docsCategory(docsRequest.get().getDocsRequestCategory())
+                .docsLocation(docsRequest.get().getDocsRequestLocation())
+                .docsName(docsRequest.get().getDocsRequestName())
                 .build();
         docsRepository.save(docs);
 
@@ -79,9 +79,9 @@ public class AdminService {
 
         // 요청에 따라 업데이트
         docs.updateBasicInfo(
-                modifiedRequest.getDocsName(),
-                modifiedRequest.getDocsLocation(),
-                modifiedRequest.getDocsCategory());
+                modifiedRequest.getDocsRequestName(),
+                modifiedRequest.getDocsRequestLocation(),
+                modifiedRequest.getDocsRequestCategory());
 
         docsRepository.deleteById(docsRequestId); // 처리된 요청 삭제
 

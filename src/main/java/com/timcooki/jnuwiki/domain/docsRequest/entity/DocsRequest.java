@@ -30,13 +30,13 @@ public class DocsRequest {
 
     @Column(name = "docs_category", nullable = false)
     @Enumerated(EnumType.STRING)
-    private DocsCategory docsCategory;
+    private DocsCategory docsRequestCategory;
 
     @Column(name = "docs_name", nullable = false)
-    private String docsName;
+    private String docsRequestName;
 
-    @Column(name = "docs_location", nullable = false)
-    private DocsLocation docsLocation;
+    @Embedded
+    private DocsLocation docsRequestLocation;
 
     @ManyToOne
     // TODO : join column 에 createdBy 적용 가능 확인
@@ -52,11 +52,11 @@ public class DocsRequest {
     private Docs docs;
 
     @Builder
-    public DocsRequest(Long requestId, DocsRequestType docsRequestType, DocsCategory docsCategory, String docsName, DocsLocation docsLocation, Member docsRequestedBy, Docs docs) {
+    public DocsRequest(DocsRequestType docsRequestType, DocsCategory docsRequestCategory, String docsRequestName, DocsLocation docsRequestLocation, Member docsRequestedBy, Docs docs) {
         this.docsRequestType = docsRequestType;
-        this.docsCategory = docsCategory;
-        this.docsName = docsName;
-        this.docsLocation = docsLocation;
+        this.docsRequestCategory = docsRequestCategory;
+        this.docsRequestName = docsRequestName;
+        this.docsRequestLocation = docsRequestLocation;
         this.docsRequestedBy = docsRequestedBy;
         this.docs = docs;
     }
