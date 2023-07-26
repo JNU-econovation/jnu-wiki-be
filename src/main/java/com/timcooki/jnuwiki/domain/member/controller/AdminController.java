@@ -10,6 +10,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import com.timcooki.jnuwiki.domain.member.service.AdminService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -20,15 +21,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/admin")
 public class AdminController {
     private final MemberService memberService;
     private final DocsRequestService docsRequestService;
     private final AdminService adminService;
 
     // 문서 기본정보 수정 요청 목록 조회
-    @GetMapping("/requests/update/{page}")
+    @GetMapping("/admin/requests/update/list/{page}")
     private ResponseEntity<?> getModifiedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
                                        @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
@@ -39,18 +40,18 @@ public class AdminController {
     }
 
     // 새 문서 생성 요청 목록 조회
-    @GetMapping("/requests/new/{page}")
+    @GetMapping("/admin/requests/new/list/{page}")
     private Object getCreatedRequests(@AuthenticationPrincipal UserDetails userDetails, @PathVariable int page,
                                       @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         // 권한 확인
-
+        log.info("컨트롤러 접속 성공");
         // 요청 목록 조회
         NewListReadResDTO createRequests = docsRequestService.getCreatedRequestList(pageable);
         return ApiUtils.success(createRequests);
     }
 
     // 문서 기본 정보 수정 요청 상세 조회
-    @GetMapping("/requests/update/{docs_request_id}")
+    @GetMapping("/admin/requests/update/{docs_request_id}")
     private Object getOneModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
         // 권한 확인
 
@@ -63,7 +64,7 @@ public class AdminController {
     }
 
     // 새 문서 신청 요청 상세 조회
-    @GetMapping("/requests/new/{docs_request_id}")
+    @GetMapping("/admin/requests/new/{docs_request_id}")
     private Object getOneCreatedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
         // 권한 확인
 
@@ -76,9 +77,10 @@ public class AdminController {
 
     // TODO - 예외처리 수정
     // 새 문서 생성 요청 승락 생성
-    @PostMapping("/approve/new/{docs_request_id}")
+    @PostMapping("/admin/approve/new/{docs_request_id}")
     private ResponseEntity<?> approveCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
 
+        log.info("컨트롤러 접근완료");
 
         try{
             return ResponseEntity.ok(ApiUtils.success(adminService.approveNewDocs(userDetails, docsRequestId)));
@@ -89,7 +91,7 @@ public class AdminController {
     }
 
     // 문서 수정 요청 승락
-    @PostMapping("/approve/update/{docs_request_id}")
+    @PostMapping("/admin/approve/update/{docs_request_id}")
     private ResponseEntity<?> approveModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
         // 권한 확인
 
@@ -102,7 +104,7 @@ public class AdminController {
     }
 
     // 문서 요청 반려
-    @PostMapping("/reject/{docs_request_id}")
+    @PostMapping("/admin/reject/{docs_request_id}")
     private ResponseEntity<?> rejectRequest(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("docs_request_id") Long docsRequestId) {
 
         try {

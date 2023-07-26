@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ public class DocsService {
         return new PageImpl<>(docsDTOList);
     }
 
+    @Transactional
     public ContentEditResDTO updateDocs(Long docsId, ContentEditReqDTO contentEditReqDTO) {
         Docs docs = docsRepository.findById(docsId).orElseThrow(
                 () -> new Exception404("존재하지 않는 문서입니다.")

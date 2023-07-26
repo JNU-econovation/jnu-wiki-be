@@ -15,18 +15,22 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DocsRequestService {
 
@@ -46,7 +50,7 @@ public class DocsRequestService {
     }
 
     public void createNewDocsRequest(UserDetails userDetails, NewWriteReqDTO newWriteReqDTO) {
-        checkMemberDuration(userDetails);
+        //checkMemberDuration(userDetails);
 
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
@@ -58,7 +62,7 @@ public class DocsRequestService {
     public void checkMemberDuration(UserDetails userDetails) {
         // 권한 확인(회원가입 15일)
         Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
-        if (ChronoUnit.DAYS.between(member.getCreatedAt(), LocalDate.now())>15){
+        if (ChronoUnit.DAYS.between(member.getCreatedAt(), LocalDateTime.now())>15){
             throw new RuntimeException("회원가입 후 15일이 지난 회원만 요청이 가능합니다.");//403 forbidden
         }
     }
@@ -68,7 +72,7 @@ public class DocsRequestService {
     public EditListReadResDTO getModifiedRequestList(Pageable pageable) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable);
+        Page<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable);
 
         List<EditReadResDTO> modifiedList = docsRequests.stream()
                 .map(mapper::editEntityToDTO)
@@ -80,9 +84,10 @@ public class DocsRequestService {
     }
 
     public NewListReadResDTO getCreatedRequestList(Pageable pageable) {
+        log.info("서비스 접속 성공");
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable);
+        Page<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable);
 
         List<NewReadResDTO> newList = docsRequests.stream()
                 .map(mapper::newEntityToDTO)
