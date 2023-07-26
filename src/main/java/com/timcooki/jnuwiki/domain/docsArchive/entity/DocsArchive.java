@@ -6,7 +6,9 @@ import com.timcooki.jnuwiki.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "DOCS_ARCHIVE")
+@EntityListeners(AuditingEntityListener.class)
 public class DocsArchive {
 
     @Id
@@ -37,6 +40,7 @@ public class DocsArchive {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
+    @CreatedBy
     private Member createdBy;
 
     @CreatedDate

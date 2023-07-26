@@ -7,7 +7,9 @@ import com.timcooki.jnuwiki.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "DOCS_REQUEST")
+@EntityListeners(AuditingEntityListener.class)
 public class DocsRequest {
 
     @Id
@@ -41,6 +44,7 @@ public class DocsRequest {
     @ManyToOne
     // TODO : join column 에 createdBy 적용 가능 확인
     @JoinColumn(name = "member_id", nullable = false)
+    @CreatedBy
     private Member docsRequestedBy;
 
     @CreatedDate
