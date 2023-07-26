@@ -53,6 +53,12 @@ compileTestJava {
 //	jvmArgs(['--enable-preview', '-Amapstruct.defaultComponentModel=spring'])
 //}
 
+jar {
+	manifest {
+		attributes 'Main-Class': 'com.timcooki.jnuwiki.JnuwikiApplication'
+	}
+}
+
 
 // TODO: gradle 알아보기
 tasks.named('test') {
