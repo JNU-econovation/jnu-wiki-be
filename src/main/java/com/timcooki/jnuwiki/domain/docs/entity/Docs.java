@@ -3,11 +3,14 @@ package com.timcooki.jnuwiki.domain.docs.entity;
 
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,7 +19,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "DOCS")
-public class Docs {
+public class Docs extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -36,20 +39,13 @@ public class Docs {
     @JoinColumn(name = "member_id")
     private Member createdBy;
 
-    @CreatedDate
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
-
     @Column(name = "docs_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private DocsCategory docsCategory;
 
     @Builder
-    public Docs(String docsName, DocsLocation docsLocation, Member createdBy, DocsCategory docsCategory) {
+    public Docs(Long docsId, String docsName, DocsLocation docsLocation, Member createdBy, DocsCategory docsCategory) {
+        this.docsId = docsId;
         this.docsName = docsName;
         this.docsLocation = docsLocation;
         this.createdBy = createdBy;
@@ -64,6 +60,5 @@ public class Docs {
 
     public void updateContent(String docsContent) {
         this.docsContent = docsContent;
-        this.modifiedAt = LocalDateTime.now();
     }
 }

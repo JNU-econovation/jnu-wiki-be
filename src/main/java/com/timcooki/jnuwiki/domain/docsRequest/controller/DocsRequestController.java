@@ -33,11 +33,10 @@ public class DocsRequestController {
     @PostMapping("/update")
     public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody EditWriteReqDTO modifiedRequestWriteDto) {
         // 권한 확인
-        ResponseEntity<?> checkAuthorization = checkAuthorization(userDetails);
-        if (checkAuthorization != null) return checkAuthorization;
+
 
         // 요청 저장
-        docsRequestService.createModifiedRequest(modifiedRequestWriteDto);
+        docsRequestService.createModifiedRequest(userDetails, modifiedRequestWriteDto);
 
         // 요청 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new NewWriteResDTO("요청이 저장되었습니다.")));

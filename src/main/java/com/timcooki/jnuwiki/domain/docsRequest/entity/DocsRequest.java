@@ -4,10 +4,13 @@ package com.timcooki.jnuwiki.domain.docsRequest.entity;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "DOCS_REQUEST")
-public class DocsRequest {
+public class DocsRequest extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -39,13 +42,8 @@ public class DocsRequest {
     private DocsLocation docsRequestLocation;
 
     @ManyToOne
-    // TODO : join column 에 createdBy 적용 가능 확인
     @JoinColumn(name = "member_id", nullable = false)
     private Member docsRequestedBy;
-
-    @CreatedDate
-    @Column(name = "requested_at")
-    private LocalDateTime docsRequestAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "docs_id")
