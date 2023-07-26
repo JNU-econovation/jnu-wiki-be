@@ -36,9 +36,6 @@ public class AdminService {
         if(!findByEmail(userDetails.getUsername())){
             throw new Exception401("로그인이 필요한 기능입니다."); // 401
         }
-        if(!userDetails.getAuthorities().contains("ADMIN")){
-            throw new Exception403("관리자 권한이 없습니다."); // 403
-        }
 
         Member member  = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(); // 위에서 처리될듯?
         Optional<DocsRequest> docsRequest = docsRequestRepository.findById(docsRequestId);

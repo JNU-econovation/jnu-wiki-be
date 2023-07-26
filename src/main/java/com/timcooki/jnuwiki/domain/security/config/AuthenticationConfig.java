@@ -36,13 +36,8 @@ public class AuthenticationConfig {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers("/members/join","/members/login", "/members/refresh-token").permitAll() // login은 항상 가능
-                .and()
-                .authorizeRequests()
-                .antMatchers("/admin/**") // 관리자 권한 체크
-                .hasRole("ADMIN")
-                .and()
-                .authorizeRequests()
-                .antMatchers("/**").authenticated() // 그 외 모든 요청 막음
+                .antMatchers("/admin/**").hasAuthority("ADMIN") // 관리자 권한 체크
+                .anyRequest().authenticated() // 그 외 모든 요청 막음
                 // TODO - PATCH, PUT, DELETE도 추가
                 .and()
                 .sessionManagement()
