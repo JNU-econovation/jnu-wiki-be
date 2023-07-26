@@ -1,5 +1,8 @@
 package com.timcooki.jnuwiki.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 public class ApiUtils {
@@ -10,5 +13,4 @@ public class ApiUtils {
     public static ApiResult<?> error(String message, HttpStatus status) {
         return new ApiResult<>(false, null, new ApiError(message, status.value()));
     }
-
 }
