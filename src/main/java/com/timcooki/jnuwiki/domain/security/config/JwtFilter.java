@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // toekn이 없는경우 || 토근이 Bearer로 시작하지 않는 경우
         if(authorization==null || !authorization.startsWith("Bearer ")){
-            log.error("authorization 을 잘못 보냈습니다..");
+            //log.error("authorization 을 잘못 보냈습니다..");
             filterChain.doFilter(request, response);
             return;
         }
