@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.domain.member.DTO.response.admin;
 
+import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 
 public record EditReadResDTO(
         Long docsRequestId,
-        Long docsId, // 수정하려는 문서의 id 값
+        Docs docs, // 수정하려는 문서
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
         String docsRequestName,
