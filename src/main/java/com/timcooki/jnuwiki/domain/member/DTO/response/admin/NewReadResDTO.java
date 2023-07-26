@@ -5,15 +5,13 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
 
 public record NewReadResDTO(
         Long docsRequestId,
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
         String docsRequestName,
-        DocsLocation docsRequestLocation,
-        LocalDateTime docsRequestedAt
+        DocsLocation docsRequestLocation
 ) {
     @Builder
     public NewReadResDTO {

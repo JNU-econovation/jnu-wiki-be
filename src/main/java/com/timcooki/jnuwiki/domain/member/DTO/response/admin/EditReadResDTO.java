@@ -10,12 +10,11 @@ import java.time.LocalDateTime;
 
 public record EditReadResDTO(
         Long docsRequestId,
-        Docs docs, // 수정하려는 문서
+        Long docsId, // 수정하려는 문서
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
         String docsRequestName,
-        DocsLocation docsRequestLocation,
-        LocalDateTime docsRequestedAt
+        DocsLocation docsRequestLocation
 ) {
     @Builder
     public EditReadResDTO {

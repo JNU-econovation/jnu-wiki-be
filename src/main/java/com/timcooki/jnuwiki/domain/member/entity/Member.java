@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.domain.member.entity;
 
+import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,7 @@ import java.time.LocalDate;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "MEMBER")
-@EntityListeners(AuditingEntityListener.class)
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,23 +30,9 @@ public class Member {
     @Column(name = "member_nickname", nullable = false, unique = true)
     private String nickName;
 
-    @CreatedDate
-    @Column(name = "member_join_date")
-    private LocalDate createdAt;
-
     @Column(name = "member_role")
     @Enumerated(EnumType.STRING)
     private MemberRole role;
-
-
-    public boolean canEdit() {
-        // 수정 가능한지 - 현재가 15일 이후면 가
-        if (LocalDate.now().isAfter(createdAt.plusDays(15))) {
-            return true;
-        }
-
-        else return false;
-    }
 
     public void update(String nickname, String password) {
         this.nickName = nickname;

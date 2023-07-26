@@ -7,7 +7,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import lombok.Builder;
 
 public record EditWriteReqDTO(
-        Docs docs,
+        Long docsId,
         DocsRequestType docsRequestType,
         DocsCategory docsRequestCategory,
         String docsRequestName,

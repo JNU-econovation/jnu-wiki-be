@@ -1,5 +1,7 @@
 package com.timcooki.jnuwiki.domain.docsRequest.service;
 
+import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
@@ -31,22 +33,25 @@ public class DocsRequestService {
     private final DocsRequestRepository docsRequestRepository;
 
     private final MemberRepository memberRepository;
+    private final DocsRepository docsRepository;
 
-    public void createModifiedRequest(EditWriteReqDTO modifiedRequestWriteDto) {
+    public void createModifiedRequest(UserDetails userDetails, EditWriteReqDTO modifiedRequestWriteDto) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto);
+        Docs docs = docsRepository.findById(modifiedRequestWriteDto.docsId()).get();
+
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member);
         docsRequestRepository.save(docsRequest);
     }
 
     public void createNewDocsRequest(UserDetails userDetails, NewWriteReqDTO newWriteReqDTO) {
-
         checkMemberDuration(userDetails);
-
 
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO);
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO, member);
         docsRequestRepository.save(docsRequest);
     }
 

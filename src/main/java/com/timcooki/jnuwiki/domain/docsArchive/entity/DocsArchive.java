@@ -3,6 +3,7 @@ package com.timcooki.jnuwiki.domain.docsArchive.entity;
 
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,7 @@ import java.time.LocalDate;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "DOCS_ARCHIVE")
-@EntityListeners(AuditingEntityListener.class)
-public class DocsArchive {
+public class DocsArchive extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -42,11 +42,6 @@ public class DocsArchive {
     @JoinColumn(name = "member_id")
     @CreatedBy
     private Member createdBy;
-
-    @CreatedDate
-    @Column(name = "created_at")
-    private LocalDate createdAt;
-
 
     @Builder
     public DocsArchive(String docsArchiveName, String docsArchiveLocation, String docsArchiveContent, Member createdBy, DocsCategory docsArchiveCategory) {

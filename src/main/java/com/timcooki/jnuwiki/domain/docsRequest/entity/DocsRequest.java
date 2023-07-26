@@ -4,6 +4,7 @@ package com.timcooki.jnuwiki.domain.docsRequest.entity;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "DOCS_REQUEST")
-@EntityListeners(AuditingEntityListener.class)
-public class DocsRequest {
+public class DocsRequest extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
@@ -46,10 +46,6 @@ public class DocsRequest {
     @JoinColumn(name = "member_id", nullable = false)
     @CreatedBy
     private Member docsRequestedBy;
-
-    @CreatedDate
-    @Column(name = "requested_at")
-    private LocalDateTime docsRequestAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "docs_id")
