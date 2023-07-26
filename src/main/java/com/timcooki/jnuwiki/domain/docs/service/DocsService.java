@@ -9,6 +9,7 @@ import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.mapper.DocsMapper;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
+import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -43,7 +44,7 @@ public class DocsService {
 
     public ContentEditResDTO updateDocs(Long docsId, ContentEditReqDTO contentEditReqDTO) {
         Docs docs = docsRepository.findById(docsId).orElseThrow(
-                () -> new RuntimeException("존재하지 않는 문서입니다.")
+                () -> new Exception404("존재하지 않는 문서입니다.")
         );
 
         docs.updateContent(contentEditReqDTO.docsContent());
@@ -57,7 +58,7 @@ public class DocsService {
 
     public ReadResDTO getOneDocs(Long docsId) {
         Docs docs = docsRepository.findById(docsId).orElseThrow(
-                () -> new RuntimeException("존재하지 않는 문서입니다.")
+                () -> new Exception404("존재하지 않는 문서입니다.")
         );
 
         return new ReadResDTO(
