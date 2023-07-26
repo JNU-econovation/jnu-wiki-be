@@ -11,6 +11,8 @@ import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
+import com.timcooki.jnuwiki.util.errors.exception.Exception400;
+import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +56,9 @@ public class MemberService {
         if(authentication.isAuthenticated()){
             // 리프레시 토큰 발급
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, memberRepository.findByEmail(email));
-            Member member = memberRepository.findByEmail(email).get();
+            Member member = memberRepository.findByEmail(email).orElseThrow(
+                    () -> new Exception404("존재하지 않는 회원입니다.")
+            );
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
@@ -75,10 +79,9 @@ public class MemberService {
                     .headers(httpHeaders)
                     .body(ApiUtils.success(loginResDTO));
 
-        }else {// 인증 오류시
+        } else {// 인증 오류시
             // TODO - 401변경 양식맞추기
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiUtils.error("인증 오류", HttpStatus.UNAUTHORIZED));
+            return ResponseEntity.badRequest().body(ApiUtils.error("이메일과 비밀번호를 확인해주세요", HttpStatus.UNAUTHORIZED));
         }
 
     }
@@ -89,17 +92,17 @@ public class MemberService {
 
         // 이메일 형식 검증
         if (!validator.isValidEmail(joinReqDTO.email())){
-            throw new IllegalArgumentException("이메일 형식으로 작성해주세요.:"+joinReqDTO.email());
+            throw new Exception400("이메일 형식으로 작성해주세요.:"+joinReqDTO.email());
         }
 
         // email 중복 확인
         if(existEmail(joinReqDTO.email())){
-            throw new IllegalArgumentException("존재하는 이메일 입니다.");
+            throw new Exception400("존재하는 이메일 입니다.");
         }
 
         // 비밀번호 형식 확인
         if(!validator.isValidPassword(joinReqDTO.password())){
-            throw new IllegalArgumentException("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+joinReqDTO.password());
+            throw new Exception400("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+joinReqDTO.password());
         }
         // TODO - MapStruct Test 필요
         /*
@@ -132,7 +135,9 @@ public class MemberService {
         }
         System.out.println("id 있음");
 
-        Member loginMember = memberRepository.findByEmail(email).get();
+        Member loginMember = memberRepository.findByEmail(email).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다.")
+        );
         System.out.println("이메일 얻어옴");
 
         // 아이디에 대응되는 비밀번호가 맞는지 확인
@@ -148,7 +153,9 @@ public class MemberService {
     }
 
     public ReadResDTO getInfo(UserDetails userDetails) {
-        Member memberOptional = memberRepository.findByEmail(userDetails.getUsername()).get();
+        Member memberOptional = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다.")
+        );
         // TODO - mapStruct 사용
         ReadResDTO resDTO = ReadResDTO.builder()
                 .id(memberOptional.getMemberId())
@@ -162,10 +169,13 @@ public class MemberService {
     public void editInfo(UserDetails userDetails,  EditReqDTO editReqDTO){
 
         if(memberRepository.findByNickName(editReqDTO.nickname()).isPresent()){
-            throw new RuntimeException("중복된 닉네임 입니다.:nickname");
+            throw new Exception400("중복된 닉네임 입니다.:nickname");
         }
 
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다.")
+        );
+
         member.update(editReqDTO.nickname(), editReqDTO.password());
     }
 }

@@ -97,7 +97,7 @@ public class AdminController {
         // 요청 존재 확인
 
 
-        InfoEditResDTO updatedDocs = adminService.updateDocsFromRequest(docsRequestId);
+        InfoEditResDTO updatedDocs = adminService.updateDocsFromRequest(userDetails, docsRequestId);
         return ResponseEntity.ok().body(ApiUtils.success(updatedDocs));
     }
 

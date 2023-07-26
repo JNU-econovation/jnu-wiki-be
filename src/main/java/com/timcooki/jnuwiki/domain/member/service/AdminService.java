@@ -9,6 +9,9 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
+import com.timcooki.jnuwiki.util.errors.exception.Exception401;
+import com.timcooki.jnuwiki.util.errors.exception.Exception403;
+import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -31,17 +34,17 @@ public class AdminService {
     public NewApproveResDTO approveNewDocs(UserDetails userDetails, Long docsRequestId){
         // 권한 확인
         if(!findByEmail(userDetails.getUsername())){
-            throw new RuntimeException("로그인이 필요한 기능입니다."); // 401
+            throw new Exception401("로그인이 필요한 기능입니다."); // 401
         }
         if(!userDetails.getAuthorities().contains("ADMIN")){
-            throw new RuntimeException("관리자 권한이 없습니다."); // 403
+            throw new Exception403("관리자 권한이 없습니다."); // 403
         }
 
-        Member member  = memberRepository.findByEmail(userDetails.getUsername()).get();
+        Member member  = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(); // 위에서 처리될듯?
         Optional<DocsRequest> docsRequest = docsRequestRepository.findById(docsRequestId);
         // 요청 존재 확인
         if(docsRequest.isEmpty()){
-            throw new RuntimeException("존재하지 않는 요청입니다."); // 404
+            throw new Exception404("존재하지 않는 요청입니다."); // 404
         }
 
         // 문서 등록
@@ -66,13 +69,25 @@ public class AdminService {
         //DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
     }
 
-    public InfoEditResDTO updateDocsFromRequest(Long docsRequestId) {
+    public InfoEditResDTO updateDocsFromRequest(UserDetails userDetails, Long docsRequestId) {
+        // 권한 확인
+        if(!findByEmail(userDetails.getUsername())){
+            throw new Exception401("로그인이 필요한 기능입니다."); // 401
+        }
+        if(!userDetails.getAuthorities().contains("ADMIN")){
+            throw new Exception403("관리자 권한이 없습니다."); // 403
+        }
+
         // 승락받은 요청 조회
-        DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).get();
+        DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
+                () -> new Exception404("존재하지 않는 요청입니다.")
+        );
 
         // 수정할 문서 조회
         Long docsId = modifiedRequest.getDocs().getDocsId();
-        Docs docs = docsRepository.findById(docsId).get();
+        Docs docs = docsRepository.findById(docsId).orElseThrow(
+                () -> new Exception404("수정하려는 문서가 존재하지 않습니다.")
+        );
 
         // 수정전 문서는 아카이브 레포에 저장
         docsArchiveRepository.save(docs);

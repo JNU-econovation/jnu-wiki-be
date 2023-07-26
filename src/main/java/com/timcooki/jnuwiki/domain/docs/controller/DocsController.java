@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 public class DocsController {
     private final DocsService docsService;
 
-    // 모든 문서 조회 -
+    // 모든 문서 조회 - 최근 수정된 순으로
     @GetMapping("/docs")
-    public ResponseEntity<?> docsFindAll(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<?> docsFindAll(@PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable){
         Page<ListReadResDTO> docsList = docsService.getDocsList(pageable);
         return ResponseEntity.ok().body(ApiUtils.success(docsList));
     }
