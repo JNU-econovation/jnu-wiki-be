@@ -23,6 +23,7 @@ public class RefreshTokenService {
 
     @Value("${jwt.secret}")
     private String secretKey;
+    // private final MemberRepository memberRepository;
 
     @Autowired
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
@@ -41,6 +42,9 @@ public class RefreshTokenService {
     }
 
     public RefreshToken createRefreshToken(String email, Optional<Member> member) {
+        // 로그인을 이미 한 유저라면?
+        // if(refreshTokenRepository.findByMemberId)
+
         RefreshToken refreshToken = RefreshToken.builder()
                 .member(member.get())
                 .token(UUID.randomUUID().toString())
