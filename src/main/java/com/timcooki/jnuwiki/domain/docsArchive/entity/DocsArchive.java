@@ -40,7 +40,6 @@ public class DocsArchive extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    @CreatedBy
     private Member createdBy;
 
     @Builder

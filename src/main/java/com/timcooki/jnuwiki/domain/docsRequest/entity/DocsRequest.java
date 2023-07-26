@@ -42,9 +42,7 @@ public class DocsRequest extends BaseTimeEntity {
     private DocsLocation docsRequestLocation;
 
     @ManyToOne
-    // TODO : join column 에 createdBy 적용 가능 확인
     @JoinColumn(name = "member_id", nullable = false)
-    @CreatedBy
     private Member docsRequestedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)

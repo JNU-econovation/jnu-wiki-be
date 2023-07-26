@@ -37,7 +37,6 @@ public class Docs extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    @CreatedBy
     private Member createdBy;
 
     @Column(name = "docs_category", nullable = false)
