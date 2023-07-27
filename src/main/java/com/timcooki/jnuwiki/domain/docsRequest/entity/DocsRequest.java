@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class DocsRequest extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "docs_request_id")
     private Long docsRequestId;
 

@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class Docs extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "docs_id")
     private Long docsId;
 
@@ -44,8 +44,7 @@ public class Docs extends BaseTimeEntity {
     private DocsCategory docsCategory;
 
     @Builder
-    public Docs(Long docsId, String docsName, DocsLocation docsLocation, Member createdBy, DocsCategory docsCategory) {
-        this.docsId = docsId;
+    public Docs(String docsName, DocsLocation docsLocation, Member createdBy, DocsCategory docsCategory) {
         this.docsName = docsName;
         this.docsLocation = docsLocation;
         this.createdBy = createdBy;
