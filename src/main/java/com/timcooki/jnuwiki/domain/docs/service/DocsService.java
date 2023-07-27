@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DocsService {
     private final DocsRepository docsRepository;
-    public Page<ListReadResDTO> getDocsList(Pageable pageable) {
-        Page<Docs> list = docsRepository.findAll(pageable);
+    public List<ListReadResDTO> getDocsList(Pageable pageable) {
+        List<Docs> list = docsRepository.findAll(pageable).getContent();
         if(list == null || list.isEmpty()){
             throw new Exception404("문서 목록이 존재하지 않습니다.");
         }
@@ -38,10 +38,11 @@ public class DocsService {
                         docs.getDocsLocation(),
                         docs.getDocsContent(),
                         docs.getCreatedBy().getNickName(),
-                        docs.getCreatedAt()))
+                        docs.getCreatedAt(),
+                        docs.getModifiedAt()))
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(docsDTOList);
+        return docsDTOList;
     }
 
     @Transactional

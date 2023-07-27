@@ -8,10 +8,20 @@ public enum DocsCategory {
     편의점
     약국
      */
-    CAFE,
-    SCHOOL,
-    COPY,
-    CONV,
-    PHAR
+    CAFE("카페"),
+    SCHOOL("학교시설"),
+    COPY("복사집"),
+    CONV("편의점"),
+    PHAR("약국");
 
+    public String name;
+
+
+    DocsCategory(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

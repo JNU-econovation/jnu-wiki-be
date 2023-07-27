@@ -16,7 +16,8 @@ public record ListReadResDTO(
          DocsLocation docsLocation,
          String docsContent,
          String docsCreatedBy,
-         LocalDateTime docsCreatedAt
+         LocalDateTime docsCreatedAt,
+        LocalDateTime docsModifiedAt
 ) {
     @Builder
     public ListReadResDTO {
