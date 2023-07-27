@@ -78,7 +78,7 @@ public class AdminService {
                 modifiedRequest.getDocsRequestLocation(),
                 modifiedRequest.getDocsRequestCategory());
 
-        docsRepository.deleteById(docsRequestId); // 처리된 요청 삭제
+        docsRequestRepository.deleteById(docsRequestId);
 
         return InfoEditResDTO.builder()
                 .docsId(docs.getDocsId())
