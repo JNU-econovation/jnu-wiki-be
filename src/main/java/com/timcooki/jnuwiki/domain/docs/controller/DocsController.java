@@ -32,8 +32,7 @@ public class DocsController {
     // 문서 수정
     @PutMapping("/docs/{docs_id}")
     public ResponseEntity<?> modifyDocs(@PathVariable Long docs_id,
-                                        @RequestBody ContentEditReqDTO contentEditReqDTO,
-                                        @AuthenticationPrincipal Member member){
+                                        @RequestBody ContentEditReqDTO contentEditReqDTO){
         // 권한 확인
 
 
