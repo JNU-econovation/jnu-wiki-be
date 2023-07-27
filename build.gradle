@@ -43,10 +43,10 @@ dependencies {
 
 // mapstruct 기본 Component Model 변경
 compileJava {
-	options.compilerArgs += ['--enable-preview', '-Amapstruct.defaultComponentModel=spring']
+	options.compilerArgs += ['-Amapstruct.defaultComponentModel=spring']
 }
 compileTestJava {
-	options.compilerArgs += ['--enable-preview', '-Amapstruct.defaultComponentModel=spring']
+	options.compilerArgs += ['-Amapstruct.defaultComponentModel=spring']
 }
 //test {
 //	useJUnitPlatform()
@@ -59,6 +59,8 @@ jar {
 	}
 }
 
+// JPA 메타모델 생성 설정
+compileJava.options.annotationProcessorPath = configurations.compileClasspath
 
 // TODO: gradle 알아보기
 tasks.named('test') {
