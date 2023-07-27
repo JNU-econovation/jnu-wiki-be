@@ -16,7 +16,7 @@ public class DocsRequestServiceTest {
     private DocsRequestService docsRequestService;
 
     @Test
-    public void 유저_15일_체크(){
+    public void fifteen_check(){
         // given
         LocalDateTime localDateTime = LocalDateTime.of(2023, 6, 1, 1, 1);
 
@@ -29,7 +29,7 @@ public class DocsRequestServiceTest {
     }
 
     @Test
-    public void 유저_15일_체크_예외(){
+    public void fifteen_check_fail(){
         // given
         LocalDateTime localDateTime = LocalDateTime.now();
 

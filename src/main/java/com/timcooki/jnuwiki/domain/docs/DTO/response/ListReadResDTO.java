@@ -9,13 +9,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record ListReadResDTO(
-        Long id,
+        Long docsId,
         String docsName,
         // TODO Type 변경 - ENUM
         DocsCategory docsCategory,
          DocsLocation docsLocation,
          String docsContent,
-         Member docsCreatedBy,
+         String docsCreatedBy,
          LocalDateTime docsCreatedAt
 ) {
     @Builder

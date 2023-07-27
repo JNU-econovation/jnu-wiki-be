@@ -21,7 +21,7 @@ import java.time.LocalDate;
 public class DocsArchive extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "docs_archive_id")
     private Long docsArchiveId;
 

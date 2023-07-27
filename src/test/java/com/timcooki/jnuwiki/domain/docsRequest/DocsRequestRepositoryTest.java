@@ -145,7 +145,7 @@ public class DocsRequestRepositoryTest {
     }
 
     @Test
-    @DisplayName("요청 타입과 페이징 정보에 맞게 조회되는가")
+    //@DisplayName("요청 타입과 페이징 정보에 맞게 조회되는가")
     public void findAll_RequestType_test() {
         // given
         DocsRequestType docsRequestType = DocsRequestType.CREATED;
