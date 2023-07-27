@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class DocsController {
     // 모든 문서 조회 - 최근 수정된 순으로
     @GetMapping("/docs")
     public ResponseEntity<?> docsFindAll(@PageableDefault(size = 10, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<ListReadResDTO> docsList = docsService.getDocsList(pageable);
+        List<ListReadResDTO> docsList = docsService.getDocsList(pageable);
         return ResponseEntity.ok().body(ApiUtils.success(docsList));
     }
 
