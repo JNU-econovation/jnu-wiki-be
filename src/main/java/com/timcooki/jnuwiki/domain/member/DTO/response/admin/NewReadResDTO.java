@@ -9,7 +9,7 @@ import lombok.Builder;
 public record NewReadResDTO(
         Long docsRequestId,
         DocsRequestType docsRequestType,
-        DocsCategory docsRequestCategory,
+        String docsRequestCategory,
         String docsRequestName,
         DocsLocation docsRequestLocation
 ) {

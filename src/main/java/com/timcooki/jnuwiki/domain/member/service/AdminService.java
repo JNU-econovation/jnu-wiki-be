@@ -47,7 +47,7 @@ public class AdminService {
 
         return NewApproveResDTO.builder()
                 .id(docs.getDocsId())
-                .docsCategory(docs.getDocsCategory())
+                .docsCategory(docs.getDocsCategory().getCategory())
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
                 .build();
@@ -85,7 +85,7 @@ public class AdminService {
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
                 .docsContent(docs.getDocsContent())
-                .docsCategory(docs.getDocsCategory())
+                .docsCategory(docs.getDocsCategory().getCategory())
                 .docsModifiedAt(LocalDateTime.now())
                 .build();
     }

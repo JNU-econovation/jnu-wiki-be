@@ -34,7 +34,7 @@ public class DocsService {
                 .map(docs -> new ListReadResDTO(
                         docs.getDocsId(),
                         docs.getDocsName(),
-                        docs.getDocsCategory(),
+                        docs.getDocsCategory().getCategory(),
                         docs.getDocsLocation(),
                         docs.getDocsContent(),
                         docs.getCreatedBy().getNickName(),
@@ -68,7 +68,7 @@ public class DocsService {
         return new ReadResDTO(
                 docs.getDocsId(),
                 docs.getDocsName(),
-                docs.getDocsCategory(),
+                docs.getDocsCategory().getCategory(),
                 docs.getDocsLocation(),
                 docs.getDocsContent(),
                 docs.getCreatedBy().getNickName(),
@@ -81,7 +81,7 @@ public class DocsService {
         if(docsList!= null && !docsList.isEmpty()){
             DocsMapper mapper = Mappers.getMapper(DocsMapper.class);
 
-            List<SearchReadResDTO> res = docsList.stream().map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName()))).toList();
+            List<SearchReadResDTO> res = docsList.stream().map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(), docs.getDocsCategory().getCategory()))).toList();
 
             return res;
         }

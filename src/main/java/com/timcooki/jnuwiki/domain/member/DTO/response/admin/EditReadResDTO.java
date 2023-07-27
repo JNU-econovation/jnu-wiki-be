@@ -12,7 +12,7 @@ public record EditReadResDTO(
         Long docsRequestId,
         Long docsId, // 수정하려는 문서
         DocsRequestType docsRequestType,
-        DocsCategory docsRequestCategory,
+        String docsRequestCategory,
         String docsRequestName,
         DocsLocation docsRequestLocation
 ) {
