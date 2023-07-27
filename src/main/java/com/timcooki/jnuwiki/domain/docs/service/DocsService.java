@@ -38,7 +38,8 @@ public class DocsService {
                         docs.getDocsLocation(),
                         docs.getDocsContent(),
                         docs.getCreatedBy().getNickName(),
-                        docs.getCreatedAt()))
+                        docs.getCreatedAt(),
+                        docs.getModifiedAt()))
                 .collect(Collectors.toList());
 
         return docsDTOList;
