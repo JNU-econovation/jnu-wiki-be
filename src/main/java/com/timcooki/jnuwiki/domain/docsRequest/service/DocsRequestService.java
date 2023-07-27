@@ -14,19 +14,18 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewReadResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
+import com.timcooki.jnuwiki.util.errors.exception.Exception400;
+import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,9 +41,11 @@ public class DocsRequestService {
     public void createModifiedRequest(UserDetails userDetails, EditWriteReqDTO modifiedRequestWriteDto) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        Docs docs = docsRepository.findById(modifiedRequestWriteDto.docsId()).get();
+        // TODO - 15일 지났는지 체크 추가
 
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        Docs docs = docsRepository.findById(modifiedRequestWriteDto.docsId()).orElseThrow(() -> new Exception404("존재하지 않는 문서 입니다."));
+
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
         DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member);
         docsRequestRepository.save(docsRequest);
     }
@@ -54,7 +55,10 @@ public class DocsRequestService {
 
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).get();
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
+
+        // TODO - 15일 지났는지 체크 추가
+
         DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO, member);
         docsRequestRepository.save(docsRequest);
     }
@@ -72,7 +76,7 @@ public class DocsRequestService {
     public EditListReadResDTO getModifiedRequestList(Pageable pageable) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        Page<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable);
+        List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable).getContent();
 
         List<EditReadResDTO> modifiedList = docsRequests.stream()
                 .map(mapper::editEntityToDTO)
@@ -87,11 +91,14 @@ public class DocsRequestService {
         log.info("서비스 접속 성공");
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        Page<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable);
+        List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable).getContent();
 
         List<NewReadResDTO> newList = docsRequests.stream()
                 .map(mapper::newEntityToDTO)
                 .collect(Collectors.toList());
+        if(newList == null || newList.isEmpty()){
+            throw new Exception404("새 문서 요청이 존재하지 않습니다.");
+        }
 
         return NewListReadResDTO.builder()
                 .createdRequestList(newList)
@@ -101,7 +108,12 @@ public class DocsRequestService {
     public EditReadResDTO getOneModifiedRequest(Long docsRequestId) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).get();
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(() -> new Exception404("존재하지 않는 요청입니다."));
+
+        // 수정된문서 요청이 아닌경우
+        if(docsRequest.getDocsRequestType().equals(DocsRequestType.CREATED)){
+            throw new Exception400("잘못된 요청입니다.");
+        }
 
         EditReadResDTO editReadResDTO = mapper.editEntityToDTO(docsRequest);
 
@@ -111,7 +123,13 @@ public class DocsRequestService {
     public NewReadResDTO getOneCreatedRequest(Long docsRequestId) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
-        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).get();
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(() -> new Exception404("존재하지 않는 요청입니다."));
+
+        // 새문서 요청이 아닌경우
+        if(docsRequest.getDocsRequestType().equals(DocsRequestType.MODIFIED)){
+            throw new Exception400("잘못된 요청입니다.");
+        }
+
 
         NewReadResDTO newReadResDTO = mapper.newEntityToDTO(docsRequest);
 
@@ -121,12 +139,9 @@ public class DocsRequestService {
 
     public void rejectRequest(Long docsRequestId) {
         // 요청 존재 확인
-        Optional<DocsRequest> docsRequest = docsRequestRepository.findById(docsRequestId);
-        if(docsRequest.isEmpty()){
-            throw new RuntimeException("존재하지 않는 요청입니다.");
-        }else {
-            docsRequestRepository.deleteById(docsRequestId);
-        }
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(() -> new Exception404("존재하지 않는 요청입니다."));
+
+        docsRequestRepository.delete(docsRequest);
     }
 
     public boolean hasRequest(Long docsRequestId) {

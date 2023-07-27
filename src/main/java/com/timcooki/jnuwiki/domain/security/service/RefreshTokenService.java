@@ -5,6 +5,7 @@ import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
+import com.timcooki.jnuwiki.util.errors.exception.Exception401;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class RefreshTokenService {
     public ResponseEntity<?> renewToken(String refreshToken){
         Member member = findByToken(refreshToken).map(this::verifyExpiration)
                 .map(RefreshToken::getMember)
-                .orElseThrow(() -> new RuntimeException("인증되지 않은 토큰입니다."));
+                .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
         String accessToken = JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
         return ResponseEntity.ok()

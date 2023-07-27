@@ -46,6 +46,9 @@ public class MemberService {
     public ResponseEntity<?> login(LoginReqDTO loginReqDTO) {
         String email= loginReqDTO.email();
         String password = loginReqDTO.password();
+        validEmail(loginReqDTO.email());
+        validPassword(loginReqDTO.password());
+
 
         // AuthenticationManger에게 인증 진행 위임
         Authentication authentication = authenticationManager.authenticate(
@@ -90,20 +93,11 @@ public class MemberService {
 
     public ResponseEntity<?> join(JoinReqDTO joinReqDTO){
 
-        // 이메일 형식 검증
-        if (!validator.isValidEmail(joinReqDTO.email())){
-            throw new Exception400("이메일 형식으로 작성해주세요.:"+joinReqDTO.email());
-        }
+        validEmail(joinReqDTO.email());
 
-        // email 중복 확인
-        if(existEmail(joinReqDTO.email())){
-            throw new Exception400("존재하는 이메일 입니다.");
-        }
+        duplicateCheckEmail(joinReqDTO.email());
 
-        // 비밀번호 형식 확인
-        if(!validator.isValidPassword(joinReqDTO.password())){
-            throw new Exception400("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+joinReqDTO.password());
-        }
+        validPassword(joinReqDTO.password());
         // TODO - MapStruct Test 필요
         /*
         MemberMapper mapper = Mappers.getMapper(MemberMapper.class);
@@ -122,6 +116,27 @@ public class MemberService {
         memberRepository.save(member);
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    private void validPassword(String password) {
+        // 비밀번호 형식 확인
+        if(!validator.isValidPassword(password)){
+            throw new Exception400("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+ password);
+        }
+    }
+
+    private void duplicateCheckEmail(String email) {
+        // email 중복 확인
+        if(existEmail(email)){
+            throw new Exception400("존재하는 이메일 입니다.");
+        }
+    }
+
+    private void validEmail(String email) {
+        // 이메일 형식 검증
+        if (!validator.isValidEmail(email)){
+            throw new Exception400("이메일 형식으로 작성해주세요.:"+ email);
+        }
     }
 
     private boolean existEmail(String email) {
@@ -145,10 +160,13 @@ public class MemberService {
     }
 
     public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO){
+
         return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
     }
 
     public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO){
+
+        validEmail(checkEmailReqDTO.email());
         return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
     }
 
@@ -168,13 +186,16 @@ public class MemberService {
     @Transactional
     public void editInfo(UserDetails userDetails,  EditReqDTO editReqDTO){
 
-        if(memberRepository.findByNickName(editReqDTO.nickname()).isPresent()){
-            throw new Exception400("중복된 닉네임 입니다.:nickname");
-        }
-
         Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
+
+        if(memberRepository.findByNickName(editReqDTO.nickname()).isPresent()){
+            throw new Exception400("중복된 닉네임 입니다.:nickname");
+        }
+        validPassword(editReqDTO.password());
+
+
 
         member.update(editReqDTO.nickname(), editReqDTO.password());
     }

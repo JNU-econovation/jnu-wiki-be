@@ -7,18 +7,13 @@ import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsArchive.repository.DocsArchiveRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
-import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
-import com.timcooki.jnuwiki.util.errors.exception.Exception401;
-import com.timcooki.jnuwiki.util.errors.exception.Exception403;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,25 +26,19 @@ public class AdminService {
 
     // TODO - 예외처리 수정
     // 새 문서 요청 승락
-    public NewApproveResDTO approveNewDocs(UserDetails userDetails, Long docsRequestId){
-        // 권한 확인
-        if(!findByEmail(userDetails.getUsername())){
-            throw new Exception401("로그인이 필요한 기능입니다."); // 401
-        }
+    public NewApproveResDTO approveNewDocs(Long docsRequestId){
 
-        Member member  = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(); // 위에서 처리될듯?
-        Optional<DocsRequest> docsRequest = docsRequestRepository.findById(docsRequestId);
-        // 요청 존재 확인
-        if(docsRequest.isEmpty()){
-            throw new Exception404("존재하지 않는 요청입니다."); // 404
-        }
+
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
+                () -> new Exception404("존재하지 않는 요청입니다.")
+        );
 
         // 문서 등록
         Docs docs = Docs.builder()
-                .createdBy(member)
-                .docsCategory(docsRequest.get().getDocsRequestCategory())
-                .docsLocation(docsRequest.get().getDocsRequestLocation())
-                .docsName(docsRequest.get().getDocsRequestName())
+                .createdBy(docsRequest.getDocsRequestedBy())
+                .docsCategory(docsRequest.getDocsRequestCategory())
+                .docsLocation(docsRequest.getDocsRequestLocation())
+                .docsName(docsRequest.getDocsRequestName())
                 .build();
         docsRepository.save(docs);
 
@@ -66,14 +55,8 @@ public class AdminService {
         //DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
     }
 
-    public InfoEditResDTO updateDocsFromRequest(UserDetails userDetails, Long docsRequestId) {
-        // 권한 확인
-        if(!findByEmail(userDetails.getUsername())){
-            throw new Exception401("로그인이 필요한 기능입니다."); // 401
-        }
-        if(!userDetails.getAuthorities().contains("ADMIN")){
-            throw new Exception403("관리자 권한이 없습니다."); // 403
-        }
+    @Transactional
+    public InfoEditResDTO updateDocsFromRequest(Long docsRequestId) {
 
         // 승락받은 요청 조회
         DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
