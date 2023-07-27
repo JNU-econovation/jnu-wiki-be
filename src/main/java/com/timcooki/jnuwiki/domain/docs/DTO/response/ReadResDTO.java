@@ -13,7 +13,7 @@ public record ReadResDTO(
          DocsCategory docsCategory,
          DocsLocation docsLocation,
          String docsContent,
-         Member docsCreatedBy,
+         String docsCreatedBy,
          LocalDateTime docsCreatedAt
 ) {
     @Builder

@@ -15,7 +15,7 @@ public record SearchReadResDTO(
         String docsName,
         DocsLocation docsLocation,
         String docsContent,
-        Member createdBy,
+        String createdBy,
         LocalDateTime createdAt,
         DocsCategory docsCategory
 ) {
