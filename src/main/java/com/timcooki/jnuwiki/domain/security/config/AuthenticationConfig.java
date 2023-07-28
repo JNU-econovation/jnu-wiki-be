@@ -35,7 +35,7 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
-                .antMatchers("/members/join","/members/login", "/members/refresh-token").permitAll() // login은 항상 가능
+                .antMatchers("/members/join","/members/login", "/members/refresh-token", "/members/check/**").permitAll() // login은 항상 가능
                 .antMatchers("/admin/**").hasAuthority("ADMIN") // 관리자 권한 체크
                 .anyRequest().authenticated() // 그 외 모든 요청 막음
                 // TODO - PATCH, PUT, DELETE도 추가
