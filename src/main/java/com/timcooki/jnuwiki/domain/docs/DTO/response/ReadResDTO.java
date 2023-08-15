@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public record ReadResDTO(
         Long id,
         String docsName,
-         DocsCategory docsCategory,
+         String docsCategory,
          DocsLocation docsLocation,
          String docsContent,
          String docsCreatedBy,

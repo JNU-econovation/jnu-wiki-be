@@ -7,7 +7,7 @@ import lombok.Builder;
 
 public record NewWriteReqDTO(
         DocsRequestType docsRequestType,
-        DocsCategory docsRequestCategory,
+        String docsRequestCategory,
         String docsRequestName,
         DocsLocation docsRequestLocation
 ) {

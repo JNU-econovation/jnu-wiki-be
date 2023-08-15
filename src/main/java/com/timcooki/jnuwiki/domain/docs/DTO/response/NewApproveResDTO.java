@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public record NewApproveResDTO(
     Long id,
     String docsName,
-    DocsCategory docsCategory,
+    String docsCategory,
     DocsLocation docsLocation,
     LocalDateTime docsCreatedAt
 ){

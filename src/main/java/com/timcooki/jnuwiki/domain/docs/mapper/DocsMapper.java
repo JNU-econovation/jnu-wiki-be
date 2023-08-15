@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface DocsMapper {
     @Mapping(target="createdBy",source = "createdBy")
-    SearchReadResDTO entityToDTO(Docs docs, String createdBy);
+    @Mapping(target="docsCategory", source = "docsCategory")
+    SearchReadResDTO entityToDTO(Docs docs, String createdBy, String docsCategory);
 }

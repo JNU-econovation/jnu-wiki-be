@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record InfoEditResDTO(
         Long docsId,
         String docsName,
-        DocsCategory docsCategory,
+        String docsCategory,
         DocsLocation docsLocation,
         String docsContent,
         LocalDateTime docsModifiedAt

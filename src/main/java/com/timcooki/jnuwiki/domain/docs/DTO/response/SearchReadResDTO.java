@@ -17,7 +17,7 @@ public record SearchReadResDTO(
         String docsContent,
         String createdBy,
         LocalDateTime createdAt,
-        DocsCategory docsCategory
+        String docsCategory
 ) {
     @Builder
     public SearchReadResDTO{

@@ -12,7 +12,6 @@ import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class PostConstructorMember {
     private final PasswordEncoder passwordEncoder;
     private final DocsRequestRepository docsRequestRepository;
 
-    @PostConstruct // 안의 데이터 변경 시 어노테이션 제거 후에 실행하고 다시 어노테이션 붙여서 실행해야함
+    @PostConstruct
     public void init(){
 
         Member admin = Member.builder()
@@ -84,7 +83,7 @@ public class PostConstructorMember {
 
         Docs docs4 = Docs.builder()
                 .docsName("업데이트4")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -96,7 +95,7 @@ public class PostConstructorMember {
 
         Docs docs5 = Docs.builder()
                 .docsName("업데이트5")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -108,7 +107,7 @@ public class PostConstructorMember {
 
         Docs docs6 = Docs.builder()
                 .docsName("업데이트X 6")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -120,7 +119,7 @@ public class PostConstructorMember {
 
         Docs docs7 = Docs.builder()
                 .docsName("업데이트X 7")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -132,7 +131,7 @@ public class PostConstructorMember {
 
         Docs docs8 = Docs.builder()
                 .docsName("업데이트X 8")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -144,7 +143,7 @@ public class PostConstructorMember {
 
         Docs docs9 = Docs.builder()
                 .docsName("업데이트X 9")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -156,7 +155,7 @@ public class PostConstructorMember {
 
         Docs docs10 = Docs.builder()
                 .docsName("업데이트 10")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -168,7 +167,7 @@ public class PostConstructorMember {
 
         Docs docs11 = Docs.builder()
                 .docsName("업데이트 11")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -180,7 +179,7 @@ public class PostConstructorMember {
 
         Docs docs12 = Docs.builder()
                 .docsName("업데이트 12")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -192,7 +191,7 @@ public class PostConstructorMember {
 
         Docs docs13 = Docs.builder()
                 .docsName("업데이트 13")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -204,7 +203,7 @@ public class PostConstructorMember {
 
         Docs docs14 = Docs.builder()
                 .docsName("업데이트X 14")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -216,7 +215,7 @@ public class PostConstructorMember {
 
         Docs docs15 = Docs.builder()
                 .docsName("업데이트 15")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -235,7 +234,7 @@ public class PostConstructorMember {
                         .lng(126.91349388159176)
                         .build())
                 .docsRequestedBy(user)
-                .docsRequestCategory(DocsCategory.CAFE)
+                .docsRequestCategory(DocsCategory.nameOf("CAFE"))
                 .build();
         docsRequestRepository.save(docsRequest1);
 
@@ -247,7 +246,7 @@ public class PostConstructorMember {
                         .lng(126.91349388159176)
                         .build())
                 .docsRequestedBy(user)
-                .docsRequestCategory(DocsCategory.CAFE)
+                .docsRequestCategory(DocsCategory.nameOf("CAFE"))
                 .build();
         docsRequestRepository.save(docsRequest2);
 
@@ -259,7 +258,7 @@ public class PostConstructorMember {
                         .lng(126.91349388159176)
                         .build())
                 .docsRequestedBy(user)
-                .docsRequestCategory(DocsCategory.CAFE)
+                .docsRequestCategory(DocsCategory.nameOf("CAFE"))
                 .build();
         docsRequestRepository.save(docsRequest3);
 

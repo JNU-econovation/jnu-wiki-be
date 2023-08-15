@@ -4,6 +4,7 @@ import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
@@ -46,7 +47,7 @@ public class DocsRequestService {
         Docs docs = docsRepository.findById(modifiedRequestWriteDto.docsId()).orElseThrow(() -> new Exception404("존재하지 않는 문서 입니다."));
 
         Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
-        DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member);
+        DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member, DocsCategory.nameOf(modifiedRequestWriteDto.docsRequestCategory()));
         docsRequestRepository.save(docsRequest);
     }
 
@@ -59,7 +60,7 @@ public class DocsRequestService {
 
         // TODO - 15일 지났는지 체크 추가
 
-        DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO, member);
+        DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO, member, DocsCategory.nameOf(newWriteReqDTO.docsRequestCategory()));
         docsRequestRepository.save(docsRequest);
     }
 
@@ -79,7 +80,7 @@ public class DocsRequestService {
         List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable).getContent();
 
         List<EditReadResDTO> modifiedList = docsRequests.stream()
-                .map(mapper::editEntityToDTO)
+                .map((docsRequest) -> mapper.editEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory()))
                 .collect(Collectors.toList());
 
         return EditListReadResDTO.builder()
@@ -94,7 +95,7 @@ public class DocsRequestService {
         List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable).getContent();
 
         List<NewReadResDTO> newList = docsRequests.stream()
-                .map(mapper::newEntityToDTO)
+                .map((docsRequest) -> mapper.newEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory()))
                 .collect(Collectors.toList());
         if(newList == null || newList.isEmpty()){
             throw new Exception404("새 문서 요청이 존재하지 않습니다.");
@@ -115,7 +116,7 @@ public class DocsRequestService {
             throw new Exception400("잘못된 요청입니다.");
         }
 
-        EditReadResDTO editReadResDTO = mapper.editEntityToDTO(docsRequest);
+        EditReadResDTO editReadResDTO = mapper.editEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory());
 
         return editReadResDTO;
     }
@@ -131,7 +132,7 @@ public class DocsRequestService {
         }
 
 
-        NewReadResDTO newReadResDTO = mapper.newEntityToDTO(docsRequest);
+        NewReadResDTO newReadResDTO = mapper.newEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory());
 
         return newReadResDTO;
     }
