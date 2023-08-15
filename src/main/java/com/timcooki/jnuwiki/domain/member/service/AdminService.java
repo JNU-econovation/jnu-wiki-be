@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -78,7 +79,7 @@ public class AdminService {
                 modifiedRequest.getDocsRequestLocation(),
                 modifiedRequest.getDocsRequestCategory());
 
-        docsRequestRepository.deleteById(docsRequestId); // 처리된 요청 삭제
+        docsRequestRepository.deleteById(docsRequestId);
 
         return InfoEditResDTO.builder()
                 .docsId(docs.getDocsId())
@@ -86,7 +87,7 @@ public class AdminService {
                 .docsLocation(docs.getDocsLocation())
                 .docsContent(docs.getDocsContent())
                 .docsCategory(docs.getDocsCategory().getCategory())
-                .docsModifiedAt(LocalDateTime.now())
+                .docsModifiedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .build();
     }
 

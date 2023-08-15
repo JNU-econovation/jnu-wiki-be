@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +39,8 @@ public class DocsService {
                         docs.getDocsLocation(),
                         docs.getDocsContent(),
                         docs.getCreatedBy().getNickName(),
-                        docs.getCreatedAt(),
-                        docs.getModifiedAt()))
+                        docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),
+                        docs.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))))
                 .collect(Collectors.toList());
 
         return docsDTOList;
@@ -57,7 +58,7 @@ public class DocsService {
         return new ContentEditResDTO(
                 docs.getDocsId(),
                 docs.getDocsContent(),
-                docs.getModifiedAt()
+                docs.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
         );
     }
 
@@ -73,7 +74,7 @@ public class DocsService {
                 docs.getDocsLocation(),
                 docs.getDocsContent(),
                 docs.getCreatedBy().getNickName(),
-                docs.getCreatedAt()
+                docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
         );
     }
 

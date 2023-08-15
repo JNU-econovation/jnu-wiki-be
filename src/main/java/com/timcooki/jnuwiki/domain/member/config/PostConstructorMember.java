@@ -46,7 +46,7 @@ public class PostConstructorMember {
         memberRepository.save(user);
 
         Docs docs1 = Docs.builder()
-                .docsName("문서테스트")
+                .docsName("업데이트1")
                 .docsCategory(DocsCategory.CAFE)
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
@@ -58,7 +58,7 @@ public class PostConstructorMember {
         docsRepository.save(docs1);
 
         Docs docs2 = Docs.builder()
-                .docsName("문서테스트22")
+                .docsName("업데이트2")
                 .docsCategory(DocsCategory.CAFE)
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
@@ -70,7 +70,7 @@ public class PostConstructorMember {
         docsRepository.save(docs2);
 
         Docs docs3 = Docs.builder()
-                .docsName("문서테스트33")
+                .docsName("업데이트3")
                 .docsCategory(DocsCategory.CAFE)
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
@@ -81,45 +81,9 @@ public class PostConstructorMember {
         docs3.updateContent("문서 컨텐츠33");
         docsRepository.save(docs3);
 
-        DocsRequest docsRequest1 = DocsRequest.builder()
-                .docsRequestName("요청문서11")
-                .docsRequestType(DocsRequestType.CREATED)
-                .docsRequestLocation(DocsLocation.builder()
-                        .lat(35.17641341218037)
-                        .lng(126.91349388159176)
-                        .build())
-                .docsRequestedBy(user)
-                .docsRequestCategory(DocsCategory.CAFE)
-                .build();
-        docsRequestRepository.save(docsRequest1);
-
-        DocsRequest docsRequest2 = DocsRequest.builder()
-                .docsRequestName("요청문서22")
-                .docsRequestType(DocsRequestType.CREATED)
-                .docsRequestLocation(DocsLocation.builder()
-                        .lat(35.17641341218037)
-                        .lng(126.91349388159176)
-                        .build())
-                .docsRequestedBy(user)
-                .docsRequestCategory(DocsCategory.CAFE)
-                .build();
-        docsRequestRepository.save(docsRequest2);
-
-        DocsRequest docsRequest3 = DocsRequest.builder()
-                .docsRequestName("요청문서33")
-                .docsRequestType(DocsRequestType.CREATED)
-                .docsRequestLocation(DocsLocation.builder()
-                        .lat(35.17641341218037)
-                        .lng(126.91349388159176)
-                        .build())
-                .docsRequestedBy(user)
-                .docsRequestCategory(DocsCategory.CAFE)
-                .build();
-        docsRequestRepository.save(docsRequest3);
-
         Docs docs4 = Docs.builder()
                 .docsName("업데이트4")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -131,7 +95,7 @@ public class PostConstructorMember {
 
         Docs docs5 = Docs.builder()
                 .docsName("업데이트5")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -143,7 +107,7 @@ public class PostConstructorMember {
 
         Docs docs6 = Docs.builder()
                 .docsName("업데이트X 6")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -155,7 +119,7 @@ public class PostConstructorMember {
 
         Docs docs7 = Docs.builder()
                 .docsName("업데이트X 7")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -167,7 +131,7 @@ public class PostConstructorMember {
 
         Docs docs8 = Docs.builder()
                 .docsName("업데이트X 8")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -179,7 +143,7 @@ public class PostConstructorMember {
 
         Docs docs9 = Docs.builder()
                 .docsName("업데이트X 9")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -191,7 +155,7 @@ public class PostConstructorMember {
 
         Docs docs10 = Docs.builder()
                 .docsName("업데이트 10")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -203,7 +167,7 @@ public class PostConstructorMember {
 
         Docs docs11 = Docs.builder()
                 .docsName("업데이트 11")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -215,7 +179,7 @@ public class PostConstructorMember {
 
         Docs docs12 = Docs.builder()
                 .docsName("업데이트 12")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -227,7 +191,7 @@ public class PostConstructorMember {
 
         Docs docs13 = Docs.builder()
                 .docsName("업데이트 13")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -239,7 +203,7 @@ public class PostConstructorMember {
 
         Docs docs14 = Docs.builder()
                 .docsName("업데이트X 14")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -251,7 +215,7 @@ public class PostConstructorMember {
 
         Docs docs15 = Docs.builder()
                 .docsName("업데이트 15")
-                .docsCategory(DocsCategory.CAFE)
+                .docsCategory(DocsCategory.nameOf("CAFE"))
                 .docsLocation(DocsLocation.builder()
                         .lat(35.17641341218037)
                         .lng(126.91349388159176)
@@ -262,6 +226,42 @@ public class PostConstructorMember {
         docsRepository.save(docs15);
 
         // 이제 문서
+        DocsRequest docsRequest1 = DocsRequest.builder()
+                .docsRequestName("요청문서11")
+                .docsRequestType(DocsRequestType.CREATED)
+                .docsRequestLocation(DocsLocation.builder()
+                        .lat(35.17641341218037)
+                        .lng(126.91349388159176)
+                        .build())
+                .docsRequestedBy(user)
+                .docsRequestCategory(DocsCategory.nameOf("CAFE"))
+                .build();
+        docsRequestRepository.save(docsRequest1);
+
+        DocsRequest docsRequest2 = DocsRequest.builder()
+                .docsRequestName("요청문서22")
+                .docsRequestType(DocsRequestType.CREATED)
+                .docsRequestLocation(DocsLocation.builder()
+                        .lat(35.17641341218037)
+                        .lng(126.91349388159176)
+                        .build())
+                .docsRequestedBy(user)
+                .docsRequestCategory(DocsCategory.nameOf("CAFE"))
+                .build();
+        docsRequestRepository.save(docsRequest2);
+
+        DocsRequest docsRequest3 = DocsRequest.builder()
+                .docsRequestName("요청문서33")
+                .docsRequestType(DocsRequestType.CREATED)
+                .docsRequestLocation(DocsLocation.builder()
+                        .lat(35.17641341218037)
+                        .lng(126.91349388159176)
+                        .build())
+                .docsRequestedBy(user)
+                .docsRequestCategory(DocsCategory.nameOf("CAFE"))
+                .build();
+        docsRequestRepository.save(docsRequest3);
+
         DocsRequest docsRequest4 = DocsRequest.builder()
                 .docsRequestName("요청문서44444")
                 .docsRequestType(DocsRequestType.MODIFIED)
@@ -300,7 +300,6 @@ public class PostConstructorMember {
                 .docs(docs1)
                 .build();
         docsRequestRepository.save(docsRequest6);
-
 
         //UPDATE MEMBER SET CREATED_AT = '2023-06-27 06:23:13.271379' WHERE MEMBER_ID=2
     }

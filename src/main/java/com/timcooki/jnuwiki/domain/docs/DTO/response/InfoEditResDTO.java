@@ -11,7 +11,7 @@ public record InfoEditResDTO(
         String docsCategory,
         DocsLocation docsLocation,
         String docsContent,
-        LocalDateTime docsModifiedAt
+        String docsModifiedAt
 ) {
     @Builder
     public InfoEditResDTO {
