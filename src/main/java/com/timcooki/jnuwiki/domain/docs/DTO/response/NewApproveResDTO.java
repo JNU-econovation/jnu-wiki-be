@@ -11,7 +11,7 @@ public record NewApproveResDTO(
     String docsName,
     String docsCategory,
     DocsLocation docsLocation,
-    LocalDateTime docsCreatedAt
+    String docsCreatedAt
 ){
     @Builder
     public NewApproveResDTO {

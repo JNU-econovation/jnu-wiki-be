@@ -16,7 +16,7 @@ public record SearchReadResDTO(
         DocsLocation docsLocation,
         String docsContent,
         String createdBy,
-        LocalDateTime createdAt,
+        String createdAt,
         String docsCategory
 ) {
     @Builder

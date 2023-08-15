@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 public record ReadResDTO(
         Long id,
         String docsName,
-         String docsCategory,
-         DocsLocation docsLocation,
-         String docsContent,
-         String docsCreatedBy,
-         LocalDateTime docsCreatedAt
+        String docsCategory,
+        DocsLocation docsLocation,
+        String docsContent,
+        String docsCreatedBy,
+        String docsCreatedAt
 ) {
     @Builder
     public ReadResDTO {

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class AdminService {
 
         return NewApproveResDTO.builder()
                 .id(docs.getDocsId())
-                .docsCategory(docs.getDocsCategory())
+                .docsCategory(docs.getDocsCategory().getCategory())
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
                 .build();
@@ -85,8 +86,8 @@ public class AdminService {
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
                 .docsContent(docs.getDocsContent())
-                .docsCategory(docs.getDocsCategory())
-                .docsModifiedAt(LocalDateTime.now())
+                .docsCategory(docs.getDocsCategory().getCategory())
+                .docsModifiedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .build();
     }
 

@@ -10,11 +10,11 @@ public record ListReadResDTO(
         String docsName,
         // TODO Type 변경 - ENUM
         String docsCategory,
-         DocsLocation docsLocation,
-         String docsContent,
-         String docsCreatedBy,
-        LocalDateTime docsCreatedAt,
-        LocalDateTime docsModifiedAt
+        DocsLocation docsLocation,
+        String docsContent,
+        String docsCreatedBy,
+        String docsCreatedAt,
+        String docsModifiedAt
 ) {
     @Builder
     public ListReadResDTO {
