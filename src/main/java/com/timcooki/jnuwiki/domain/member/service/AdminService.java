@@ -27,9 +27,8 @@ public class AdminService {
 
     // TODO - 예외처리 수정
     // 새 문서 요청 승락
+    @Transactional
     public NewApproveResDTO approveNewDocs(Long docsRequestId){
-
-
         DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
                 () -> new Exception404("존재하지 않는 요청입니다.")
         );
@@ -51,20 +50,16 @@ public class AdminService {
                 .docsCategory(docs.getDocsCategory().getCategory())
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
+                .docsCreatedAt(docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .build();
-
-        //DocsCreateDTO createdDocs = docsRequestService.createDocsFromRequest(docsRequestId);
     }
 
     @Transactional
     public InfoEditResDTO updateDocsFromRequest(Long docsRequestId) {
-
-        // 승락받은 요청 조회
         DocsRequest modifiedRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
                 () -> new Exception404("존재하지 않는 요청입니다.")
         );
 
-        // 수정할 문서 조회
         Long docsId = modifiedRequest.getDocs().getDocsId();
         Docs docs = docsRepository.findById(docsId).orElseThrow(
                 () -> new Exception404("수정하려는 문서가 존재하지 않습니다.")
