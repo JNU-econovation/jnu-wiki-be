@@ -83,13 +83,16 @@ public class DocsRequestService {
                 .map((docsRequest) -> mapper.editEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory()))
                 .collect(Collectors.toList());
 
+        if(modifiedList == null || modifiedList.isEmpty()){
+            throw new Exception404("정보 수정 요청이 존재하지 않습니다.");
+        }
+
         return EditListReadResDTO.builder()
                 .modifiedRequestList(modifiedList)
                 .build();
     }
 
     public NewListReadResDTO getCreatedRequestList(Pageable pageable) {
-        log.info("서비스 접속 성공");
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
 
         List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable).getContent();
@@ -97,6 +100,7 @@ public class DocsRequestService {
         List<NewReadResDTO> newList = docsRequests.stream()
                 .map((docsRequest) -> mapper.newEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory()))
                 .collect(Collectors.toList());
+
         if(newList == null || newList.isEmpty()){
             throw new Exception404("새 문서 요청이 존재하지 않습니다.");
         }
