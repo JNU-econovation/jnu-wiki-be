@@ -8,12 +8,8 @@ import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 
 @Entity
@@ -31,11 +27,11 @@ public class DocsRequest extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private DocsRequestType docsRequestType;
 
-    @Column(name = "docs_category", nullable = false)
+    @Column(name = "docs_request_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private DocsCategory docsRequestCategory;
 
-    @Column(name = "docs_name", nullable = false)
+    @Column(name = "docs_request_name", nullable = false)
     private String docsRequestName;
 
     @Embedded
