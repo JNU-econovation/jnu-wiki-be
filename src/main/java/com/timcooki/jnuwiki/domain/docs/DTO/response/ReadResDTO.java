@@ -14,7 +14,8 @@ public record ReadResDTO(
         DocsLocation docsLocation,
         String docsContent,
         String docsCreatedBy,
-        String docsCreatedAt
+        String docsCreatedAt,
+        boolean scrap
 ) {
     @Builder
     public ReadResDTO {
