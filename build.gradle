@@ -39,6 +39,9 @@ dependencies {
 
 	// test -> LocalDateTime 오류
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
+
+	// springdoc(swagger)
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.8'
 }
 
 // mapstruct 기본 Component Model 변경
