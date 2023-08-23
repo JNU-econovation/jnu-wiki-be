@@ -3,14 +3,14 @@ package com.timcooki.jnuwiki.domain.member.controller;
 import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.InfoResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
-import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,8 +63,11 @@ public class MemberController {
                                         @RequestBody EditReqDTO editReqDTO){
 
         memberService.editInfo(userDetails, editReqDTO);
-
-
         return ResponseEntity.ok().body(ApiUtils.success(null));
+    }
+
+    @GetMapping("/members/scrap")
+    public ResponseEntity<?> getScrappedDocsList(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(ApiUtils.success(memberService.getScrappedDocs(userDetails, pageable)));
     }
 }
