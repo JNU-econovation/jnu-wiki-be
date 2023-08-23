@@ -26,7 +26,10 @@ public class DocsController {
     // 모든 문서 조회 - 최근 수정된 순으로
     @GetMapping("/docs")
     public ResponseEntity<?> docsFindAll(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 50, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(userDetails.getUsername(), pageable)));
+        if (userDetails != null) {
+            return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(userDetails.getUsername(), pageable)));
+        }
+        return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(null, pageable)));
     }
 
     // 문서 수정
