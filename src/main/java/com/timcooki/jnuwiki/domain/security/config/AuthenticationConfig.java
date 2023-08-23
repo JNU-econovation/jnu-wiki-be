@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,6 +36,7 @@ public class AuthenticationConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/docs").permitAll()
                 .antMatchers("/members/join","/members/login", "/members/refresh-token", "/members/check/**").permitAll() // login은 항상 가능
                 .antMatchers("/swagger-ui/**", "/v3/**").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN") // 관리자 권한 체크
