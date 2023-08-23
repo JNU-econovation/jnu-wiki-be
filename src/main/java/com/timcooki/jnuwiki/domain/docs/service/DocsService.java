@@ -8,11 +8,14 @@ import com.timcooki.jnuwiki.domain.docs.DTO.response.SearchReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.mapper.DocsMapper;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
+import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
+import com.timcooki.jnuwiki.domain.scrap.entity.ScrapId;
+import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,25 +28,24 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DocsService {
     private final DocsRepository docsRepository;
-    public List<ListReadResDTO> getDocsList(Pageable pageable) {
-        List<Docs> list = docsRepository.findAll(pageable).getContent();
-        if(list == null || list.isEmpty()){
-            throw new Exception404("문서 목록이 존재하지 않습니다.");
+    private final MemberRepository memberRepository;
+    private final ScrapRepository scrapRepository;
+
+    public List<ListReadResDTO> getDocsList(String email, Pageable pageable) {
+        if (email != null) {
+            Member member = memberRepository.findByEmail(email).get();
+            return docsRepository.mFindAllByScrapUser(member.getMemberId(), pageable);
         }
 
-        List<ListReadResDTO> docsDTOList = list.stream()
+        Page<Docs> list = docsRepository.findAll(pageable);
+
+        return list.stream()
                 .map(docs -> new ListReadResDTO(
                         docs.getDocsId(),
                         docs.getDocsName(),
                         docs.getDocsCategory().getCategory(),
-                        docs.getDocsLocation(),
-                        docs.getDocsContent(),
-                        docs.getCreatedBy().getNickName(),
-                        docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),
-                        docs.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))))
+                        false))
                 .collect(Collectors.toList());
-
-        return docsDTOList;
     }
 
     @Transactional
@@ -62,10 +64,16 @@ public class DocsService {
         );
     }
 
-    public ReadResDTO getOneDocs(Long docsId) {
+    public ReadResDTO getOneDocs(String email, Long docsId) {
+        boolean scrap = false;
         Docs docs = docsRepository.findById(docsId).orElseThrow(
                 () -> new Exception404("존재하지 않는 문서입니다.")
         );
+
+        if (email != null) {
+            Member member = memberRepository.findByEmail(email).get();
+            if (scrapRepository.findById(new ScrapId(member.getMemberId(), docs.getDocsId())).isPresent()) scrap = true;
+        }
 
         return new ReadResDTO(
                 docs.getDocsId(),
@@ -74,20 +82,20 @@ public class DocsService {
                 docs.getDocsLocation(),
                 docs.getDocsContent(),
                 docs.getCreatedBy().getNickName(),
-                docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"))
+                docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),
+                scrap
         );
     }
 
     public List<SearchReadResDTO> searchLike(String search) {
         List<Docs> docsList = docsRepository.searchLike(search);
-        if(docsList!= null && !docsList.isEmpty()){
+        if (docsList != null && !docsList.isEmpty()) {
             DocsMapper mapper = Mappers.getMapper(DocsMapper.class);
 
             List<SearchReadResDTO> res = docsList.stream().map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(), docs.getDocsCategory().getCategory()))).toList();
 
             return res;
-        }
-        else {
+        } else {
             throw new Exception404("요청결과가 존재하지 않습니다.");
         }
 

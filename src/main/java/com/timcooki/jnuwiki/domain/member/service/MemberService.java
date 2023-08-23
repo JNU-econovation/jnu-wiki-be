@@ -1,9 +1,10 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
-import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
+import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
@@ -16,6 +17,7 @@ import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +37,7 @@ import java.util.Optional;
 public class MemberService {
     private final Validator validator;
     private final MemberRepository memberRepository;
+    private final DocsRepository docsRepository;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
@@ -198,5 +202,15 @@ public class MemberService {
 
 
         member.update(editReqDTO.nickname(), editReqDTO.password());
+    }
+
+    public List<ScrapResDTO> getScrappedDocs(UserDetails userDetails, Pageable pageable) {
+        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다.")
+        );
+
+        return docsRepository.mFindScrappedDocsByMemberId(member.getMemberId(), pageable).stream()
+                .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName()))
+                .toList();
     }
 }
