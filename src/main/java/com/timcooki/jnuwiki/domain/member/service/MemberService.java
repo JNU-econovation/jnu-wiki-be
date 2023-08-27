@@ -201,7 +201,7 @@ public class MemberService {
 
 
 
-        member.update(editReqDTO.nickname(), editReqDTO.password());
+        member.update(editReqDTO.nickname(), passwordEncoder.encode(editReqDTO.password()));
     }
 
     public List<ScrapResDTO> getScrappedDocs(UserDetails userDetails, Pageable pageable) {
