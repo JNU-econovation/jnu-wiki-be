@@ -10,6 +10,7 @@ import com.timcooki.jnuwiki.domain.docs.mapper.DocsMapper;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
+import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.entity.ScrapId;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
@@ -32,20 +33,30 @@ public class DocsService {
     private final ScrapRepository scrapRepository;
 
     public List<ListReadResDTO> getDocsList(String email, Pageable pageable) {
+        Page<Docs> docsList = docsRepository.findAll(pageable);
+
+        List<ListReadResDTO> result = docsList.stream()
+                .map(docs -> createListReadResDTO(docs, email))
+                .collect(Collectors.toList());
+
+        return result;
+    }
+
+    private ListReadResDTO createListReadResDTO(Docs docs, String email) {
+        boolean isScrap = false;
         if (email != null) {
             Member member = memberRepository.findByEmail(email).get();
-            return docsRepository.mFindAllByScrapUser(member.getMemberId(), pageable);
+            List<Scrap> scrapList = scrapRepository.findAllByMemberId(member.getMemberId());
+            isScrap = scrapList.stream()
+                    .anyMatch(scrapItem -> scrapItem.getDocsId().equals(docs.getDocsId()));
+
         }
-
-        Page<Docs> list = docsRepository.findAll(pageable);
-
-        return list.stream()
-                .map(docs -> new ListReadResDTO(
-                        docs.getDocsId(),
-                        docs.getDocsName(),
-                        docs.getDocsCategory().getCategory(),
-                        false))
-                .collect(Collectors.toList());
+        return new ListReadResDTO(
+                docs.getDocsId(),
+                docs.getDocsName(),
+                docs.getDocsCategory().getCategory(),
+                isScrap
+        );
     }
 
     @Transactional
