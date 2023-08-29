@@ -98,5 +98,41 @@ public class DocsRequestControllerTest {
         // then
         result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
     }
+    @Test
+    @DisplayName("문서 생성 요청 작성")
+    @WithMockUser(username = "mminl@naver.cm", roles = "USER")
+    public void add_create_request() throws Exception {
+        // given
+        NewWriteReqDTO newWriteReqDTO = NewWriteReqDTO.builder()
+                .docsRequestType(DocsRequestType.MODIFIED)
+                .docsRequestName("ds")
+                .docsRequestLocation(new DocsLocation(12.0, 321.3))
+                .docsRequestCategory(DocsCategory.CAFE.getCategory())
+                .build();
+
+        Member member = Member.builder()
+                .email("momo@naver.com")
+                .nickName("mmmm")
+                .password("1235!dasd")
+                .role(MemberRole.USER)
+                .build();
+
+        String requestBody = om.writeValueAsString(newWriteReqDTO);
+        System.out.println("테스트 : " + requestBody);
+
+        // when
+        ResultActions result = mvc.perform(
+                MockMvcRequestBuilders
+                        .post("/requests/update")
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        String responseBody = result.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
+    }
 
 }
