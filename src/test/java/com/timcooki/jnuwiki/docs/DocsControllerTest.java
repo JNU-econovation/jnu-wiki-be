@@ -122,4 +122,38 @@ public class DocsControllerTest {
         // then
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
     }
+
+    @Test
+    @DisplayName("문서 상세 조회")
+    @WithMockUser(username = "mminl@naver.cm", roles = "USER")
+    public void findById_test() throws Exception {
+        // given
+        Long docsId = 1L;
+
+        Member member = Member.builder()
+                .email("mminl@naver.cm")
+                .nickName("mmmm")
+                .password("1235!dasd")
+                .role(MemberRole.USER)
+                .build();
+
+        // stub
+        Mockito.when(docsService.getOneDocs(eq("mminl@naver.cm"), eq(docsId))).thenReturn(
+                new ReadResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), new DocsLocation(13.1, 34.3), "1nuu", member.getNickName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),true)
+        );
+
+        // when
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get("/docs/1", docsId)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        String responseBody = result.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        result.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
+    }
+
 }
