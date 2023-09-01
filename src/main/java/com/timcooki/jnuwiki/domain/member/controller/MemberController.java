@@ -17,14 +17,15 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
 @Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
     private final RefreshTokenService refreshTokenService;
 
-    @PostMapping("/members/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
 
         return memberService.login(loginReqDTO);
@@ -32,7 +33,7 @@ public class MemberController {
     }
 
     // refresh token 재발급
-    @PostMapping("/members/refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken){
 
         try{
@@ -44,13 +45,13 @@ public class MemberController {
 
     }
 
-    @PostMapping("/members/join")
+    @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO){
 
         return memberService.join(joinReqDTO);
     }
 
-    @GetMapping("/members/info")
+    @GetMapping("/info")
     public ResponseEntity<?> info(@AuthenticationPrincipal UserDetails userDetails){
         ReadResDTO member = memberService.getInfo(userDetails);
 
@@ -58,7 +59,7 @@ public class MemberController {
     }
 
     // TODO AuthenticationPrincipal - SecurityContextHolder/Authentication도 고려
-    @PostMapping("/members/modify/change")
+    @PostMapping("/modify/change")
     public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal UserDetails userDetails,
                                         @RequestBody EditReqDTO editReqDTO){
 
@@ -66,7 +67,7 @@ public class MemberController {
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
-    @GetMapping("/members/scrap")
+    @GetMapping("/scrap")
     public ResponseEntity<?> getScrappedDocsList(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(ApiUtils.success(memberService.getScrappedDocs(userDetails, pageable)));
     }
