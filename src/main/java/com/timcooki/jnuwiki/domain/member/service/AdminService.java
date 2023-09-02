@@ -28,7 +28,7 @@ public class AdminService {
     // TODO - 예외처리 수정
     // 새 문서 요청 승락
     @Transactional
-    public NewApproveResDTO approveNewDocs(Long docsRequestId){
+    public NewApproveResDTO approveNewDocs(Long docsRequestId) {
         DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
                 () -> new Exception404("존재하지 않는 요청입니다.")
         );
@@ -86,13 +86,10 @@ public class AdminService {
                 .build();
     }
 
+    public void rejectRequest(Long docsRequestId) {
+        // 요청 존재 확인
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(() -> new Exception404("존재하지 않는 요청입니다."));
 
-    public boolean findByEmail(String email){
-
-        if(memberRepository.findByEmail(email).isPresent()){
-            return true;
-        }else {
-            return false;
-        }
+        docsRequestRepository.delete(docsRequest);
     }
 }
