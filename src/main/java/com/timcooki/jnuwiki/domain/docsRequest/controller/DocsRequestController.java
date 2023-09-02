@@ -6,7 +6,6 @@ import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestWriteService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
-import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestReadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

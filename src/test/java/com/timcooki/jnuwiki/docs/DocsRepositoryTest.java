@@ -11,7 +11,6 @@ import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
 
 @Import(ObjectMapper.class)
 @DataJpaTest
