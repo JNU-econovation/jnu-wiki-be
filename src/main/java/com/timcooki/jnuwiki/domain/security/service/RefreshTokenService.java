@@ -51,7 +51,7 @@ public class RefreshTokenService {
                         .expiredDate(Instant.now().plusMillis(1000*60*60))//1시간
                         .build()
         );
-        return refreshTokenRepository.save(refreshToken);
+        return refreshToken;
     }
 
 
