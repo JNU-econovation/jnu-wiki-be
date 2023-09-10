@@ -1,6 +1,6 @@
 package com.timcooki.jnuwiki.domain.docsRequest;
 
-import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
+import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestReadService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @SpringBootTest
-public class DocsRequestServiceTest {
+public class DocsRequestReadServiceTest {
 
     @Autowired
-    private DocsRequestService docsRequestService;
+    private DocsRequestReadService docsRequestReadService;
 
     @Test
     public void fifteen_check(){

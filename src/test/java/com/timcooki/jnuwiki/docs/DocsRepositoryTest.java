@@ -9,7 +9,8 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
+import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
+import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
-import java.util.List;
 
 @Import(ObjectMapper.class)
 @DataJpaTest
@@ -33,6 +32,9 @@ public class DocsRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ScrapRepository scrapRepository;
 
     @Autowired
     private EntityManager em;
@@ -100,6 +102,18 @@ public class DocsRepositoryTest {
                         .build()
         );
 
+        Scrap scrap1 = Scrap.builder()
+                .memberId(1L)
+                .docsId(1L)
+                .build();
+
+        Scrap scrap2 = Scrap.builder()
+                .memberId(1L)
+                .docsId(3L)
+                .build();
+
+        scrapRepository.save(scrap1);
+        scrapRepository.save(scrap2);
         docsRepository.findAll().forEach(System.out::println);
         docs.updateContent("테스트내용");
         em.flush();
@@ -137,7 +151,7 @@ public class DocsRepositoryTest {
     }
 
     @Test
-    //@DisplayName("최신 수정 시간순 정렬이 적용되어 있는가")
+    @DisplayName("최신 수정 시간순 정렬이 적용되어 있는가")
     public void docs_findAllByTime_test() throws JsonProcessingException {
         // given
         int page = 0;
@@ -166,6 +180,23 @@ public class DocsRepositoryTest {
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         Page<Docs> docs = docsRepository.findAll(pageRequest);
         docs.forEach(d -> System.out.println(d.getDocsName() + " " + d.getModifiedAt()));
+
+        // then
+
+    }
+
+    @Test
+    @DisplayName("유저가 스크랩한 글만 조회가 되는가")
+    public void docs_scrap_test() throws JsonProcessingException {
+        // given
+        int page = 0;
+        int size = 6;
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+
+        // when
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        Page<Docs> docs = docsRepository.mFindScrappedDocsByMemberId(1L, pageRequest);
+        docs.forEach(d -> System.out.println("조회된 문서의 Id" + d.getDocsId() + " 조회된 문서의 스크랩 시간 " + d.getCreatedAt()));
 
         // then
 

@@ -44,14 +44,14 @@ public class RefreshTokenService {
 
     public RefreshToken createRefreshToken(String email, Optional<Member> member) {
         // 로그인을 이미 한 유저라면?
-        // if(refreshTokenRepository.findByMemberId)
-
-        RefreshToken refreshToken = RefreshToken.builder()
-                .member(member.get())
-                .token(UUID.randomUUID().toString())
-                .expiredDate(Instant.now().plusMillis(1000*60*60))//1시간
-                .build();
-        return refreshTokenRepository.save(refreshToken);
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member.get(), Instant.now()).orElse(
+                RefreshToken.builder()
+                        .member(member.get())
+                        .token(UUID.randomUUID().toString())
+                        .expiredDate(Instant.now().plusMillis(1000*60*60))//1시간
+                        .build()
+        );
+        return refreshToken;
     }
 
 

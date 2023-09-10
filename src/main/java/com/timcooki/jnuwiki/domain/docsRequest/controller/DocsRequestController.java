@@ -2,10 +2,10 @@ package com.timcooki.jnuwiki.domain.docsRequest.controller;
 
 
 import com.timcooki.jnuwiki.domain.docsRequest.dto.response.NewWriteResDTO;
+import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestWriteService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
-import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,30 +20,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/requests")
 public class DocsRequestController {
-    private final DocsRequestService docsRequestService;
+    private final DocsRequestWriteService writeService;
 
     // 문서 수정 요청 작성
     @PostMapping("/update")
     public ResponseEntity<?> writeModifiedRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody EditWriteReqDTO modifiedRequestWriteDto) {
-        // 권한 확인
-
-        // 요청 저장
-        docsRequestService.createModifiedRequest(userDetails, modifiedRequestWriteDto);
-
-        // 요청 반환
+        writeService.createModifiedRequest(userDetails, modifiedRequestWriteDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new NewWriteResDTO("요청이 저장되었습니다.")));
     }
 
     // 문서 생성 요청 작성
     @PostMapping("/new")
     public ResponseEntity<?> writeCreateRequest(@AuthenticationPrincipal UserDetails userDetails, @RequestBody NewWriteReqDTO newWriteReqDTO) {
-        // TODO - CustomUserDetails | findByEmail
-
-
-        // 문서 저장
-        docsRequestService.createNewDocsRequest(userDetails, newWriteReqDTO);
-
-        // 요청 반환
+        writeService.createNewDocsRequest(userDetails, newWriteReqDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(new NewWriteResDTO("요청이 저장되었습니다.")));
     }
 }

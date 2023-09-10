@@ -37,6 +37,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Import({
         AuthenticationConfig.class,
@@ -89,11 +90,8 @@ public class DocsControllerTest {
     @WithMockUser(username = "mminl@naver.cm", roles = "USER")
     public void findAll_test() throws Exception {
         // given
-        int page = 1;
-        int size = 10;
-
         Member member = Member.builder()
-                .email("momo@naver.com")
+                .email("mminl@naver.cm")
                 .nickName("mmmm")
                 .password("1235!dasd")
                 .role(MemberRole.USER)
@@ -146,8 +144,7 @@ public class DocsControllerTest {
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/docs/1", docsId)
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
+                        .contentType(MediaType.APPLICATION_JSON));
 
         String responseBody = result.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
         System.out.println("테스트 : " + responseBody);
