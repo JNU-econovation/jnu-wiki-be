@@ -5,7 +5,8 @@ import lombok.Builder;
 import java.util.List;
 //
 public record EditListReadResDTO(
-        List<EditReadResDTO> modifiedRequestList
+        List<EditReadResDTO> modifiedRequestList,
+        int totalPages
 ) {
     @Builder
     public EditListReadResDTO {
