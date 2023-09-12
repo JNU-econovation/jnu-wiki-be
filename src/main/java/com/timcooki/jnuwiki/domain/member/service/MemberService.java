@@ -1,9 +1,11 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
+import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
@@ -15,8 +17,8 @@ import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import com.timcooki.jnuwiki.util.errors.exception.Exception400;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,8 +31,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class MemberService {
 
 
     public ResponseEntity<?> login(LoginReqDTO loginReqDTO) {
-        String email= loginReqDTO.email();
+        String email = loginReqDTO.email();
         String password = loginReqDTO.password();
         validEmail(loginReqDTO.email());
         validPassword(loginReqDTO.password());
@@ -60,7 +60,7 @@ public class MemberService {
 
 
         // 인증되었다면,
-        if(authentication.isAuthenticated()){
+        if (authentication.isAuthenticated()) {
             // 리프레시 토큰 발급
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, memberRepository.findByEmail(email));
             Member member = memberRepository.findByEmail(email).orElseThrow(
@@ -69,7 +69,7 @@ public class MemberService {
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
-            String token = JwtUtil.createJwt(email,memberRole, secretKey);
+            String token = JwtUtil.createJwt(email, memberRole, secretKey);
 
             // header 생성
             HttpHeaders httpHeaders = new HttpHeaders();
@@ -94,8 +94,7 @@ public class MemberService {
     }
 
 
-
-    public ResponseEntity<?> join(JoinReqDTO joinReqDTO){
+    public ResponseEntity<?> join(JoinReqDTO joinReqDTO) {
 
         validEmail(joinReqDTO.email());
 
@@ -124,22 +123,22 @@ public class MemberService {
 
     private void validPassword(String password) {
         // 비밀번호 형식 확인
-        if(!validator.isValidPassword(password)){
-            throw new Exception400("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:"+ password);
+        if (!validator.isValidPassword(password)) {
+            throw new Exception400("비밀번호는 8~16자여야 하고 영문, 숫자, 특수문자가 포함되어야합니다.:" + password);
         }
     }
 
     private void duplicateCheckEmail(String email) {
         // email 중복 확인
-        if(existEmail(email)){
+        if (existEmail(email)) {
             throw new Exception400("존재하는 이메일 입니다.");
         }
     }
 
     private void validEmail(String email) {
         // 이메일 형식 검증
-        if (!validator.isValidEmail(email)){
-            throw new Exception400("이메일 형식으로 작성해주세요.:"+ email);
+        if (!validator.isValidEmail(email)) {
+            throw new Exception400("이메일 형식으로 작성해주세요.:" + email);
         }
     }
 
@@ -163,12 +162,12 @@ public class MemberService {
         return loginMember.getPassword().equals(passwordEncoder.encode(password));
     }
 
-    public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO){
+    public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO) {
 
         return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
     }
 
-    public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO){
+    public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO) {
 
         validEmail(checkEmailReqDTO.email());
         return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
@@ -188,29 +187,34 @@ public class MemberService {
     }
 
     @Transactional
-    public void editInfo(UserDetails userDetails,  EditReqDTO editReqDTO){
+    public void editInfo(UserDetails userDetails, EditReqDTO editReqDTO) {
 
         Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
 
-        if(memberRepository.findByNickName(editReqDTO.nickname()).isPresent()){
+        if (memberRepository.findByNickName(editReqDTO.nickname()).isPresent()) {
             throw new Exception400("중복된 닉네임 입니다.:nickname");
         }
         validPassword(editReqDTO.password());
 
 
-
         member.update(editReqDTO.nickname(), passwordEncoder.encode(editReqDTO.password()));
     }
 
-    public List<ScrapResDTO> getScrappedDocs(UserDetails userDetails, Pageable pageable) {
+    public ScrapListResDTO getScrappedDocs(UserDetails userDetails, Pageable pageable) {
         Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
 
-        return docsRepository.mFindScrappedDocsByMemberId(member.getMemberId(), pageable).stream()
-                .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName()))
-                .toList();
+        Page<Docs> docsList = docsRepository.mFindScrappedDocsByMemberId(member.getMemberId(), pageable);
+
+        ScrapListResDTO list = ScrapListResDTO.builder()
+                .scrapList(docsList.stream()
+                        .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName()))
+                        .toList())
+                .totalPages(docsList.getTotalPages())
+                .build();
+        return list;
     }
 }
