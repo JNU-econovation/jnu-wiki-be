@@ -1,6 +1,7 @@
 package com.timcooki.jnuwiki.domain.docs.controller;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.request.ContentEditReqDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.request.FindAllReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ContentEditResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
@@ -24,12 +25,11 @@ public class DocsController {
     private final DocsService docsService;
 
     // 모든 문서 조회 - 최근 수정된 순으로
+    // 좌표 사이로
     @GetMapping("/docs")
-    public ResponseEntity<?> docsFindAll(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 50, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        if (userDetails != null) {
-            return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(userDetails.getUsername(), pageable)));
-        }
-        return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(null, pageable)));
+    public ResponseEntity<?> docsFindAll(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 50, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                         @RequestBody FindAllReqDTO findAllReqDTO) {
+        return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(pageable, findAllReqDTO)));
     }
 
     // 문서 수정

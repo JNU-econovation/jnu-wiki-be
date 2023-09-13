@@ -1,6 +1,7 @@
 package com.timcooki.jnuwiki.domain.docs.service;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.request.ContentEditReqDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.request.FindAllReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ContentEditResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
@@ -17,7 +18,11 @@ import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,11 +37,21 @@ public class DocsService {
     private final MemberRepository memberRepository;
     private final ScrapRepository scrapRepository;
 
-    public List<ListReadResDTO> getDocsList(String email, Pageable pageable) {
-        Page<Docs> docsList = docsRepository.findAll(pageable);
+    // SecurityContextHolder로 로그인한 유저의 정보를 가져온다.
+    private String getEmail(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal.equals("anonymousUser")){
+            return null;
+        }
+        UserDetails userDetails = (UserDetails)principal;
+        return userDetails.getUsername()==null?null: userDetails.getUsername();
+    }
+
+    public List<ListReadResDTO> getDocsList(Pageable pageable, FindAllReqDTO findAllReqDTO) {
+        Page<Docs> docsList = docsRepository.mfindAll(findAllReqDTO.leftDown(), findAllReqDTO.rightUp(),pageable);
 
         List<ListReadResDTO> result = docsList.stream()
-                .map(docs -> createListReadResDTO(docs, email))
+                .map(docs -> createListReadResDTO(docs, getEmail()))
                 .collect(Collectors.toList());
 
         return result;
