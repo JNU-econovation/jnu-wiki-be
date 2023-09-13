@@ -4,10 +4,10 @@ import lombok.Builder;
 import java.util.List;
 
 public record NewListReadResDTO(
-        List<NewReadResDTO> createdRequestList
+        List<NewReadResDTO> createdRequestList,
+        int totalPages
 ) {
     @Builder
     public NewListReadResDTO {
-
     }
 }

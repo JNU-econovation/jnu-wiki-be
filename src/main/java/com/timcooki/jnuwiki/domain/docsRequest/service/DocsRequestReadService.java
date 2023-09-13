@@ -13,6 +13,7 @@ import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +31,9 @@ public class DocsRequestReadService {
     // 기본정보 수정 요청 목록 조회
     public EditListReadResDTO getModifiedRequestList(Pageable pageable) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
-        List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable).getContent();
+        Page<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.MODIFIED, pageable);
 
-        List<EditReadResDTO> modifiedList = docsRequests.stream()
+        List<EditReadResDTO> modifiedList = docsRequests.getContent().stream()
                 .map((docsRequest) -> mapper.editEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory()))
                 .collect(Collectors.toList());
 
@@ -42,12 +43,13 @@ public class DocsRequestReadService {
 
         return EditListReadResDTO.builder()
                 .modifiedRequestList(modifiedList)
+                .totalPages(docsRequests.getTotalPages())
                 .build();
     }
 
     public NewListReadResDTO getCreatedRequestList(Pageable pageable) {
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
-        List<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable).getContent();
+        Page<DocsRequest> docsRequests = docsRequestRepository.findAllByDocsRequestType(DocsRequestType.CREATED, pageable);
 
         List<NewReadResDTO> newList = docsRequests.stream()
                 .map((docsRequest) -> mapper.newEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory()))
@@ -59,6 +61,7 @@ public class DocsRequestReadService {
 
         return NewListReadResDTO.builder()
                 .createdRequestList(newList)
+                .totalPages(docsRequests.getTotalPages())
                 .build();
     }
 

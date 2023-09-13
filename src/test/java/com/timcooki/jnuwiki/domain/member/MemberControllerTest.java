@@ -2,12 +2,11 @@ package com.timcooki.jnuwiki.domain.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
-import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
 import com.timcooki.jnuwiki.domain.member.controller.MemberController;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
@@ -15,7 +14,6 @@ import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.errors.GlobalExceptionHandler;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,23 +25,16 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Import({
         AuthenticationConfig.class,
@@ -65,33 +56,20 @@ public class MemberControllerTest {
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper om;
 
-    @BeforeEach
-    void setUp() {
-        UserDetails userDetails = memberSecurityService.loadUserByUsername("test@test.com");
-//        this.mvc = MockMvcBuilders.standaloneSetup(new MemberController).build();
-    }
-
     @Test
     @DisplayName("마이페이지 내가 스크랩한 글 조회")
     @WithMockUser(username = "test@test.com", roles = "USER")
     public void get_scrapped_docsList_test() throws Exception {
         // given
-        Member member = Member.builder()
-                .email("test@test.com")
-                .nickName("hihi")
-                .role(MemberRole.USER)
-                .password("1234!asdf")
-                .build();
-
-        UserDetails userDetails = memberSecurityService.loadUserByUsername("test@test.com");
-
         List<ScrapResDTO> list = new ArrayList<>();
         list.add(new ScrapResDTO(1L, "내용1", DocsCategory.CONV.getCategory()));
         list.add(new ScrapResDTO(2L, "내용2", DocsCategory.CAFE.getCategory()));
         list.add(new ScrapResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory()));
 
+        ScrapListResDTO listResDTO = new ScrapListResDTO(list, 3);
+
         // stub
-        Mockito.when(memberService.getScrappedDocs(any(), any())).thenReturn(list);
+        Mockito.when(memberService.getScrappedDocs(any(), any())).thenReturn(listResDTO);
 
         // when
         ResultActions resultActions = mvc.perform(
@@ -100,7 +78,7 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
-        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(Charset.forName("UTF-8"));
         System.out.println("테스트 : " + responseBody);
 
         // then
