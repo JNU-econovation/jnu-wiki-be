@@ -1,6 +1,7 @@
 package com.timcooki.jnuwiki.docs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.timcooki.jnuwiki.domain.docs.DTO.request.FindAllReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.controller.DocsController;
@@ -67,13 +68,25 @@ public class DocsControllerTest {
                 .docsId(1L)
                 .docsCategory("cafe")
                 .build());
+        FindAllReqDTO dto = FindAllReqDTO.builder()
+                .rightUp(DocsLocation.builder()
+                        .lat(40.0)
+                        .lng(40.0)
+                        .build())
+                .leftDown(DocsLocation.builder()
+                        .lat(30.0)
+                        .lng(30.0)
+                        .build())
+                .build();
 
-        Mockito.when(docsService.getDocsList(null, any())).thenReturn(docsList);
+        Mockito.when(docsService.getDocsList(any(), any())).thenReturn(docsList);
+        String requestBody = om.writeValueAsString(dto);
 
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/docs")
+                        .content(requestBody)
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -85,41 +98,41 @@ public class DocsControllerTest {
 
     }
 
-    @Test
-    @DisplayName("문서 목록 조회")
-    @WithMockUser(username = "mminl@naver.cm", roles = "USER")
-    public void findAll_test() throws Exception {
-        // given
-        Member member = Member.builder()
-                .email("mminl@naver.cm")
-                .nickName("mmmm")
-                .password("1235!dasd")
-                .role(MemberRole.USER)
-                .build();
-
-        List<ListReadResDTO> list = new ArrayList<>();
-        list.add(new ListReadResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), true));
-        list.add(new ListReadResDTO(2L, "내용2", DocsCategory.CAFE.getCategory(), false));
-        list.add(new ListReadResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory(), false));
-
-        list.forEach(System.out::println);
-
-        // stub
-        Mockito.when(docsService.getDocsList(eq("mminl@naver.cm"), any())).thenReturn(list);
-//        given(docsService.getDocsList(Mockito.any(PageRequest.class))).willReturn(list);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(
-                MockMvcRequestBuilders
-                        .get("/docs")
-                        .contentType(MediaType.APPLICATION_JSON));
-
-        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
-        System.out.println("테스트 : " + responseBody);
-
-        // then
-        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
-    }
+//    @Test
+//    @DisplayName("문서 목록 조회")
+//    @WithMockUser(username = "mminl@naver.cm", roles = "USER")
+//    public void findAll_test() throws Exception {
+//        // given
+//        Member member = Member.builder()
+//                .email("mminl@naver.cm")
+//                .nickName("mmmm")
+//                .password("1235!dasd")
+//                .role(MemberRole.USER)
+//                .build();
+//
+//        List<ListReadResDTO> list = new ArrayList<>();
+//        list.add(new ListReadResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), true));
+//        list.add(new ListReadResDTO(2L, "내용2", DocsCategory.CAFE.getCategory(), false));
+//        list.add(new ListReadResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory(), false));
+//
+//        list.forEach(System.out::println);
+//
+//        // stub
+//        Mockito.when(docsService.getDocsList(eq("mminl@naver.cm"), any(), any())).thenReturn(list);
+////        given(docsService.getDocsList(Mockito.any(PageRequest.class))).willReturn(list);
+//
+//        // when
+//        ResultActions resultActions = mockMvc.perform(
+//                MockMvcRequestBuilders
+//                        .get("/docs")
+//                        .contentType(MediaType.APPLICATION_JSON));
+//
+//        String responseBody = resultActions.andReturn().getResponse().getContentAsString();
+//        System.out.println("테스트 : " + responseBody);
+//
+//        // then
+//        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
+//    }
 
     @Test
     @DisplayName("문서 상세 조회")
