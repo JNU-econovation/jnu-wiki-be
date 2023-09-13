@@ -211,7 +211,7 @@ public class MemberService {
 
         ScrapListResDTO list = ScrapListResDTO.builder()
                 .scrapList(docsList.stream()
-                        .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName()))
+                        .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName(), d.getDocsLocation(), member.getNickName()))
                         .toList())
                 .totalPages(docsList.getTotalPages())
                 .build();
