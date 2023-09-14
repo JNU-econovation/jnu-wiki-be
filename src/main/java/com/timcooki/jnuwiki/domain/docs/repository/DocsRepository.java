@@ -1,7 +1,7 @@
 package com.timcooki.jnuwiki.domain.docs.repository;
 
-import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +19,14 @@ public interface DocsRepository extends JpaRepository<Docs, Long> {
     // 검색
     @Query(value = "select d from Docs d where d.docsName like %:search% or d.docsContent like %:search%")
     List<Docs> searchLike(@Param("search")String search);
+
+//    @Query(value = "SELECT d from Docs d where d.docsLocation.lat " +
+//            "between :leftLat and :rightLat and " +
+//            "d.docsLocation.lat between :leftLng and :rightLng")
+//    Page<Docs> mfindAll(Double rightLat, Double rightLng, Double leftLat, Double leftLng, Pageable pageable);
+
+    @Query(value = "SELECT d from Docs d where d.docsLocation.lat " +
+            "between :#{#leftDown.lat} and :#{#rightUp.lat} and " +
+            "d.docsLocation.lat between :#{#leftDown.lng} and :#{#rightUp.lng}")
+    Page<Docs> mfindAll(DocsLocation rightUp, DocsLocation leftDown, Pageable pageable);
 }
