@@ -1,6 +1,5 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
-import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberWriteService {
     private final Validator validator;
     private final MemberRepository memberRepository;
     private final AuthenticationManager authenticationManager;

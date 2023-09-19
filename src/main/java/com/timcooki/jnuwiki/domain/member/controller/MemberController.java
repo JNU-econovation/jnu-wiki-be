@@ -5,7 +5,7 @@ import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
-import com.timcooki.jnuwiki.domain.member.service.MemberService;
+import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +23,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/members")
 public class MemberController {
-    private final MemberService memberService;
+    private final MemberWriteService memberWriteService;
     private final MemberReadService memberReadService;
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
 
-        return memberService.login(loginReqDTO);
+        return memberWriteService.login(loginReqDTO);
 
     }
 
@@ -50,7 +50,7 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO){
 
-        return memberService.join(joinReqDTO);
+        return memberWriteService.join(joinReqDTO);
     }
 
     @GetMapping("/info")
@@ -65,7 +65,7 @@ public class MemberController {
     public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal UserDetails userDetails,
                                         @RequestBody EditReqDTO editReqDTO){
 
-        memberService.editInfo(userDetails, editReqDTO);
+        memberWriteService.editInfo(userDetails, editReqDTO);
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 

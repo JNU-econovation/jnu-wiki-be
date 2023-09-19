@@ -23,7 +23,7 @@ public class MemberReadService {
         Member memberOptional = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
-        // TODO - mapStruct 사용
+
         ReadResDTO resDTO = ReadResDTO.builder()
                 .id(memberOptional.getMemberId())
                 .nickName(memberOptional.getNickName())
