@@ -1,18 +1,15 @@
 package com.timcooki.jnuwiki.domain.docs.DTO.response;
 
-import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 public record ListReadResDTO(
-        Long docsId,
-        String docsName,
-        // TODO Type 변경 - ENUM
-        String docsCategory,
-        boolean scrap
+        List<OneOfListReadResDTO> docsList,
+        int totalPages
 ) {
     @Builder
     public ListReadResDTO {
     }
 }
+
