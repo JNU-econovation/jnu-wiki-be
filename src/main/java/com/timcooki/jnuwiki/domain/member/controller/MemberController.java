@@ -4,6 +4,7 @@ import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
+    private final MemberReadService memberReadService;
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
@@ -53,7 +55,7 @@ public class MemberController {
 
     @GetMapping("/info")
     public ResponseEntity<?> info(@AuthenticationPrincipal UserDetails userDetails){
-        ReadResDTO member = memberService.getInfo(userDetails);
+        ReadResDTO member = memberReadService.getInfo(userDetails);
 
         return ResponseEntity.ok().body(ApiUtils.success(member));
     }
@@ -69,6 +71,6 @@ public class MemberController {
 
     @GetMapping("/scrap")
     public ResponseEntity<?> getScrappedDocsList(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiUtils.success(memberService.getScrappedDocs(userDetails, pageable)));
+        return ResponseEntity.ok(ApiUtils.success(memberReadService.getScrappedDocs(userDetails, pageable)));
     }
 }
