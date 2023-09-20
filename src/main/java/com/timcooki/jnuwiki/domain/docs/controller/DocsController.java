@@ -2,14 +2,11 @@ package com.timcooki.jnuwiki.domain.docs.controller;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.request.ContentEditReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.request.FindAllReqDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.response.ContentEditResDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
-import com.timcooki.jnuwiki.domain.docs.service.DocsService;
-import com.timcooki.jnuwiki.domain.member.entity.Member;
+import com.timcooki.jnuwiki.domain.docs.service.DocsReadService;
+import com.timcooki.jnuwiki.domain.docs.service.DocsWriteService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -21,34 +18,36 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class DocsController {
-    private final DocsService docsService;
+    private final DocsReadService docsReadService;
+    private final DocsWriteService docsWriteService;
 
     // 모든 문서 조회 - 최근 수정된 순으로
     // 좌표 사이로
     @GetMapping("/docs")
-    public ResponseEntity<?> docsFindAll(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 50, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                         @RequestBody FindAllReqDTO findAllReqDTO) {
-        return ResponseEntity.ok().body(ApiUtils.success(docsService.getDocsList(pageable, findAllReqDTO)));
+    public ResponseEntity<?> docsFindAll(@RequestBody FindAllReqDTO findAllReqDTO, @PageableDefault(size = 50, sort = "modifiedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("테스트 : {}", findAllReqDTO.rightUp().getLat());
+        return ResponseEntity.ok().body(ApiUtils.success(docsReadService.getDocsList(pageable, findAllReqDTO)));
     }
 
     // 문서 수정
     @PutMapping("/docs/{docs_id}")
     public ResponseEntity<?> modifyDocs(@PathVariable Long docs_id, @RequestBody ContentEditReqDTO contentEditReqDTO) {
-        return ResponseEntity.ok().body(ApiUtils.success(docsService.updateDocs(docs_id, contentEditReqDTO)));
+        return ResponseEntity.ok().body(ApiUtils.success(docsWriteService.updateDocs(docs_id, contentEditReqDTO)));
     }
 
     @GetMapping("/docs/{docs_id}")
     public ResponseEntity<?> docsFindOne(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long docs_id) {
         if (userDetails != null) {
-            return ResponseEntity.ok().body(ApiUtils.success(docsService.getOneDocs(userDetails.getUsername(), docs_id)));
+            return ResponseEntity.ok().body(ApiUtils.success(docsReadService.getOneDocs(userDetails.getUsername(), docs_id)));
         }
-        return ResponseEntity.ok().body(ApiUtils.success(docsService.getOneDocs(null, docs_id)));
+        return ResponseEntity.ok().body(ApiUtils.success(docsReadService.getOneDocs(null, docs_id)));
     }
 
     @GetMapping("/docs/search")
     public ResponseEntity<?> docsSearch(@RequestParam(value = "search") String search) {
 
-        return ResponseEntity.ok(ApiUtils.success(docsService.searchLike(search)));
+        return ResponseEntity.ok(ApiUtils.success(docsReadService.searchLike(search)));
     }
 }
