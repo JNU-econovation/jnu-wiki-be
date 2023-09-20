@@ -28,7 +28,7 @@ public class AdminController {
     @GetMapping("/requests/update")
     private ResponseEntity<?> getModifiedRequests(@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         EditListReadResDTO modifiedRequests = docsRequestReadService.getModifiedRequestList(pageable);
-        return ResponseEntity.ok().body(ApiUtils.success(modifiedRequests));
+        return ResponseEntity.ok(ApiUtils.success(modifiedRequests));
     }
 
     // 새 문서 생성 요청 목록 조회
@@ -63,7 +63,7 @@ public class AdminController {
     @PostMapping("/approve/update/{docs_request_id}")
     private ResponseEntity<?> approveModifiedRequest(@PathVariable("docs_request_id") Long docsRequestId) {
         InfoEditResDTO updatedDocs = adminWriteService.updateDocsFromRequest(docsRequestId);
-        return ResponseEntity.ok().body(ApiUtils.success(updatedDocs));
+        return ResponseEntity.ok(ApiUtils.success(updatedDocs));
     }
 
     // 문서 요청 반려

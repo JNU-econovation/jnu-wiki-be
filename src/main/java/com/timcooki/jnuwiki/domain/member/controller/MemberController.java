@@ -29,44 +29,34 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
-
-        return memberWriteService.login(loginReqDTO);
-
+        return ResponseEntity.ok(memberWriteService.login(loginReqDTO));
     }
 
     // refresh token 재발급
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken){
-
         try{
-            return refreshTokenService.renewToken(refreshToken);
+            return ResponseEntity.ok(refreshTokenService.renewToken(refreshToken));
         }catch (Exception e){
             return ResponseEntity.status(401).body(ApiUtils.error(e.getMessage(), HttpStatus.UNAUTHORIZED));
         }
-
-
     }
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO){
-
-        return memberWriteService.join(joinReqDTO);
+        return ResponseEntity.ok(memberWriteService.join(joinReqDTO));
     }
 
     @GetMapping("/info")
     public ResponseEntity<?> info(@AuthenticationPrincipal UserDetails userDetails){
         ReadResDTO member = memberReadService.getInfo(userDetails);
-
-        return ResponseEntity.ok().body(ApiUtils.success(member));
+        return ResponseEntity.ok(ApiUtils.success(member));
     }
 
-    // TODO AuthenticationPrincipal - SecurityContextHolder/Authentication도 고려
     @PostMapping("/modify/change")
-    public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal UserDetails userDetails,
-                                        @RequestBody EditReqDTO editReqDTO){
-
-        memberWriteService.editInfo(userDetails, editReqDTO);
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+    public ResponseEntity<?> modifyInfo(@RequestBody EditReqDTO editReqDTO){
+        memberWriteService.editInfo(editReqDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @GetMapping("/scrap")
