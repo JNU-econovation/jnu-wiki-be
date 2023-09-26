@@ -24,34 +24,29 @@ public class RefreshTokenService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    // private final MemberRepository memberRepository;
 
     @Autowired
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public ResponseEntity<?> renewToken(String refreshToken){
+    public String renewToken(String refreshToken){
         Member member = findByToken(refreshToken).map(this::verifyExpiration)
                 .map(RefreshToken::getMember)
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
-        String accessToken = JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, accessToken)
-                .body(ApiUtils.success(null));
+        return JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
     }
 
-    public RefreshToken createRefreshToken(String email, Optional<Member> member) {
+    public RefreshToken createRefreshToken(Member member) {
         // 로그인을 이미 한 유저라면?
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member.get(), Instant.now()).orElse(
+        return refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
                 RefreshToken.builder()
-                        .member(member.get())
+                        .member(member)
                         .token(UUID.randomUUID().toString())
                         .expiredDate(Instant.now().plusMillis(1000*60*60))//1시간
                         .build()
         );
-        return refreshToken;
     }
 
 
