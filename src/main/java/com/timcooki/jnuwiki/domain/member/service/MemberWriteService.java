@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -86,11 +87,8 @@ public class MemberWriteService {
 
 
     public ResponseEntity<?> join(JoinReqDTO joinReqDTO) {
-
         validEmail(joinReqDTO.email());
-
         duplicateCheckEmail(joinReqDTO.email());
-
         validPassword(joinReqDTO.password());
 
         Member member = Member.builder()
@@ -158,7 +156,9 @@ public class MemberWriteService {
     }
 
     @Transactional
-    public void editInfo(UserDetails userDetails, EditReqDTO editReqDTO) {
+    public void editInfo(EditReqDTO editReqDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getDetails();
 
         Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
