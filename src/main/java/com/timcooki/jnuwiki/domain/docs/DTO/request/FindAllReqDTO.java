@@ -4,8 +4,10 @@ import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import lombok.Builder;
 
 public record FindAllReqDTO(
-        DocsLocation rightUp,
-        DocsLocation leftDown
+        Double rightLat,
+        Double rightLng,
+        Double leftLat,
+        Double leftLng
 ) {
     @Builder
     public FindAllReqDTO{
