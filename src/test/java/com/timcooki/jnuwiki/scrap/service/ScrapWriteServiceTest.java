@@ -5,7 +5,7 @@ import com.timcooki.jnuwiki.domain.scrap.DTO.request.DeleteScrapReqDTO;
 import com.timcooki.jnuwiki.domain.scrap.DTO.request.NewScrapReqDTO;
 import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
-import com.timcooki.jnuwiki.domain.scrap.service.ScrapService;
+import com.timcooki.jnuwiki.domain.scrap.service.ScrapWriteService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,12 +20,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class ScrapServiceTest {
+public class ScrapWriteServiceTest {
 
     @Mock
     private ScrapRepository scrapRepository;
     @InjectMocks
-    private ScrapService scrapService;
+    private ScrapWriteService scrapWriteService;
     private final ObjectMapper om = new ObjectMapper();
 
     @DisplayName("스크랩 생성 메서드 단위 테스트")
@@ -40,7 +40,7 @@ public class ScrapServiceTest {
         given(scrapRepository.save(any())).willReturn(scrap);
 
         // when
-        ResponseEntity<?> response = scrapService.create(dto);
+        ResponseEntity<?> response = scrapWriteService.create(dto);
 
         // then
         String expected = om.writeValueAsString(ResponseEntity.ok().body(ApiUtils.success(null)));
@@ -62,7 +62,7 @@ public class ScrapServiceTest {
         //given(scrapRepository.delete(any())).;
 
         // when
-        ResponseEntity<?> response = scrapService.delete(dto);
+        ResponseEntity<?> response = scrapWriteService.delete(dto);
 
         // then
         String expected = om.writeValueAsString(ResponseEntity.ok().body(ApiUtils.success(null)));

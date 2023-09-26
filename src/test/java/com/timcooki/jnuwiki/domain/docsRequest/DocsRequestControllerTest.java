@@ -10,7 +10,7 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import com.timcooki.jnuwiki.domain.docsRequest.service.DocsRequestWriteService;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.service.MemberService;
+import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
@@ -45,7 +45,7 @@ public class DocsRequestControllerTest {
     private DocsRequestWriteService writeService;
 
     @MockBean
-    private MemberService memberService;
+    private MemberWriteService memberWriteService;
 
     @MockBean
     private MemberSecurityService memberSecurityService;

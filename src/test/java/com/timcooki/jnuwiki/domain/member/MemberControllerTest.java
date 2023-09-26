@@ -1,13 +1,12 @@
 package com.timcooki.jnuwiki.domain.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
 import com.timcooki.jnuwiki.domain.member.controller.MemberController;
-import com.timcooki.jnuwiki.domain.member.entity.Member;
-import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.member.service.MemberService;
+import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
@@ -23,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -47,7 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class MemberControllerTest {
 
     @MockBean
-    private MemberService memberService;
+    private MemberReadService memberReadService;
     @MockBean
     private MemberSecurityService memberSecurityService;
     @MockBean
@@ -62,14 +60,14 @@ public class MemberControllerTest {
     public void get_scrapped_docsList_test() throws Exception {
         // given
         List<ScrapResDTO> list = new ArrayList<>();
-        list.add(new ScrapResDTO(1L, "내용1", DocsCategory.CONV.getCategory()));
-        list.add(new ScrapResDTO(2L, "내용2", DocsCategory.CAFE.getCategory()));
-        list.add(new ScrapResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory()));
+        list.add(new ScrapResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), new DocsLocation(213.34, 3423.32),  "12"));
+        list.add(new ScrapResDTO(2L, "내용2", DocsCategory.CAFE.getCategory(), new DocsLocation(213.34, 3423.32), "12"));
+        list.add(new ScrapResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory(), new DocsLocation(213.34, 3423.32),"12"));
 
         ScrapListResDTO listResDTO = new ScrapListResDTO(list, 3);
 
         // stub
-        Mockito.when(memberService.getScrappedDocs(any(), any())).thenReturn(listResDTO);
+        Mockito.when(memberReadService.getScrappedDocs(any(), any())).thenReturn(listResDTO);
 
         // when
         ResultActions resultActions = mvc.perform(

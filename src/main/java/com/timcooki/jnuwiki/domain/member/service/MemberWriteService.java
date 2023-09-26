@@ -1,12 +1,7 @@
 package com.timcooki.jnuwiki.domain.member.service;
 
-import com.timcooki.jnuwiki.domain.docs.entity.Docs;
-import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
@@ -18,8 +13,6 @@ import com.timcooki.jnuwiki.util.errors.exception.Exception400;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,10 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberWriteService {
     private final Validator validator;
     private final MemberRepository memberRepository;
-    private final DocsRepository docsRepository;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
@@ -86,8 +78,7 @@ public class MemberService {
                     .headers(httpHeaders)
                     .body(ApiUtils.success(loginResDTO));
 
-        } else {// 인증 오류시
-            // TODO - 401변경 양식맞추기
+        } else {
             return ResponseEntity.badRequest().body(ApiUtils.error("이메일과 비밀번호를 확인해주세요", HttpStatus.UNAUTHORIZED));
         }
 
@@ -101,13 +92,6 @@ public class MemberService {
         duplicateCheckEmail(joinReqDTO.email());
 
         validPassword(joinReqDTO.password());
-        // TODO - MapStruct Test 필요
-        /*
-        MemberMapper mapper = Mappers.getMapper(MemberMapper.class);
-
-        Member member = mapper.toEntity(joinReqDTO, MemberRole.USER);
-
-         */
 
         Member member = Member.builder()
                 .email(joinReqDTO.email())
@@ -173,19 +157,6 @@ public class MemberService {
         return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
     }
 
-    public ReadResDTO getInfo(UserDetails userDetails) {
-        Member memberOptional = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
-                () -> new Exception404("존재하지 않는 회원입니다.")
-        );
-        // TODO - mapStruct 사용
-        ReadResDTO resDTO = ReadResDTO.builder()
-                .id(memberOptional.getMemberId())
-                .nickName(memberOptional.getNickName())
-                .password(memberOptional.getPassword())
-                .build();
-        return resDTO;
-    }
-
     @Transactional
     public void editInfo(UserDetails userDetails, EditReqDTO editReqDTO) {
 
@@ -200,21 +171,5 @@ public class MemberService {
 
 
         member.update(editReqDTO.nickname(), passwordEncoder.encode(editReqDTO.password()));
-    }
-
-    public ScrapListResDTO getScrappedDocs(UserDetails userDetails, Pageable pageable) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
-                () -> new Exception404("존재하지 않는 회원입니다.")
-        );
-
-        Page<Docs> docsList = docsRepository.mFindScrappedDocsByMemberId(member.getMemberId(), pageable);
-
-        ScrapListResDTO list = ScrapListResDTO.builder()
-                .scrapList(docsList.stream()
-                        .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName(), d.getDocsLocation(), member.getNickName()))
-                        .toList())
-                .totalPages(docsList.getTotalPages())
-                .build();
-        return list;
     }
 }

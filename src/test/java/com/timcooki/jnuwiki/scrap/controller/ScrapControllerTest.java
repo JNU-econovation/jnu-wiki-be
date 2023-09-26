@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.scrap.DTO.request.DeleteScrapReqDTO;
 import com.timcooki.jnuwiki.domain.scrap.DTO.request.NewScrapReqDTO;
 import com.timcooki.jnuwiki.domain.scrap.controller.ScrapController;
-import com.timcooki.jnuwiki.domain.scrap.service.ScrapService;
+import com.timcooki.jnuwiki.domain.scrap.service.ScrapWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class ScrapControllerTest {
 
     @MockBean
-    private ScrapService scrapService;
+    private ScrapWriteService scrapWriteService;
 
     @Autowired
     private ObjectMapper om;
@@ -58,7 +58,7 @@ public class ScrapControllerTest {
                 .docsId(1L)
                 .build();
 
-        Mockito.when(scrapService.create(any(NewScrapReqDTO.class))).thenReturn(ResponseEntity.ok().body(ApiUtils.success(null)));
+        Mockito.when(scrapWriteService.create(any(NewScrapReqDTO.class))).thenReturn(ResponseEntity.ok().body(ApiUtils.success(null)));
         String request = om.writeValueAsString(dto);
 
         // when
@@ -86,7 +86,7 @@ public class ScrapControllerTest {
                 .docsId(1L)
                 .build();
 
-        Mockito.when(scrapService.delete(any(DeleteScrapReqDTO.class))).thenReturn(ResponseEntity.ok().body(ApiUtils.success(null)));
+        Mockito.when(scrapWriteService.delete(any(DeleteScrapReqDTO.class))).thenReturn(ResponseEntity.ok().body(ApiUtils.success(null)));
         String request = om.writeValueAsString(dto);
         System.out.println("request : " + request);
 

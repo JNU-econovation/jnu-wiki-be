@@ -18,14 +18,13 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
-public class AdminService {
+public class AdminWriteService {
 
     private final MemberRepository memberRepository;
     private final DocsRequestRepository docsRequestRepository;
     private final DocsRepository docsRepository;
     private final DocsArchiveRepository docsArchiveRepository;
 
-    // TODO - 예외처리 수정
     // 새 문서 요청 승락
     @Transactional
     public NewApproveResDTO approveNewDocs(Long docsRequestId) {
