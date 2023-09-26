@@ -47,7 +47,13 @@ public class MemberReadService {
 
         ScrapListResDTO list = ScrapListResDTO.builder()
                 .scrapList(docsList.stream()
-                        .map(d -> new ScrapResDTO(d.getDocsId(), d.getDocsName(), d.getDocsName(), d.getDocsLocation(), member.getNickName()))
+                        .map(d -> ScrapResDTO.builder()
+                                .docsId(d.getDocsId())
+                                .docsName(d.getDocsName())
+                                .docsCategory(d.getDocsCategory().getCategory())
+                                .docsRequestLocation(d.getDocsLocation())
+                                .member(member.getNickName())
+                                .build())
                         .toList())
                 .totalPages(docsList.getTotalPages())
                 .build();
