@@ -4,12 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
-import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
@@ -84,6 +81,34 @@ public class MemberControllerTest {
         // then
     }
 
+    @Test
+    @DisplayName("내 정보 보기")
+    @WithMockUser
+    public void info() throws Exception {
+        // given
+        Long id = 0L;
+        String nickname = "mmm";
+        String password = "mmm1234!";
+
+        // stub
+        Mockito.when(memberReadService.getInfo()).thenReturn(new ReadResDTO(id, nickname, password));
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                MockMvcRequestBuilders
+                        .get("/members/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(Charset.forName("UTF-8"));
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
+        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.id").value(id));
+        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.nickName").value(nickname));
+        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.password").value(password));
+    }
 
     @Test
     @DisplayName("마이페이지 내가 스크랩한 글 조회")
