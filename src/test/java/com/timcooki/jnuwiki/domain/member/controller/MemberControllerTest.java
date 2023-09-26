@@ -12,7 +12,6 @@ import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
-import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.errors.GlobalExceptionHandler;
@@ -47,19 +46,39 @@ import static org.mockito.ArgumentMatchers.any;
 @MockBean(JpaMetamodelMappingContext.class)
 public class MemberControllerTest {
 
-    @MockBean
-    private MemberReadService memberReadService;
-    @MockBean
-    private MemberSecurityService memberSecurityService;
-    @MockBean
-    private RefreshTokenRepository refreshTokenRepository;
-    @MockBean
-    private MemberWriteService memberWriteService;
+    @MockBean private MemberReadService memberReadService;
+    @MockBean private RefreshTokenService refreshTokenService;
+    @MockBean private MemberSecurityService memberSecurityService;
+    @MockBean private MemberWriteService memberWriteService;
 
-    @Autowired
-    private MockMvc mvc;
-    @Autowired
-    private ObjectMapper om;
+    @Autowired private MockMvc mvc;
+    @Autowired private ObjectMapper om;
+
+    // TODO: 로그인 리팩토링 후 테스트 코드 작성
+    @Test
+    @DisplayName("리프레시 토큰 재발급")
+    @WithMockUser
+    public void refreshToken() throws Exception {
+        // given
+        String refreshToken = "token";
+
+        // stub
+        Mockito.when(refreshTokenService.renewToken(refreshToken)).thenReturn(refreshToken);
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                MockMvcRequestBuilders
+                        .post("/members/refresh-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("set-cookie", refreshToken)
+        );
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(Charset.forName("UTF-8"));
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+
+    }
 
     @Test
     @DisplayName("회원가입")
@@ -109,6 +128,7 @@ public class MemberControllerTest {
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.nickName").value(nickname));
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.password").value(password));
     }
+
     @Test
     @DisplayName("내 정보 수정")
     @WithMockUser
