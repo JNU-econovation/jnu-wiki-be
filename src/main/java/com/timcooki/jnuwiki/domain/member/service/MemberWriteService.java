@@ -128,22 +128,6 @@ public class MemberWriteService {
         return memberRepository.findByEmail(email).isPresent();
     }
 
-    private boolean validationMember(String email, String password) {
-        // id가 있는지 확인
-        if (memberRepository.findByEmail(email).isEmpty()) {
-            return false;
-        }
-        System.out.println("id 있음");
-
-        Member loginMember = memberRepository.findByEmail(email).orElseThrow(
-                () -> new Exception404("존재하지 않는 회원입니다.")
-        );
-        System.out.println("이메일 얻어옴");
-
-        // 아이디에 대응되는 비밀번호가 맞는지 확인
-        return loginMember.getPassword().equals(passwordEncoder.encode(password));
-    }
-
     public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO) {
 
         return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
