@@ -67,7 +67,7 @@ public class MemberControllerTest {
         ScrapListResDTO listResDTO = new ScrapListResDTO(list, 3);
 
         // stub
-        Mockito.when(memberReadService.getScrappedDocs(any(), any())).thenReturn(listResDTO);
+        Mockito.when(memberReadService.getScrappedDocs(any())).thenReturn(listResDTO);
 
         // when
         ResultActions resultActions = mvc.perform(

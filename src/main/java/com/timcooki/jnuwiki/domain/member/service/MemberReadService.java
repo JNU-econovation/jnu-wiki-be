@@ -11,6 +11,7 @@ import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,21 +20,26 @@ import org.springframework.stereotype.Service;
 public class MemberReadService {
     private final MemberRepository memberRepository;
     private final DocsRepository docsRepository;
-    public ReadResDTO getInfo(UserDetails userDetails) {
-        Member memberOptional = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+    public ReadResDTO getInfo() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails memberDetails = (UserDetails) principal;
+
+        Member member = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
 
-        ReadResDTO resDTO = ReadResDTO.builder()
-                .id(memberOptional.getMemberId())
-                .nickName(memberOptional.getNickName())
-                .password(memberOptional.getPassword())
+        return ReadResDTO.builder()
+                .id(member.getMemberId())
+                .nickName(member.getNickName())
+                .password(member.getPassword())
                 .build();
-        return resDTO;
     }
 
-    public ScrapListResDTO getScrappedDocs(UserDetails userDetails, Pageable pageable) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+    public ScrapListResDTO getScrappedDocs(Pageable pageable) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails memberDetails = (UserDetails) principal;
+
+        Member member = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
 
