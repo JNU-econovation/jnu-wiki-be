@@ -1,12 +1,17 @@
-package com.timcooki.jnuwiki.domain.member;
+package com.timcooki.jnuwiki.domain.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
+import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
-import com.timcooki.jnuwiki.domain.member.controller.MemberController;
+import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
+import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
@@ -22,6 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -50,9 +56,34 @@ public class MemberControllerTest {
     private MemberSecurityService memberSecurityService;
     @MockBean
     private RefreshTokenRepository refreshTokenRepository;
+    @MockBean
+    private MemberWriteService memberWriteService;
 
-    @Autowired private MockMvc mvc;
-    @Autowired private ObjectMapper om;
+    @Autowired
+    private MockMvc mvc;
+    @Autowired
+    private ObjectMapper om;
+
+    @Test
+    @DisplayName("회원가입")
+    public void join() throws Exception {
+        // given
+        JoinReqDTO joinReqDTO = new JoinReqDTO("minl7@fd.fos", "mm", "edfwf741!");
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                MockMvcRequestBuilders
+                        .post("/members/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(joinReqDTO))
+        );
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(Charset.forName("UTF-8"));
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+    }
+
 
     @Test
     @DisplayName("마이페이지 내가 스크랩한 글 조회")
@@ -60,9 +91,9 @@ public class MemberControllerTest {
     public void get_scrapped_docsList_test() throws Exception {
         // given
         List<ScrapResDTO> list = new ArrayList<>();
-        list.add(new ScrapResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), new DocsLocation(213.34, 3423.32),  "12"));
+        list.add(new ScrapResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), new DocsLocation(213.34, 3423.32), "12"));
         list.add(new ScrapResDTO(2L, "내용2", DocsCategory.CAFE.getCategory(), new DocsLocation(213.34, 3423.32), "12"));
-        list.add(new ScrapResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory(), new DocsLocation(213.34, 3423.32),"12"));
+        list.add(new ScrapResDTO(3L, "내용3", DocsCategory.SCHOOL.getCategory(), new DocsLocation(213.34, 3423.32), "12"));
 
         ScrapListResDTO listResDTO = new ScrapListResDTO(list, 3);
 
