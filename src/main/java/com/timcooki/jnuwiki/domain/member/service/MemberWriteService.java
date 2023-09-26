@@ -59,7 +59,7 @@ public class MemberWriteService {
                     () -> new Exception404("존재하지 않는 회원입니다.")
             );
 
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, member);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
