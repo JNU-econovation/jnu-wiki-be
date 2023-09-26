@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,22 +43,23 @@ public class MemberWriteService {
     public ResponseEntity<?> login(LoginReqDTO loginReqDTO) {
         String email = loginReqDTO.email();
         String password = loginReqDTO.password();
-        validEmail(loginReqDTO.email());
-        validPassword(loginReqDTO.password());
 
+        validEmail(email);
+        validPassword(password);
 
         // AuthenticationManger에게 인증 진행 위임
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
 
-
         // 인증되었다면,
         if (authentication.isAuthenticated()) {
             // 리프레시 토큰 발급
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, memberRepository.findByEmail(email));
+
             Member member = memberRepository.findByEmail(email).orElseThrow(
                     () -> new Exception404("존재하지 않는 회원입니다.")
             );
+
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
@@ -85,12 +87,9 @@ public class MemberWriteService {
     }
 
 
-    public ResponseEntity<?> join(JoinReqDTO joinReqDTO) {
-
+    public void join(JoinReqDTO joinReqDTO) {
         validEmail(joinReqDTO.email());
-
         duplicateCheckEmail(joinReqDTO.email());
-
         validPassword(joinReqDTO.password());
 
         Member member = Member.builder()
@@ -101,8 +100,6 @@ public class MemberWriteService {
                 .build();
 
         memberRepository.save(member);
-
-        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
     private void validPassword(String password) {
@@ -130,22 +127,6 @@ public class MemberWriteService {
         return memberRepository.findByEmail(email).isPresent();
     }
 
-    private boolean validationMember(String email, String password) {
-        // id가 있는지 확인
-        if (memberRepository.findByEmail(email).isEmpty()) {
-            return false;
-        }
-        System.out.println("id 있음");
-
-        Member loginMember = memberRepository.findByEmail(email).orElseThrow(
-                () -> new Exception404("존재하지 않는 회원입니다.")
-        );
-        System.out.println("이메일 얻어옴");
-
-        // 아이디에 대응되는 비밀번호가 맞는지 확인
-        return loginMember.getPassword().equals(passwordEncoder.encode(password));
-    }
-
     public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO) {
 
         return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
@@ -158,7 +139,9 @@ public class MemberWriteService {
     }
 
     @Transactional
-    public void editInfo(UserDetails userDetails, EditReqDTO editReqDTO) {
+    public void editInfo(EditReqDTO editReqDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getDetails();
 
         Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
