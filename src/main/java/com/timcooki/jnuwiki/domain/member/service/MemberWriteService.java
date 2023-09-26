@@ -110,7 +110,7 @@ public class MemberWriteService {
 
     private void duplicateCheckEmail(String email) {
         // email 중복 확인
-        if (existEmail(email)) {
+        if (memberRepository.existsByEmail(email)) {
             throw new Exception400("존재하는 이메일 입니다.");
         }
     }
@@ -122,35 +122,60 @@ public class MemberWriteService {
         }
     }
 
-    private boolean existEmail(String email) {
-        return memberRepository.findByEmail(email).isPresent();
-    }
-
     public boolean isPresentNickName(CheckNicknameReqDTO checkNicknameReqDTO) {
-
-        return memberRepository.findByNickName(checkNicknameReqDTO.nickname()).isPresent();
+        return memberRepository.existsByNickName(checkNicknameReqDTO.nickname());
     }
 
     public boolean isPresentEmail(CheckEmailReqDTO checkEmailReqDTO) {
-
         validEmail(checkEmailReqDTO.email());
-        return memberRepository.findByEmail(checkEmailReqDTO.email()).isPresent();
+        return memberRepository.existsByEmail(checkEmailReqDTO.email());
     }
 
     @Transactional
     public void editInfo(EditReqDTO editReqDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getDetails();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails memberDetails = (UserDetails) principal;
 
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(
+        Member member = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
 
-        if (memberRepository.findByNickName(editReqDTO.nickname()).isPresent()) {
+        if (memberRepository.existsByNickName(memberDetails.getUsername())) {
             throw new Exception400("중복된 닉네임 입니다.:nickname");
         }
         validPassword(editReqDTO.password());
 
         member.update(editReqDTO.nickname(), passwordEncoder.encode(editReqDTO.password()));
+    }
+
+    @Transactional
+    public void editMemberNickname(EditNicknameReqDTO newNickname) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails memberDetails = (UserDetails) principal;
+
+        Member member = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다.")
+        );
+
+        if (memberRepository.existsByNickName(memberDetails.getUsername())) {
+            throw new Exception400("중복된 닉네임 입니다.:" + newNickname);
+        }
+
+        member.updateNickname(newNickname.nickname());
+    }
+
+
+    @Transactional
+    public void editMemberPassword(EditPasswordReqDTO newPassword) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails memberDetails = (UserDetails) principal;
+
+        Member member = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
+                () -> new Exception404("존재하지 않는 회원입니다.")
+        );
+
+        validPassword(newPassword.password());
+
+        member.updatePassword(newPassword.password());
     }
 }
