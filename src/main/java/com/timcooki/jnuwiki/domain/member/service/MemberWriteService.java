@@ -43,23 +43,22 @@ public class MemberWriteService {
     public ResponseEntity<?> login(LoginReqDTO loginReqDTO) {
         String email = loginReqDTO.email();
         String password = loginReqDTO.password();
+        validEmail(loginReqDTO.email());
+        validPassword(loginReqDTO.password());
 
-        validEmail(email);
-        validPassword(password);
 
         // AuthenticationManger에게 인증 진행 위임
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
 
+
         // 인증되었다면,
         if (authentication.isAuthenticated()) {
             // 리프레시 토큰 발급
-
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, memberRepository.findByEmail(email));
             Member member = memberRepository.findByEmail(email).orElseThrow(
                     () -> new Exception404("존재하지 않는 회원입니다.")
             );
-
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
@@ -87,7 +86,7 @@ public class MemberWriteService {
     }
 
 
-    public void join(JoinReqDTO joinReqDTO) {
+    public ResponseEntity<?> join(JoinReqDTO joinReqDTO) {
         validEmail(joinReqDTO.email());
         duplicateCheckEmail(joinReqDTO.email());
         validPassword(joinReqDTO.password());
@@ -100,6 +99,8 @@ public class MemberWriteService {
                 .build();
 
         memberRepository.save(member);
+
+        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
     private void validPassword(String password) {
