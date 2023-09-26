@@ -3,6 +3,7 @@ package com.timcooki.jnuwiki.domain.member.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
+import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
@@ -24,7 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -108,6 +108,28 @@ public class MemberControllerTest {
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.id").value(id));
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.nickName").value(nickname));
         resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.response.password").value(password));
+    }
+    @Test
+    @DisplayName("내 정보 수정")
+    @WithMockUser
+    public void modifyInfo() throws Exception {
+        // given
+        String nickname = "mmm";
+        String password = "mmm1234!";
+
+        // when
+        ResultActions resultActions = mvc.perform(
+                MockMvcRequestBuilders
+                        .post("/members/modify/change")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(om.writeValueAsString(new EditReqDTO(nickname, password)))
+        );
+
+        String responseBody = resultActions.andReturn().getResponse().getContentAsString(Charset.forName("UTF-8"));
+        System.out.println("테스트 : " + responseBody);
+
+        // then
+        resultActions.andExpect(MockMvcResultMatchers.jsonPath("$.success").value("true"));
     }
 
     @Test
