@@ -3,6 +3,7 @@ package com.timcooki.jnuwiki.domain.docs.service;
 import com.timcooki.jnuwiki.domain.docs.DTO.request.FindAllReqDTO;
 import com.timcooki.jnuwiki.domain.docs.DTO.response.*;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
+import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docs.mapper.DocsMapper;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
@@ -12,12 +13,14 @@ import com.timcooki.jnuwiki.domain.scrap.entity.ScrapId;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,7 +30,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DocsReadService {
     private final DocsRepository docsRepository;
     private final MemberRepository memberRepository;
@@ -41,7 +46,18 @@ public class DocsReadService {
     }
 
     public ListReadResDTO getDocsList(Pageable pageable, FindAllReqDTO findAllReqDTO) {
-        Page<Docs> docsList = docsRepository.mfindAll(findAllReqDTO.rightUp(),findAllReqDTO.leftDown(), pageable);
+        DocsLocation rightUp = DocsLocation.builder()
+                .lat(findAllReqDTO.rightLat())
+                .lng(findAllReqDTO.rightLng())
+                .build();
+        DocsLocation leftDown = DocsLocation.builder()
+                .lat(findAllReqDTO.leftLat())
+                .lng(findAllReqDTO.leftLng())
+                .build();
+        log.info("테스트7: {}", findAllReqDTO.rightLat());
+        log.info("테스트8: {}", findAllReqDTO.leftLat());
+
+        Page<Docs> docsList = docsRepository.mfindAll(rightUp,leftDown, pageable);
         Optional<Member> member = memberRepository.findByEmail(getEmail());
         List<Scrap> scrapList = member.isPresent() ? scrapRepository.findAllByMemberId(member.get().getMemberId()) : new ArrayList<>();
 
@@ -53,6 +69,7 @@ public class DocsReadService {
                         .docsId(d.getDocsId())
                                 .docsName(d.getDocsName())
                                 .docsCategory(d.getDocsCategory().getCategory())
+                                .docsLocation(d.getDocsLocation())
                                 .scrap(!scrapList.isEmpty() && scrapList.stream()
                                         .anyMatch(s -> Objects.equals(s.getDocsId(), d.getDocsId()))
                                 )
