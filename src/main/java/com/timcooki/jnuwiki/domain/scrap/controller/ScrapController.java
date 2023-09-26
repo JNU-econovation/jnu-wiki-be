@@ -19,11 +19,13 @@ public class ScrapController {
 
     @PostMapping("/scrap/create")
     public ResponseEntity<?> create(@RequestBody NewScrapReqDTO newScrapReqDTO){
-        return ResponseEntity.ok(ApiUtils.success(scrapWriteService.create(newScrapReqDTO)));
+        scrapWriteService.create(newScrapReqDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @DeleteMapping("/scrap")
     public ResponseEntity<?> delete(@RequestBody DeleteScrapReqDTO deleteScrapReqDTO){
-        return ResponseEntity.ok(ApiUtils.success(scrapWriteService.delete(deleteScrapReqDTO)));
+        scrapWriteService.delete(deleteScrapReqDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
     }
 }
