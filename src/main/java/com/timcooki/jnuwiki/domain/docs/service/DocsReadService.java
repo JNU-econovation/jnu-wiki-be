@@ -87,8 +87,9 @@ public class DocsReadService {
 
 
 
-    public ReadResDTO getOneDocs(String email, Long docsId) {
+    public ReadResDTO getOneDocs(Long docsId) {
         boolean scrap = false;
+        String email = getEmail();
         Docs docs = docsRepository.findById(docsId).orElseThrow(
                 () -> new Exception404("존재하지 않는 문서입니다.")
         );

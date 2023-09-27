@@ -40,11 +40,8 @@ public class DocsController {
     }
 
     @GetMapping("/docs/{docs_id}")
-    public ResponseEntity<?> docsFindOne(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long docs_id) {
-        if (userDetails != null) {
-            return ResponseEntity.ok().body(ApiUtils.success(docsReadService.getOneDocs(userDetails.getUsername(), docs_id)));
-        }
-        return ResponseEntity.ok().body(ApiUtils.success(docsReadService.getOneDocs(null, docs_id)));
+    public ResponseEntity<?> docsFindOne(@PathVariable Long docs_id) {
+        return ResponseEntity.ok().body(ApiUtils.success(docsReadService.getOneDocs(docs_id)));
     }
 
     @GetMapping("/docs/search")
