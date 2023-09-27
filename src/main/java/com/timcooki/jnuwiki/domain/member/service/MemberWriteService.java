@@ -176,6 +176,6 @@ public class MemberWriteService {
 
         validPassword(newPassword.password());
 
-        member.updatePassword(newPassword.password());
+        member.updatePassword(passwordEncoder.encode(newPassword.password()));
     }
 }
