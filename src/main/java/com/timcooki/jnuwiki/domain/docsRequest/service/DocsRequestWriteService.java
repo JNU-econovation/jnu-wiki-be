@@ -14,8 +14,11 @@ import com.timcooki.jnuwiki.util.errors.exception.Exception400;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,18 +27,28 @@ public class DocsRequestWriteService {
     private final MemberRepository memberRepository;
     private final DocsRepository docsRepository;
 
-    public void createModifiedRequest(UserDetails userDetails, EditWriteReqDTO modifiedRequestWriteDto) {
+    private String getEmail(){
+        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
+        String email = loggedInUser.getName();
+        return email;
+    }
+
+    @Transactional
+    public void createModifiedRequest(EditWriteReqDTO modifiedRequestWriteDto) {
+        String email = getEmail();
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
         Docs docs = docsRepository.findById(modifiedRequestWriteDto.docsId()).orElseThrow(() -> new Exception404("존재하지 않는 문서 입니다."));
 
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
         DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member, DocsCategory.nameOf(modifiedRequestWriteDto.docsRequestCategory()));
         docsRequestRepository.save(docsRequest);
     }
 
-    public void createNewDocsRequest(UserDetails userDetails, NewWriteReqDTO newWriteReqDTO) {
+    @Transactional
+    public void createNewDocsRequest(NewWriteReqDTO newWriteReqDTO) {
+        String email = getEmail();
         DocsRequestMapper mapper = Mappers.getMapper(DocsRequestMapper.class);
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
 
         DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO, member, DocsCategory.nameOf(newWriteReqDTO.docsRequestCategory()));
         docsRequestRepository.save(docsRequest);

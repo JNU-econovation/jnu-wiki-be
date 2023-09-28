@@ -27,6 +27,6 @@ public interface DocsRepository extends JpaRepository<Docs, Long> {
 
     @Query(value = "SELECT d from Docs d where d.docsLocation.lat " +
             "between :#{#leftDown.lat} and :#{#rightUp.lat} and " +
-            "d.docsLocation.lat between :#{#leftDown.lng} and :#{#rightUp.lng}")
+            "d.docsLocation.lng between :#{#leftDown.lng} and :#{#rightUp.lng}")
     Page<Docs> mfindAll(DocsLocation rightUp, DocsLocation leftDown, Pageable pageable);
 }
