@@ -6,24 +6,22 @@ import com.timcooki.jnuwiki.domain.scrap.service.ScrapWriteService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/scrap")
 @RequiredArgsConstructor
 public class ScrapController {
 
     private final ScrapWriteService scrapWriteService;
 
-    @PostMapping("/scrap/create")
+    @PostMapping("/")
     public ResponseEntity<?> create(@RequestBody NewScrapReqDTO newScrapReqDTO){
         scrapWriteService.create(newScrapReqDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @DeleteMapping("/scrap")
+    @DeleteMapping("/")
     public ResponseEntity<?> delete(@RequestBody DeleteScrapReqDTO deleteScrapReqDTO){
         scrapWriteService.delete(deleteScrapReqDTO);
         return ResponseEntity.ok(ApiUtils.success(null));
