@@ -61,7 +61,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiUtils.success(null));
     }
 
-    @PutMapping("/email")
+    @PutMapping("/nickname")
     public ResponseEntity<?> editMemberEmail(@RequestBody EditNicknameReqDTO newNickname) {
         memberWriteService.editMemberNickname(newNickname);
         return ResponseEntity.ok(ApiUtils.success("닉네임이 변경되었습니다." + newNickname.nickname()));
