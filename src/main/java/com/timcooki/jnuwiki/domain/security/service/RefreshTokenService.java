@@ -24,7 +24,8 @@ public class RefreshTokenService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-    // private final MemberRepository memberRepository;
+
+    private static final long RefreshTokenExpiredMS = 1000*60*60; // 1시간
 
     @Autowired
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
@@ -42,13 +43,13 @@ public class RefreshTokenService {
                 .body(ApiUtils.success(null));
     }
 
-    public RefreshToken createRefreshToken(String email, Optional<Member> member) {
+    public RefreshToken createRefreshToken(String email, Member member) {
         // 로그인을 이미 한 유저라면?
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member.get(), Instant.now()).orElse(
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
                 RefreshToken.builder()
-                        .member(member.get())
+                        .member(member)
                         .token(UUID.randomUUID().toString())
-                        .expiredDate(Instant.now().plusMillis(1000*60*60))//1시간
+                        .expiredDate(Instant.now().plusMillis(RefreshTokenExpiredMS))//1시간
                         .build()
         );
         return refreshToken;
