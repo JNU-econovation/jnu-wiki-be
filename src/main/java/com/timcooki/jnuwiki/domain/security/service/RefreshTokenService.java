@@ -40,14 +40,13 @@ public class RefreshTokenService {
 
     public RefreshToken createRefreshToken(Member member) {
         // 로그인을 이미 한 유저라면?
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
+        return refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
                 RefreshToken.builder()
                         .member(member)
                         .token(UUID.randomUUID().toString())
                         .expiredDate(Instant.now().plusMillis(1000*60*60))//1시간
                         .build()
         );
-        return refreshToken;
     }
 
 

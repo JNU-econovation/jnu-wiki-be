@@ -39,6 +39,7 @@ public class AdminWriteService {
                 .docsLocation(docsRequest.getDocsRequestLocation())
                 .docsName(docsRequest.getDocsRequestName())
                 .build();
+
         docsRepository.save(docs);
 
         // DocsRequest 삭제
@@ -49,7 +50,7 @@ public class AdminWriteService {
                 .docsCategory(docs.getDocsCategory().getCategory())
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
-                .docsCreatedAt(docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
+                .docsCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .build();
     }
 

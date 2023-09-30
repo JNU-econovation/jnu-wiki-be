@@ -24,14 +24,14 @@ public class MemberReadService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetails memberDetails = (UserDetails) principal;
 
-        Member member = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
+        Member memberOptional = memberRepository.findByEmail(memberDetails.getUsername()).orElseThrow(
                 () -> new Exception404("존재하지 않는 회원입니다.")
         );
 
         return ReadResDTO.builder()
-                .id(member.getMemberId())
-                .nickName(member.getNickName())
-                .password(member.getPassword())
+                .id(memberOptional.getMemberId())
+                .nickName(memberOptional.getNickName())
+                .password(memberOptional.getPassword())
                 .build();
     }
 

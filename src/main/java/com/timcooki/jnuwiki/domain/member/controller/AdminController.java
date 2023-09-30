@@ -56,7 +56,6 @@ public class AdminController {
     @PostMapping("/approve/new/{docs_request_id}")
     private ResponseEntity<?> approveCreateRequest(@PathVariable("docs_request_id") Long docsRequestId) {
         return ResponseEntity.ok(ApiUtils.success(adminWriteService.approveNewDocs(docsRequestId)));
-
     }
 
     // 문서 수정 요청 승락
