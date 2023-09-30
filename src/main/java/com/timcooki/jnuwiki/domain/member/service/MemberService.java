@@ -3,10 +3,7 @@ package com.timcooki.jnuwiki.domain.member.service;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
-import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.*;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
@@ -47,7 +44,7 @@ public class MemberService {
 
 
 
-    public ResponseEntity<?> login(LoginReqDTO loginReqDTO) {
+    public WrapLoginResDTO<?> login(LoginReqDTO loginReqDTO) {
         String email = loginReqDTO.email();
         String password = loginReqDTO.password();
         validEmail(loginReqDTO.email());
@@ -81,14 +78,18 @@ public class MemberService {
                     .id(memberId)
                     .role(memberRole)
                     .build();
-
-            return ResponseEntity.ok()
+            return WrapLoginResDTO.builder()
+                    .status(HttpStatus.OK)
                     .headers(httpHeaders)
-                    .body(ApiUtils.success(loginResDTO));
+                    .body(ApiUtils.success(loginResDTO))
+                    .build();
 
         } else {// 인증 오류시
             // TODO - 401변경 양식맞추기
-            return ResponseEntity.badRequest().body(ApiUtils.error("이메일과 비밀번호를 확인해주세요", HttpStatus.UNAUTHORIZED));
+            return WrapLoginResDTO.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ApiUtils.error("이메일과 비밀번호를 확인해주세요.", HttpStatus.BAD_REQUEST))
+                    .build();
         }
 
     }
@@ -101,13 +102,6 @@ public class MemberService {
         duplicateCheckEmail(joinReqDTO.email());
 
         validPassword(joinReqDTO.password());
-        // TODO - MapStruct Test 필요
-        /*
-        MemberMapper mapper = Mappers.getMapper(MemberMapper.class);
-
-        Member member = mapper.toEntity(joinReqDTO, MemberRole.USER);
-
-         */
 
         Member member = Member.builder()
                 .email(joinReqDTO.email())

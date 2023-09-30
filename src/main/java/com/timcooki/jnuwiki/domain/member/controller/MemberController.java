@@ -4,6 +4,7 @@ import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
@@ -28,7 +29,9 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
 
-        return memberService.login(loginReqDTO);
+        WrapLoginResDTO<?> dto = memberService.login(loginReqDTO);
+
+        return ResponseEntity.status(dto.status()).headers(dto.headers()).body(dto.body());
 
     }
 
