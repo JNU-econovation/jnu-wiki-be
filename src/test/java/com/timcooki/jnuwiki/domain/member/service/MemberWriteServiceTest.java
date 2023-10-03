@@ -3,7 +3,6 @@ package com.timcooki.jnuwiki.domain.member.service;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.request.EditNicknameReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.EditPasswordReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
@@ -114,6 +113,7 @@ public class MemberWriteServiceTest {
         Mockito.when(validator.isValidPassword(password)).thenReturn(true);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
+        Mockito.when(passwordEncoder.encode(password)).thenReturn(password);
 
         // when
         memberWriteService.editMemberPassword(new EditPasswordReqDTO(password));
