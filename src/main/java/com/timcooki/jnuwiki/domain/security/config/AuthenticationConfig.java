@@ -2,7 +2,6 @@ package com.timcooki.jnuwiki.domain.security.config;
 
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,19 +23,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AuthenticationConfig {
 
     private final MemberSecurityService memberSecurityService;
-    @Autowired
     private final JwtFilter filter;
 
 
     // 인증 범위 정해놓기 // TODO - ADMIN ROLE 추가
+    /**
+     * @Throws ArithmeticException m
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception{
         return httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
-                .cors().and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/docs").permitAll()
+                .antMatchers(HttpMethod.GET, "/docs/**").permitAll()
                 .antMatchers("/members/join","/members/login", "/members/refresh-token", "/members/check/**").permitAll() // login은 항상 가능
                 .antMatchers("/swagger-ui/**", "/v3/**").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN") // 관리자 권한 체크
@@ -68,9 +68,4 @@ public class AuthenticationConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
-
-
-
 }
