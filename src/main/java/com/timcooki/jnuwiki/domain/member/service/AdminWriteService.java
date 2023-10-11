@@ -18,14 +18,13 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
-public class AdminService {
+public class AdminWriteService {
 
     private final MemberRepository memberRepository;
     private final DocsRequestRepository docsRequestRepository;
     private final DocsRepository docsRepository;
     private final DocsArchiveRepository docsArchiveRepository;
 
-    // TODO - 예외처리 수정
     // 새 문서 요청 승락
     @Transactional
     public NewApproveResDTO approveNewDocs(Long docsRequestId) {
@@ -40,6 +39,7 @@ public class AdminService {
                 .docsLocation(docsRequest.getDocsRequestLocation())
                 .docsName(docsRequest.getDocsRequestName())
                 .build();
+
         docsRepository.save(docs);
 
         // DocsRequest 삭제
@@ -50,7 +50,7 @@ public class AdminService {
                 .docsCategory(docs.getDocsCategory().getCategory())
                 .docsName(docs.getDocsName())
                 .docsLocation(docs.getDocsLocation())
-                .docsCreatedAt(docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
+                .docsCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
                 .build();
     }
 

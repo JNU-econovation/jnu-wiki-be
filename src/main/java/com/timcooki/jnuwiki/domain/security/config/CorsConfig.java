@@ -1,7 +1,6 @@
 package com.timcooki.jnuwiki.domain.security.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -11,14 +10,10 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .exposedHeaders("Authorization")
-                .allowedMethods(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.PATCH.name())
+                .allowedOrigins("http://localhost:5173/")
+                .allowedMethods("*")
+                .allowedHeaders("Access-Control-Allow-Origin", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
+                        "Access-Control-Request-Headers", "Set-Cookie", "Authorization")
                 .allowCredentials(false)
                 .maxAge(3600);
     }

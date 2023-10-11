@@ -4,14 +4,11 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.JwtAndExpirationDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
-import com.timcooki.jnuwiki.util.ApiUtils;
 import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import com.timcooki.jnuwiki.util.errors.exception.Exception401;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -30,16 +27,14 @@ public class RefreshTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public ResponseEntity<?> renewToken(String refreshToken){
+    public String renewToken(String refreshToken){
         Member member = findByToken(refreshToken).map(this::verifyExpiration)
                 .map(RefreshToken::getMember)
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
-        String accessToken = JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, accessToken)
-                .body(ApiUtils.success(null));
+        return JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
     }
+
 
     public RefreshToken createRefreshToken(Member member, String secretKey) {
         JwtAndExpirationDTO jwtAndExpiration = JwtUtil.createRefreshToken(member.getEmail(), member.getRole().toString(), secretKey);

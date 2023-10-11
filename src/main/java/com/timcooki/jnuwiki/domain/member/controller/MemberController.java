@@ -1,21 +1,19 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
-import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
-import com.timcooki.jnuwiki.domain.member.DTO.request.LoginReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
-import com.timcooki.jnuwiki.domain.member.service.MemberService;
+import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
+import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -23,55 +21,63 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/members")
 public class MemberController {
-    private final MemberService memberService;
+    private final MemberWriteService memberWriteService;
+    private final MemberReadService memberReadService;
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
-
-        WrapLoginResDTO<?> dto = memberService.login(loginReqDTO);
+        WrapLoginResDTO<?> dto = memberWriteService.login(loginReqDTO);
 
         return ResponseEntity.status(dto.status()).headers(dto.headers()).body(dto.body());
-
     }
 
     // refresh token 재발급
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken){
-
-        try{
-            return refreshTokenService.renewToken(refreshToken);
-        }catch (Exception e){
+    public ResponseEntity<?> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken) {
+        try {
+            String accessToken = refreshTokenService.renewToken(refreshToken);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.AUTHORIZATION, accessToken)
+                    .body(ApiUtils.success("토큰 재발급 성공"));
+        } catch (Exception e) {
             return ResponseEntity.status(401).body(ApiUtils.error(e.getMessage(), HttpStatus.UNAUTHORIZED));
         }
-
-
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO){
-
-        return memberService.join(joinReqDTO);
+    public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO) {
+        memberWriteService.join(joinReqDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(null));
     }
 
     @GetMapping("/info")
-    public ResponseEntity<?> info(@AuthenticationPrincipal UserDetails userDetails){
-        ReadResDTO member = memberService.getInfo(userDetails);
-
-        return ResponseEntity.ok().body(ApiUtils.success(member));
+    public ResponseEntity<?> info() {
+        ReadResDTO memberInfo = memberReadService.getInfo();
+        return ResponseEntity.ok(ApiUtils.success(memberInfo));
     }
 
-    // TODO AuthenticationPrincipal - SecurityContextHolder/Authentication도 고려
+    // TODO: 분리한 API 전달 후 제거
     @PostMapping("/modify/change")
-    public ResponseEntity<?> modifyInfo(@AuthenticationPrincipal UserDetails userDetails,
-                                        @RequestBody EditReqDTO editReqDTO){
+    public ResponseEntity<?> modifyInfo(@RequestBody EditReqDTO editReqDTO) {
+        memberWriteService.editInfo(editReqDTO);
+        return ResponseEntity.ok(ApiUtils.success(null));
+    }
 
-        memberService.editInfo(userDetails, editReqDTO);
-        return ResponseEntity.ok().body(ApiUtils.success(null));
+    @PutMapping("/nickname")
+    public ResponseEntity<?> editMemberEmail(@RequestBody EditNicknameReqDTO newNickname) {
+        memberWriteService.editMemberNickname(newNickname);
+        return ResponseEntity.ok(ApiUtils.success("닉네임이 변경되었습니다." + newNickname.nickname()));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> editMemberPassword(@RequestBody EditPasswordReqDTO newPassword) {
+        memberWriteService.editMemberPassword(newPassword);
+        return ResponseEntity.ok(ApiUtils.success("비밀번호가 변경되었습니다." + newPassword.password()));
     }
 
     @GetMapping("/scrap")
-    public ResponseEntity<?> getScrappedDocsList(@AuthenticationPrincipal UserDetails userDetails, @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiUtils.success(memberService.getScrappedDocs(userDetails, pageable)));
+    public ResponseEntity<?> getScrappedDocsList(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(ApiUtils.success(memberReadService.getScrappedDocs(pageable)));
     }
 }

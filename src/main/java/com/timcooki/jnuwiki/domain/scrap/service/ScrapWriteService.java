@@ -13,27 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ScrapService {
+public class ScrapWriteService {
 
     private final ScrapRepository scrapRepository;
 
     @Transactional
-    public ResponseEntity<ApiResult<?>> create(NewScrapReqDTO newScrapReqDTO){
-
+    public void create(NewScrapReqDTO newScrapReqDTO){
         Scrap scrap = dtoToScrap(newScrapReqDTO.memberId(), newScrapReqDTO.docsId());
-
         scrapRepository.save(scrap);
-        return ResponseEntity.ok().body(ApiUtils.success(null));
     }
 
     @Transactional
-    public ResponseEntity<ApiResult<?>> delete(DeleteScrapReqDTO deleteScrapReqDTO){
-
+    public void delete(DeleteScrapReqDTO deleteScrapReqDTO){
         Scrap scrap = dtoToScrap(deleteScrapReqDTO.memberId(), deleteScrapReqDTO.docsId());
-
         scrapRepository.delete(scrap);
-        return ResponseEntity.ok().body(ApiUtils.success(null));
-
     }
 
     private static Scrap dtoToScrap(Long memberId, Long docsId) {

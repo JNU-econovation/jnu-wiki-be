@@ -10,13 +10,11 @@ import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
-import com.timcooki.jnuwiki.domain.member.service.MemberService;
 import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.timcooki.jnuwiki.scrap.repository;
+package com.timcooki.jnuwiki.domain.scrap.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
@@ -73,5 +73,4 @@ public class ScrapRepositoryTest {
         Assertions.assertThat(result.isPresent()).isFalse();
 
     }
-
 }
