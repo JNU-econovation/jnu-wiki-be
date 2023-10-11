@@ -59,13 +59,13 @@ public class MemberService {
         // 인증되었다면,
         if (authentication.isAuthenticated()) {
             // 리프레시 토큰 발급
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(email, memberRepository.findByEmail(email));
             Member member = memberRepository.findByEmail(email).orElseThrow(
                     () -> new Exception404("존재하지 않는 회원입니다.")
             );
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(member, secretKey);
             String token = JwtUtil.createJwt(email, memberRole, secretKey);
 
             // header 생성
@@ -85,7 +85,6 @@ public class MemberService {
                     .build();
 
         } else {// 인증 오류시
-            // TODO - 401변경 양식맞추기
             return WrapLoginResDTO.builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .body(ApiUtils.error("이메일과 비밀번호를 확인해주세요.", HttpStatus.BAD_REQUEST))
