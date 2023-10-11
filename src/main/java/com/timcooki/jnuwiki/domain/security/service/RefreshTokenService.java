@@ -1,5 +1,6 @@
 package com.timcooki.jnuwiki.domain.security.service;
 
+import com.timcooki.jnuwiki.domain.member.DTO.response.JwtAndExpirationDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +24,6 @@ public class RefreshTokenService {
 
     @Value("${jwt.secret}")
     private String secretKey;
-
-    private static final long RefreshTokenExpiredMS = 1000*60*60; // 1시간
 
     @Autowired
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
@@ -43,16 +41,16 @@ public class RefreshTokenService {
                 .body(ApiUtils.success(null));
     }
 
-    public RefreshToken createRefreshToken(String email, Member member) {
+    public RefreshToken createRefreshToken(Member member, String secretKey) {
+        JwtAndExpirationDTO jwtAndExpiration = JwtUtil.createRefreshToken(member.getEmail(), member.getRole().toString(), secretKey);
         // 로그인을 이미 한 유저라면?
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
+        return refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
                 RefreshToken.builder()
                         .member(member)
-                        .token(UUID.randomUUID().toString())
-                        .expiredDate(Instant.now().plusMillis(RefreshTokenExpiredMS))//1시간
+                        .token(jwtAndExpiration.jwt())
+                        .expiredDate(jwtAndExpiration.Expiration())
                         .build()
         );
-        return refreshToken;
     }
 
 
