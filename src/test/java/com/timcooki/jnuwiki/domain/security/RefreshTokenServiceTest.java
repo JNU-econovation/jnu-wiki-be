@@ -15,13 +15,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +38,8 @@ public class RefreshTokenServiceTest {
         // Mock 객체를 초기화합니다.
         MockitoAnnotations.initMocks(this);
     }
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     // TODO: 테스트 stub이 실행될 때의 now와 서비스단 메서드가 실행될 때의 now가 달라서 에러 발생
     @Test
@@ -63,7 +64,7 @@ public class RefreshTokenServiceTest {
         Mockito.when(refreshTokenRepository.save(expectedToken)).thenReturn(expectedToken);
 
         // when
-        RefreshToken actualToken = refreshTokenService.createRefreshToken(member.getEmail(), Optional.of(member));
+        RefreshToken actualToken = refreshTokenService.createRefreshToken(member, secretKey);
 
         // then
         assertEquals(expectedToken, actualToken);
