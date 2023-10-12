@@ -2,6 +2,7 @@ package com.timcooki.jnuwiki.domain.member.service;
 
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,7 +40,7 @@ public class MemberWriteService {
 
 
 
-    public ResponseEntity<?> login(LoginReqDTO loginReqDTO) {
+    public WrapLoginResDTO<?> login(LoginReqDTO loginReqDTO) {
         String email = loginReqDTO.email();
         String password = loginReqDTO.password();
 
@@ -58,7 +58,7 @@ public class MemberWriteService {
                     () -> new Exception404("존재하지 않는 회원입니다.")
             );
 
-            RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(member, secretKey);
             Long memberId = member.getMemberId();
             String memberRole = member.getRole().toString();
 
@@ -74,13 +74,17 @@ public class MemberWriteService {
                     .id(memberId)
                     .role(memberRole)
                     .build();
-
-            return ResponseEntity.ok()
+            return WrapLoginResDTO.builder()
+                    .status(HttpStatus.OK)
                     .headers(httpHeaders)
-                    .body(ApiUtils.success(loginResDTO));
+                    .body(ApiUtils.success(loginResDTO))
+                    .build();
 
-        } else {
-            return ResponseEntity.badRequest().body(ApiUtils.error("이메일과 비밀번호를 확인해주세요", HttpStatus.UNAUTHORIZED));
+        } else {// 인증 오류시
+            return WrapLoginResDTO.builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ApiUtils.error("이메일과 비밀번호를 확인해주세요.", HttpStatus.BAD_REQUEST))
+                    .build();
         }
 
     }

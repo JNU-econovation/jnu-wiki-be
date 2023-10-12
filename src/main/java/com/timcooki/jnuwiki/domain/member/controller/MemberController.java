@@ -2,6 +2,7 @@ package com.timcooki.jnuwiki.domain.member.controller;
 
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
@@ -26,7 +27,9 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
-        return ResponseEntity.ok(memberWriteService.login(loginReqDTO));
+        WrapLoginResDTO<?> dto = memberWriteService.login(loginReqDTO);
+
+        return ResponseEntity.status(dto.status()).headers(dto.headers()).body(dto.body());
     }
 
     // refresh token 재발급
