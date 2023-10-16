@@ -1,0 +1,22 @@
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
+
+spring:
+  h2:
+    console:
+      enabled: true
+      #path:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    driver-class-name: ${JDBC_DATABASE_DRIVER}
+    password: ${JDBC_DATABASE_PASSWORD}
+

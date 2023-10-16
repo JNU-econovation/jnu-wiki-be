@@ -1,9 +1,11 @@
 package com.timcooki.jnuwiki.domain.member.entity;
 
+import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,10 +14,10 @@ import java.time.LocalDate;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "MEMBER")
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
 
@@ -28,22 +30,20 @@ public class Member {
     @Column(name = "member_nickname", nullable = false, unique = true)
     private String nickName;
 
-    @CreatedDate
-    @Column(name = "member_join_date")
-    private LocalDate createdAt;
-
     @Column(name = "member_role")
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
+    public void update(String nickname, String password) {
+        this.nickName = nickname;
+        this.password = password;
+    }
 
-    public boolean canEdit() {
-        // 수정 가능한지 - 현재가 15일 이후면 가
-        if (LocalDate.now().isAfter(createdAt.plusDays(15))) {
-            return true;
-        }
-
-        else return false;
+    public void updateNickname(String nickname) {
+        this.nickName = nickname;
+    }
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 
     @Builder
