@@ -1,5 +1,5 @@
 jwt:
-  secret: test.test
+  secret: ${JWT_SECRET_KEY}
 
 
 spring:
@@ -18,3 +18,5 @@ spring:
     url: ${JDBC_DATABASE_URL}
     username: ${JDBC_DATABASE_USERNAME}
     driver-class-name: ${JDBC_DATABASE_DRIVER}
+    password: ${JDBC_DATABASE_PASSWORD}
+
