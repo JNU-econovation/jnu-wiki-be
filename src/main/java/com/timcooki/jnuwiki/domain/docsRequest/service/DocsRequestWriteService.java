@@ -41,7 +41,12 @@ public class DocsRequestWriteService {
 
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
         DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member, DocsCategory.nameOf(modifiedRequestWriteDto.docsRequestCategory()));
-        docsRequestRepository.save(docsRequest);
+        // docsRequestRepository.save(docsRequest);
+
+        docs.updateBasicInfo(docsRequest.getDocsRequestName(),
+                        docsRequest.getDocsRequestLocation(),
+                        docsRequest.getDocsRequestCategory());
+
     }
 
     @Transactional
@@ -51,6 +56,14 @@ public class DocsRequestWriteService {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new Exception400("잘못된 요청입니다."));
 
         DocsRequest docsRequest = mapper.newDTOToEntity(newWriteReqDTO, member, DocsCategory.nameOf(newWriteReqDTO.docsRequestCategory()));
-        docsRequestRepository.save(docsRequest);
+        // docsRequestRepository.save(docsRequest);
+
+        Docs docs = Docs.builder()
+                .createdBy(docsRequest.getDocsRequestedBy())
+                .docsCategory(docsRequest.getDocsRequestCategory())
+                .docsLocation(docsRequest.getDocsRequestLocation())
+                .docsName(docsRequest.getDocsRequestName())
+                .build();
+        docsRepository.save(docs);
     }
 }
