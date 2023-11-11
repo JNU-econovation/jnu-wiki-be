@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,20 @@ public class DocsReadService {
     private final ScrapRepository scrapRepository;
 
     // SecurityContextHolder로 로그인한 유저의 정보를 가져온다.
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
     private String getEmail(){
-        Authentication loggedInUser = SecurityContextHolder.getContext().getAuthentication();
-        String email = loggedInUser.getName();
-        return email;
+        Authentication loggedInUser = getAuthentication();
+        return loggedInUser.getName();
+    }
+
+    private boolean isAuthenticated() {
+        Authentication authentication = getAuthentication();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        return authentication.isAuthenticated();
     }
 
     public ListReadResDTO getDocsList(Pageable pageable, FindAllReqDTO findAllReqDTO) {
@@ -89,13 +100,13 @@ public class DocsReadService {
 
     public ReadResDTO getOneDocs(Long docsId) {
         boolean scrap = false;
-        String email = getEmail();
         Docs docs = docsRepository.findById(docsId).orElseThrow(
                 () -> new Exception404("존재하지 않는 문서입니다.")
         );
 
-        if (email != null) {
-            Member member = memberRepository.findByEmail(email).get();
+        if (isAuthenticated()) {
+            Member member = memberRepository.findByEmail(getEmail()).orElseThrow(
+                    () -> new Exception404("존재하지 않는 회원입니다."));
             if (scrapRepository.findById(new ScrapId(member.getMemberId(), docs.getDocsId())).isPresent()) scrap = true;
         }
 
@@ -116,9 +127,9 @@ public class DocsReadService {
         if (docsList != null && !docsList.isEmpty()) {
             DocsMapper mapper = Mappers.getMapper(DocsMapper.class);
 
-            List<SearchReadResDTO> res = docsList.stream().map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(), docs.getDocsCategory().getCategory()))).toList();
-
-            return res;
+            return docsList.stream()
+                    .map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(), docs.getDocsCategory().getCategory())))
+                    .toList();
         } else {
             throw new Exception404("요청결과가 존재하지 않습니다.");
         }
