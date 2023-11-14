@@ -13,6 +13,7 @@ import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import com.timcooki.jnuwiki.util.errors.exception.Exception400;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,8 +27,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberWriteService {
     private final Validator validator;
     private final MemberRepository memberRepository;
@@ -43,6 +46,8 @@ public class MemberWriteService {
     public WrapLoginResDTO<?> login(LoginReqDTO loginReqDTO) {
         String email = loginReqDTO.email();
         String password = loginReqDTO.password();
+        log.info("email : {}", email);
+        log.info("password : {}", password);
 
         validEmail(email);
         validPassword(password);
@@ -63,17 +68,18 @@ public class MemberWriteService {
             String memberRole = member.getRole().toString();
 
             String token = JwtUtil.createJwt(email, memberRole, secretKey);
-
             // header 생성
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.set(HttpHeaders.AUTHORIZATION, token);
             httpHeaders.set(HttpHeaders.SET_COOKIE, refreshToken.getToken());
 
+            Long expiration = JwtUtil.getExpiration(token.split(" ")[1], secretKey);
+
             // DTO 생성
             LoginResDTO loginResDTO = LoginResDTO.builder()
                     .id(memberId)
                     .role(memberRole)
-                    .expiration(JwtUtil.getExpiration(token, secretKey))
+                    .expiration(expiration)
                     .build();
             return WrapLoginResDTO.builder()
                     .status(HttpStatus.OK)
