@@ -73,6 +73,7 @@ public class MemberWriteService {
             LoginResDTO loginResDTO = LoginResDTO.builder()
                     .id(memberId)
                     .role(memberRole)
+                    .expiration(JwtUtil.getExpiration(token, secretKey))
                     .build();
             return WrapLoginResDTO.builder()
                     .status(HttpStatus.OK)
