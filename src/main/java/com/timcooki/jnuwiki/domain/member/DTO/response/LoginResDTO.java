@@ -4,7 +4,8 @@ import lombok.Builder;
 
 public record LoginResDTO(
         Long id,
-        String role
+        String role,
+        Long expiration
 ) {
     @Builder
     public LoginResDTO {
