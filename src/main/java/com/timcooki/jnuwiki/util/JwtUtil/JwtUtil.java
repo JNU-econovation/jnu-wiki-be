@@ -50,7 +50,9 @@ public class JwtUtil {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
-                .getExpiration().toInstant().toEpochMilli();
+                .getExpiration()
+                .toInstant()
+                .toEpochMilli();
     }
 
     // Toekn 생성
