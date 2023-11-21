@@ -1,12 +1,18 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
+import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
+import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
+import com.timcooki.jnuwiki.util.ApiResult;
 import com.timcooki.jnuwiki.util.ApiUtils;
+import com.timcooki.jnuwiki.util.CookieUtil;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -26,10 +32,12 @@ public class MemberController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginReqDTO loginReqDTO){
-        WrapLoginResDTO<?> dto = memberWriteService.login(loginReqDTO);
-
-        return ResponseEntity.status(dto.status()).headers(dto.headers()).body(dto.body());
+    public ResponseEntity<ApiResult<LoginResDTO>> login(HttpServletResponse response,
+                                                        @RequestBody @Valid LoginReqDTO loginReqDTO) {
+        WrapLoginResDTO wrapLoginResDTO = memberWriteService.login(response, loginReqDTO);
+        return ResponseEntity.ok()
+                .headers(wrapLoginResDTO.headers())
+                .body(ApiUtils.success(wrapLoginResDTO.body()));
     }
 
     // refresh token 재발급

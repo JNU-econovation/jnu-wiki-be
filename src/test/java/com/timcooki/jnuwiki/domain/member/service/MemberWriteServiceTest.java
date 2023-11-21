@@ -27,17 +27,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
-public class MemberWriteServiceTest {
+class MemberWriteServiceTest {
     @InjectMocks private MemberWriteService memberWriteService;
     @Mock private MemberRepository memberRepository;
     @Mock private DocsRepository docsRepository;
     @Mock private PasswordEncoder passwordEncoder;
 
-    @Mock private Validator validator;
+    @Mock private MemberValidator memberValidator;
 
     @Test
     @DisplayName("회원가입")
-    public void join_test() {
+    void join_test() {
         // given
         JoinReqDTO joinReqDTO = JoinReqDTO.builder()
                 .nickName("mmm")
@@ -47,10 +47,6 @@ public class MemberWriteServiceTest {
 
         String newNickname = "moly";
 
-        // stub
-        Mockito.when(validator.isValidEmail(joinReqDTO.email())).thenReturn(true);
-        Mockito.when(validator.isValidPassword(joinReqDTO.password())).thenReturn(true);
-
         // when
         memberWriteService.join(joinReqDTO);
 
@@ -59,7 +55,7 @@ public class MemberWriteServiceTest {
 
     @Test
     @DisplayName("닉네임 수정")
-    public void editMemberNickname_test() {
+    void editMemberNickname_test() {
         // given
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Authentication authentication = Mockito.mock(Authentication.class);
@@ -91,7 +87,7 @@ public class MemberWriteServiceTest {
 
     @Test
     @DisplayName("비밀번호 수정")
-    public void editMemberPassword_test() {
+    void editMemberPassword_test() {
         // given
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
         Authentication authentication = Mockito.mock(Authentication.class);
@@ -110,7 +106,6 @@ public class MemberWriteServiceTest {
 
         // stub
         Mockito.when(memberRepository.findByEmail(userDetails.getUsername())).thenReturn(Optional.of(member));
-        Mockito.when(validator.isValidPassword(password)).thenReturn(true);
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
         Mockito.when(passwordEncoder.encode(password)).thenReturn(password);

@@ -14,6 +14,7 @@ import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
+import com.timcooki.jnuwiki.testutil.CommonApiTest;
 import com.timcooki.jnuwiki.util.errors.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.charset.StandardCharsets;
 
 
-@Import({
-        JwtFilter.class,
-        GlobalExceptionHandler.class,
-        AuthenticationConfig.class
-})
-@WebMvcTest(controllers = {DocsRequestController.class})
+@Import(DocsRequestController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class DocsRequestControllerTest {
+public class DocsRequestControllerTest extends CommonApiTest {
 
     @MockBean
     private DocsRequestWriteService writeService;

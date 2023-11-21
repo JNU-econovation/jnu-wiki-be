@@ -6,9 +6,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 public record WrapLoginResDTO<T>(
-        HttpStatus status,
         HttpHeaders headers,
-        ApiResult<? extends T> body
+        LoginResDTO body
 
 ) {
     @Builder
