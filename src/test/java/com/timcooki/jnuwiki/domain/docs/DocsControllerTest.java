@@ -13,6 +13,7 @@ import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
+import com.timcooki.jnuwiki.testutil.CommonApiTest;
 import com.timcooki.jnuwiki.util.errors.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,24 +41,14 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-@Import({
-        AuthenticationConfig.class,
-        JwtFilter.class,
-        GlobalExceptionHandler.class
-})
-@WebMvcTest(controllers = DocsController.class)
+@Import(DocsController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class DocsControllerTest {
+public class DocsControllerTest extends CommonApiTest {
 
     @MockBean
     private DocsReadService docsReadService;
     @MockBean
     private DocsWriteService docsWriteService;
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper om;
     @MockBean
     private MemberSecurityService memberSecurityService;
 

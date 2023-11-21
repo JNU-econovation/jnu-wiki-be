@@ -31,7 +31,7 @@ public class AdminWriteServiceTest {
     @Mock private DocsRepository docsRepository;
     @Mock private PasswordEncoder passwordEncoder;
 
-    @Mock private Validator validator;
+    @Mock private MemberValidator memberValidator;
 
     @Test
     @DisplayName("새 문서 요청 승락")

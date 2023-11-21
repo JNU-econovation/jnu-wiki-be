@@ -7,6 +7,7 @@ import com.timcooki.jnuwiki.domain.scrap.service.ScrapWriteService;
 import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
 import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
+import com.timcooki.jnuwiki.testutil.CommonApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.charset.Charset;
 
 
-@Import({
-        AuthenticationConfig.class,
-        JwtFilter.class,
-})
-@WebMvcTest(controllers = ScrapController.class)
+@Import(ScrapController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class ScrapControllerTest {
+public class ScrapControllerTest extends CommonApiTest {
 
     @MockBean
     private ScrapWriteService scrapWriteService;
@@ -45,7 +42,7 @@ public class ScrapControllerTest {
     @Test
     @DisplayName("스크랩 생성")
     @WithMockUser
-     void create_test() throws Exception {
+    void create_test() throws Exception {
         // given
         NewScrapReqDTO dto = NewScrapReqDTO.builder()
                 .memberId(0L)
@@ -70,7 +67,7 @@ public class ScrapControllerTest {
     @Test
     @DisplayName("스크랩 삭제")
     @WithMockUser
-     void delete_test() throws Exception {
+    void delete_test() throws Exception {
         // given
         DeleteScrapReqDTO dto = DeleteScrapReqDTO.builder()
                 .memberId(1L)
