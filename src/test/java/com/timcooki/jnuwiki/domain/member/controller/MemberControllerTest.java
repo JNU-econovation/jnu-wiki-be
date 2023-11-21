@@ -1,6 +1,5 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.DTO.request.EditReqDTO;
@@ -10,22 +9,17 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
-import com.timcooki.jnuwiki.domain.security.config.AuthenticationConfig;
-import com.timcooki.jnuwiki.domain.security.config.JwtFilter;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
-import com.timcooki.jnuwiki.util.errors.GlobalExceptionHandler;
+import com.timcooki.jnuwiki.testutil.CommonApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -36,23 +30,14 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@Import({
-        AuthenticationConfig.class,
-        JwtFilter.class,
-        GlobalExceptionHandler.class,
-        RefreshTokenService.class
-})
-@WebMvcTest(controllers = MemberController.class)
+@Import(MemberController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-public class MemberControllerTest {
+public class MemberControllerTest extends CommonApiTest {
 
     @MockBean private MemberReadService memberReadService;
     @MockBean private RefreshTokenService refreshTokenService;
     @MockBean private MemberSecurityService memberSecurityService;
     @MockBean private MemberWriteService memberWriteService;
-
-    @Autowired private MockMvc mvc;
-    @Autowired private ObjectMapper om;
 
     // TODO: 로그인 리팩토링 후 테스트 코드 작성
     @Test
@@ -66,7 +51,7 @@ public class MemberControllerTest {
         Mockito.when(refreshTokenService.renewToken(refreshToken)).thenReturn(refreshToken);
 
         // when
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/members/refresh-token")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +72,7 @@ public class MemberControllerTest {
         JoinReqDTO joinReqDTO = new JoinReqDTO("minl7@fd.fos", "mm", "edfwf741!");
 
         // when
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/members/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +98,7 @@ public class MemberControllerTest {
         Mockito.when(memberReadService.getInfo()).thenReturn(new ReadResDTO(id, nickname, password));
 
         // when
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/members/info")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +123,7 @@ public class MemberControllerTest {
         String password = "mmm1234!";
 
         // when
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/members/modify/change")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -168,7 +153,7 @@ public class MemberControllerTest {
         Mockito.when(memberReadService.getScrappedDocs(any())).thenReturn(listResDTO);
 
         // when
-        ResultActions resultActions = mvc.perform(
+        ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/members/scrap")
                         .contentType(MediaType.APPLICATION_JSON)
