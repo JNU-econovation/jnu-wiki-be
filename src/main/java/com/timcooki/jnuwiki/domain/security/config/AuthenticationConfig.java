@@ -12,6 +12,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,34 +28,49 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class AuthenticationConfig {
 
     private final MemberSecurityService memberSecurityService;
-    private final JwtFilter filter;
-
-
-    // 인증 범위 정해놓기 // TODO - ADMIN ROLE 추가
-    /**
-     * @Throws ArithmeticException m
-     */
+    public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+            http.addFilter(new JwtFilter(authenticationManager));
+        }
+    }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .httpBasic().disable()
-                .csrf().disable()
-                .cors().configurationSource(configurationSource())
+                .httpBasic()
+                .disable()
+
+                .csrf()
+                .disable()
+
+                .cors()
+                .configurationSource(configurationSource())
+
+                .and()
+                .apply(new CustomSecurityFilterManager())
 
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/docs/**").permitAll()
-                .antMatchers("/members/join","/members/login", "/members/refresh-token", "/members/check/**").permitAll() // login은 항상 가능
-                .antMatchers("/swagger-ui/**", "/v3/**").permitAll()
-                .antMatchers("/admin/**").hasAuthority("ADMIN") // 관리자 권한 체크
-                .anyRequest().authenticated() // 그 외 모든 요청 막음
-                // TODO - PATCH, PUT, DELETE도 추가
+
+                .antMatchers("/members/join", "/members/login", "/members/refresh-token", "/members/check/**")
+                .permitAll()
+
+                .antMatchers("/swagger-ui/**", "/v3/**")
+                .permitAll()
+
+                .antMatchers("/admin/**")
+                .hasAuthority("ADMIN")
+
+                .anyRequest()
+                .authenticated()
+
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT사용하는 경우만 사용
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
                 .and()
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -71,24 +87,5 @@ public class AuthenticationConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
-    }
-
-
-    // 패스워드 인코더
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(memberSecurityService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
     }
 }
