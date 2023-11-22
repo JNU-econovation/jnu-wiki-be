@@ -1,12 +1,10 @@
 package com.timcooki.jnuwiki.domain.security.config;
 
 
-import static com.timcooki.jnuwiki.util.JwtUtil.JwtUtil.cutTokenPrefix;
+import static com.timcooki.jnuwiki.domain.security.config.JwtProvider.cutTokenPrefix;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
-import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -27,36 +25,33 @@ import java.io.IOException;
 
 @Slf4j
 public class JwtFilter extends BasicAuthenticationFilter {
-    private final String secretKey = "test.test";
-
     public JwtFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
     }
-
 
     @Override
     // 인증 필터
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        log.info("JwtFilter 동작");
-        final String toekn = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (toekn == null || !toekn.startsWith("Bearer ")) {
+        final String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String token = cutTokenPrefix(toekn);
-            String email = JwtUtil.getMemberEmail(token, secretKey);
-            MemberRole memberRole = JwtUtil.getMemberRole(token, secretKey);
+            String token = cutTokenPrefix(bearerToken);
+            String email = JwtProvider.getClaims(token).get("memberEmail", String.class);
+            MemberRole memberRole = JwtProvider.getClaims(token).get("memberRole", MemberRole.class);
 
-            Member member = Member.builder()
-                    .email(email)
-                    .role(memberRole)
-                    .build();
-
-            MemberDetails userDetails = new MemberDetails(member);
+            MemberDetails userDetails = new MemberDetails(
+                    Member.builder()
+                            .email(email)
+                            .role(memberRole)
+                            .build()
+            );
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
