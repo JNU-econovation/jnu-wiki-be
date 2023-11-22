@@ -6,11 +6,9 @@ import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
-import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.ApiResult;
 import com.timcooki.jnuwiki.util.ApiUtils;
-import com.timcooki.jnuwiki.util.CookieUtil;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,15 +40,11 @@ public class MemberController {
 
     // refresh token 재발급
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken) {
-        try {
-            String accessToken = refreshTokenService.renewToken(refreshToken);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, accessToken)
-                    .body(ApiUtils.success("토큰 재발급 성공"));
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(ApiUtils.error(e.getMessage(), HttpStatus.UNAUTHORIZED));
-        }
+    public ResponseEntity<ApiResult<String>> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken) {
+        String accessToken = refreshTokenService.renewAccessToken(refreshToken);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                .body(ApiUtils.success("토큰 재발급 성공"));
     }
 
     @PostMapping("/join")
@@ -63,13 +57,6 @@ public class MemberController {
     public ResponseEntity<?> info() {
         ReadResDTO memberInfo = memberReadService.getInfo();
         return ResponseEntity.ok(ApiUtils.success(memberInfo));
-    }
-
-    // TODO: 분리한 API 전달 후 제거
-    @PostMapping("/modify/change")
-    public ResponseEntity<?> modifyInfo(@RequestBody EditReqDTO editReqDTO) {
-        memberWriteService.editInfo(editReqDTO);
-        return ResponseEntity.ok(ApiUtils.success(null));
     }
 
     @PutMapping("/nickname")
