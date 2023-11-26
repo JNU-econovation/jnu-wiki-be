@@ -43,8 +43,9 @@ public class JwtFilter extends BasicAuthenticationFilter {
 
         try {
             String token = cutTokenPrefix(bearerToken);
-            String email = JwtProvider.getClaims(token).get("memberEmail", String.class);
-            MemberRole memberRole = JwtProvider.getClaims(token).get("memberRole", MemberRole.class);
+            String email = (String) JwtProvider.getClaims(token).get("memberEmail");
+            MemberRole memberRole = MemberRole.valueOf((String) JwtProvider.getClaims(token).get("memberRole"));
+            log.info("email: {}, role: {}", email, memberRole);
 
             MemberDetails userDetails = new MemberDetails(
                     Member.builder()
