@@ -7,13 +7,13 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeFormatter {
     public static String format(Instant instant) {
-        ZonedDateTime zdtVancouver = instant.atZone(ZoneId.of("Asia/Seoul"));
-        return zdtVancouver.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        ZonedDateTime koreaTime = instant.atZone(ZoneId.of("Asia/Seoul"));
+        return koreaTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     public static String format(Long time) {
         Instant longToInstant = Instant.ofEpochMilli(time);
-        ZonedDateTime zdtVancouver = longToInstant.atZone(ZoneId.of("Asia/Seoul"));
-        return zdtVancouver.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        ZonedDateTime koreaTime = longToInstant.atZone(ZoneId.of("Asia/Seoul"));
+        return koreaTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }
