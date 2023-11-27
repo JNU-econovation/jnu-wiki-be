@@ -40,7 +40,8 @@ public class MemberController {
 
     // refresh token 재발급
     @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResult<String>> refreshToken(@RequestHeader(value = "set-cookie") String refreshToken) {
+    public ResponseEntity<ApiResult<String>> refreshToken(@CookieValue(value = "refresh-token") String refreshToken) {
+        log.info("refreshToken: {}", refreshToken);
         String accessToken = refreshTokenService.renewAccessToken(refreshToken);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
