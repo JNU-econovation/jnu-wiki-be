@@ -6,18 +6,18 @@ import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
 import com.timcooki.jnuwiki.domain.security.config.JwtProvider;
 import com.timcooki.jnuwiki.util.errors.exception.Exception401;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
-    // refreshToken이 만료되지 않았다면 accessToken을 재발급
     public String renewAccessToken(String refreshToken) {
-        RefreshToken existToken = refreshTokenRepository.findByToken(refreshToken)
+        RefreshToken existToken = refreshTokenRepository.findByToken(JwtProvider.PREFIX + refreshToken)
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
         verifyExpiration(existToken);
