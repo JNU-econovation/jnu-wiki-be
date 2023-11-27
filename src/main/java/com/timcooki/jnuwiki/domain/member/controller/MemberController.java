@@ -1,9 +1,11 @@
 package com.timcooki.jnuwiki.domain.member.controller;
 
 import com.timcooki.jnuwiki.domain.member.DTO.request.*;
+import com.timcooki.jnuwiki.domain.member.DTO.response.AccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.LoginResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.WrapLoginResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.WrapAccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
@@ -38,14 +40,13 @@ public class MemberController {
                 .body(ApiUtils.success(wrapLoginResDTO.body()));
     }
 
-    // refresh token 재발급
-    @PostMapping("/refresh-token")
-    public ResponseEntity<ApiResult<String>> refreshToken(@CookieValue(value = "refresh-token") String refreshToken) {
-        log.info("refreshToken: {}", refreshToken);
-        String accessToken = refreshTokenService.renewAccessToken(refreshToken);
+    // access token 재발급
+    @PostMapping("/access-token")
+    public ResponseEntity<ApiResult<AccessTokenResDTO>> refreshToken(@CookieValue(value = "refresh-token") String refreshToken) {
+        WrapAccessTokenResDTO wrapAccessTokenResDTO = refreshTokenService.renewAccessToken(refreshToken);
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, accessToken)
-                .body(ApiUtils.success("토큰 재발급 성공"));
+                .header(HttpHeaders.AUTHORIZATION, wrapAccessTokenResDTO.accessToken())
+                .body(ApiUtils.success(wrapAccessTokenResDTO.accessTokenResDTO()));
     }
 
     @PostMapping("/join")
