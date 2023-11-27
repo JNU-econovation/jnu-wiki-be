@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 public class JwtProvider {
     private static String secretKey;
     public static final String PREFIX = "Bearer ";
-    private static final Long SECOND = 1000L;
-    private static final Long ACCESS_TOKEN_EXP_MS = SECOND * 60 * 5L; // 5분
-    private static final Long REFRESH_TOKEN_EXP_MS = SECOND * 60 * 10L; // 10분
+    private static final Long MINUTE = 1000L * 60;
+    private static final Long ACCESS_TOKEN_EXP_MS = 3 * MINUTE; // 3분
+    private static final Long REFRESH_TOKEN_EXP_MS = 60 * MINUTE * 24; // 1일 = 60분 * 24시간
 
     @Value("${jwt.secret}")
     public void setSecretKey(String secretKey) {

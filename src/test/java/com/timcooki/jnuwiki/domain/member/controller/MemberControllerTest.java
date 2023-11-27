@@ -5,16 +5,23 @@ import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.member.DTO.request.EditNicknameReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.EditPasswordReqDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.request.JoinReqDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.AccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapListResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.ScrapResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.WrapAccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.service.MemberReadService;
 import com.timcooki.jnuwiki.domain.member.service.MemberWriteService;
+import com.timcooki.jnuwiki.domain.security.config.JwtProvider;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.testutil.CommonApiTest;
+import com.timcooki.jnuwiki.util.TimeFormatter;
+import java.time.Instant;
+import javax.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -44,23 +51,30 @@ class MemberControllerTest extends CommonApiTest {
     @MockBean
     private MemberWriteService memberWriteService;
 
-    // TODO: 로그인 리팩토링 후 테스트 코드 작성
     @Test
-    @DisplayName("리프레시 토큰 재발급")
+    @DisplayName("엑세스 토큰 재발급")
     @WithMockUser
     void refreshToken() throws Exception {
         // given
-        String refreshToken = "token";
+        String refreshToken = "lhkjtoke.dsda.fgfn";
+        Instant expiration = Instant.ofEpochSecond(170123032L);
 
         // stub
-        Mockito.when(refreshTokenService.renewAccessToken(refreshToken)).thenReturn(refreshToken);
+        Mockito.when(refreshTokenService.renewAccessToken(refreshToken)).thenReturn(
+                WrapAccessTokenResDTO.builder()
+                        .accessTokenResDTO(AccessTokenResDTO.builder()
+                                .accessTokenFormattedExpiration(TimeFormatter.format(expiration))
+                                .accessTokenExpiration(expiration.toEpochMilli())
+                                .build())
+                        .accessToken(refreshToken)
+                        .build());
 
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/members/refresh-token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("set-cookie", refreshToken)
+                        .cookie(new Cookie("refresh-token", refreshToken))
         );
 
         String responseBody = resultActions.andReturn().getResponse().getContentAsString(Charset.forName("UTF-8"));

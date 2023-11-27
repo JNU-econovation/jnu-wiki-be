@@ -10,8 +10,10 @@ import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.service.RefreshTokenService;
 import com.timcooki.jnuwiki.util.CookieUtil;
 import com.timcooki.jnuwiki.domain.security.config.JwtProvider;
+import com.timcooki.jnuwiki.util.TimeFormatter;
 import com.timcooki.jnuwiki.util.errors.exception.Exception400;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
+import java.time.Instant;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,19 +50,23 @@ public class MemberWriteService {
         // header 생성
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
         String cutRefreshToken = JwtProvider.cutTokenPrefix(refreshToken.getToken());
-        long expiration = JwtProvider.getExpiration(accessToken).toEpochMilli();
+        Instant accessTokenExpiration = JwtProvider.getExpiration(accessToken);
+        Instant refreshTokenExpiration = JwtProvider.getExpiration(refreshToken.getToken());
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, accessToken);
 
-        CookieUtil.addCookie(response, "refresh-token", cutRefreshToken, (int) expiration);
+        CookieUtil.addCookie(response, "refresh-token", cutRefreshToken, (int) accessTokenExpiration.toEpochMilli());
 
         return WrapLoginResDTO.builder()
                 .headers(httpHeaders)
                 .body(LoginResDTO.builder()
                         .id(memberId)
                         .role(memberRole)
-                        .expiration(expiration)
+                        .accessTokenExpiration(accessTokenExpiration.toEpochMilli())
+                        .accessTokenFormattedExpiration(TimeFormatter.format(accessTokenExpiration))
+                        .refreshTokenExpiration(refreshTokenExpiration.toEpochMilli())
+                        .refreshTokenFormattedExpiration(TimeFormatter.format(refreshTokenExpiration))
                         .build())
                 .build();
     }
