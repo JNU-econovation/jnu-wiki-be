@@ -1,9 +1,14 @@
 package com.timcooki.jnuwiki.domain.security.service;
 
+import static com.timcooki.jnuwiki.domain.security.config.JwtProvider.PREFIX;
+
+import com.timcooki.jnuwiki.domain.member.DTO.response.AccessTokenResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.WrapAccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
 import com.timcooki.jnuwiki.domain.security.config.JwtProvider;
+import com.timcooki.jnuwiki.util.TimeFormatter;
 import com.timcooki.jnuwiki.util.errors.exception.Exception401;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +21,22 @@ import java.time.Instant;
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public String renewAccessToken(String refreshToken) {
-        RefreshToken existToken = refreshTokenRepository.findByToken(JwtProvider.PREFIX + refreshToken)
+    public WrapAccessTokenResDTO renewAccessToken(String refreshToken) {
+        refreshToken = PREFIX + refreshToken;
+        RefreshToken existToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
         verifyExpiration(existToken);
+        Instant expiration = JwtProvider.getExpiration(refreshToken);
 
         Member member = existToken.getMember();
-        return JwtProvider.createAccessToken(member.getEmail(), member.getRole().toString());
+        return WrapAccessTokenResDTO.builder()
+                .accessToken(JwtProvider.createAccessToken(member.getEmail(), member.getRole().toString()))
+                .accessTokenResDTO(AccessTokenResDTO.builder()
+                        .accessTokenExpiration(expiration.toEpochMilli())
+                        .accessTokenFormattedExpiration(TimeFormatter.format(expiration))
+                        .build())
+                .build();
     }
 
 
@@ -46,7 +59,7 @@ public class RefreshTokenService {
     public void verifyExpiration(RefreshToken token) {
         if (token.getExpiredDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(token);
-            throw new RuntimeException("Refresh token was expired. Please make a new signin request");
+            throw new Exception401("리프레시 토큰이 만료되었습니다. 재로그인을 해주세요.");
         }
     }
 }
