@@ -2,6 +2,7 @@ package com.timcooki.jnuwiki.domain.security.config;
 
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -75,9 +76,9 @@ public class AuthenticationConfig {
     CorsConfigurationSource configurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("https://jnu-wiki.vercel.app/", "http://localhost:5173/"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
         configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
         configuration.addExposedHeader(HttpHeaders.SET_COOKIE);
         configuration.setAllowCredentials(true);
