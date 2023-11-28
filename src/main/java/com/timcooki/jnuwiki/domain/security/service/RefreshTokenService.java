@@ -42,7 +42,7 @@ public class RefreshTokenService {
 
     public RefreshToken createRefreshToken(Member member) {
         if (refreshTokenRepository.existsByMemberAndExpiredDateIsAfter(member, Instant.now())) {
-            return refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).get();
+            return refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).get(0);
         }
 
         String refreshToken = JwtProvider.createRefreshToken(member.getEmail(), member.getRole().toString());

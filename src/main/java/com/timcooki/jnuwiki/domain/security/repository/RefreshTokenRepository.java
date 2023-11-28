@@ -2,6 +2,7 @@ package com.timcooki.jnuwiki.domain.security.repository;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByToken(String token);
-    Optional<RefreshToken> findByMemberAndExpiredDateIsAfter(Member member, Instant expiredDate);
+    List<RefreshToken> findByMemberAndExpiredDateIsAfter(Member member, Instant expiredDate);
     boolean existsByMemberAndExpiredDateIsAfter(Member member, Instant expiredDate);
 }
