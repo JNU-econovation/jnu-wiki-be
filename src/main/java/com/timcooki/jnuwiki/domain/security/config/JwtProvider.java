@@ -54,12 +54,12 @@ public class JwtProvider {
     public static Claims getClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
-                .parseClaimsJws(token)
+                .parseClaimsJws(cutTokenPrefix(token))
                 .getBody();
     }
 
     public static Instant getExpiration(String token) {
-        return getClaims(cutTokenPrefix(token))
+        return getClaims(token)
                 .getExpiration()
                 .toInstant();
     }
