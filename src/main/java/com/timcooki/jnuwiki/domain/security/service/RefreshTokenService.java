@@ -27,11 +27,12 @@ public class RefreshTokenService {
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
         verifyExpiration(existToken);
-        Instant expiration = JwtProvider.getExpiration(refreshToken);
-
         Member member = existToken.getMember();
+        String accessToken = JwtProvider.createAccessToken(member.getEmail(), member.getRole().toString());
+        Instant expiration = JwtProvider.getExpiration(accessToken);
+
         return WrapAccessTokenResDTO.builder()
-                .accessToken(JwtProvider.createAccessToken(member.getEmail(), member.getRole().toString()))
+                .accessToken(accessToken)
                 .accessTokenResDTO(AccessTokenResDTO.builder()
                         .accessTokenExpiration(expiration.toEpochMilli())
                         .accessTokenFormattedExpiration(TimeFormatter.format(expiration))
