@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MemberValidator {
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+
     public void validateEmailDuplication(String email) {
         if (memberRepository.existsByEmail(email)) {
             throw new Exception400("존재하는 이메일 입니다.");

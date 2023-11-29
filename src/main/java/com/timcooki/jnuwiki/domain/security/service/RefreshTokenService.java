@@ -10,7 +10,6 @@ import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
 import com.timcooki.jnuwiki.domain.security.config.JwtProvider;
 import com.timcooki.jnuwiki.util.TimeFormatter;
 import com.timcooki.jnuwiki.util.errors.exception.Exception401;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,11 +41,6 @@ public class RefreshTokenService {
 
 
     public RefreshToken createRefreshToken(Member member) {
-        if (refreshTokenRepository.existsByMemberAndExpiredDateIsAfter(member, Instant.now())) {
-            List<RefreshToken> refreshTokens = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now());
-            return refreshTokens.get(refreshTokens.size() - 1);
-        }
-
         String refreshToken = JwtProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
         Instant expiration = JwtProvider.getExpiration(refreshToken);
 
@@ -60,7 +54,6 @@ public class RefreshTokenService {
 
     public void verifyExpiration(RefreshToken token) {
         if (token.getExpiredDate().isBefore(Instant.now())) {
-            refreshTokenRepository.delete(token);
             throw new Exception401("리프레시 토큰이 만료되었습니다. 재로그인을 해주세요.");
         }
     }
