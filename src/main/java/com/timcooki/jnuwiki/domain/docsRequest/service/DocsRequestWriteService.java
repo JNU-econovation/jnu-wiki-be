@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,10 +42,7 @@ public class DocsRequestWriteService {
         DocsRequest docsRequest = mapper.editDTOToEntity(modifiedRequestWriteDto, docs, member, DocsCategory.nameOf(modifiedRequestWriteDto.docsRequestCategory()));
         // docsRequestRepository.save(docsRequest);
 
-        docs.updateBasicInfo(docsRequest.getDocsRequestName(),
-                        docsRequest.getDocsRequestLocation(),
-                        docsRequest.getDocsRequestCategory());
-
+        docs.updateBasicInfo(docsRequest);
     }
 
     @Transactional

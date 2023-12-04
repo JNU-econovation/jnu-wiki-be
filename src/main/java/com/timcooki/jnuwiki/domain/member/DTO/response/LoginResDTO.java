@@ -1,7 +1,7 @@
 package com.timcooki.jnuwiki.domain.member.DTO.response;
 
 import lombok.Builder;
-
+@Builder
 public record LoginResDTO(
         Long id,
         String role,
@@ -10,8 +10,4 @@ public record LoginResDTO(
         Long refreshTokenExpiration,
         String refreshTokenFormattedExpiration
 ) {
-    @Builder
-    public LoginResDTO {
-
-    }
 }
