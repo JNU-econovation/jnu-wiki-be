@@ -19,39 +19,21 @@ import java.time.format.DateTimeFormatter;
 @Service
 @RequiredArgsConstructor
 public class AdminWriteService {
-
-    private final MemberRepository memberRepository;
     private final DocsRequestRepository docsRequestRepository;
     private final DocsRepository docsRepository;
     private final DocsArchiveRepository docsArchiveRepository;
 
-    // 새 문서 요청 승락
     @Transactional
     public NewApproveResDTO approveNewDocs(Long docsRequestId) {
         DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(
                 () -> new Exception404("존재하지 않는 요청입니다.")
         );
 
-        // 문서 등록
-        Docs docs = Docs.builder()
-                .createdBy(docsRequest.getDocsRequestedBy())
-                .docsCategory(docsRequest.getDocsRequestCategory())
-                .docsLocation(docsRequest.getDocsRequestLocation())
-                .docsName(docsRequest.getDocsRequestName())
-                .build();
-
+        Docs docs = Docs.of(docsRequest);
         docsRepository.save(docs);
-
-        // DocsRequest 삭제
         docsRequestRepository.deleteById(docsRequestId);
 
-        return NewApproveResDTO.builder()
-                .id(docs.getDocsId())
-                .docsCategory(docs.getDocsCategory().getCategory())
-                .docsName(docs.getDocsName())
-                .docsLocation(docs.getDocsLocation())
-                .docsCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
-                .build();
+        return NewApproveResDTO.of(docs);
     }
 
     @Transactional
@@ -65,30 +47,16 @@ public class AdminWriteService {
                 () -> new Exception404("수정하려는 문서가 존재하지 않습니다.")
         );
 
-        // 수정전 문서는 아카이브 레포에 저장
         docsArchiveRepository.save(docs);
 
-        // 요청에 따라 업데이트
-        docs.updateBasicInfo(
-                modifiedRequest.getDocsRequestName(),
-                modifiedRequest.getDocsRequestLocation(),
-                modifiedRequest.getDocsRequestCategory());
-
+        docs.updateBasicInfo(modifiedRequest);
         docsRequestRepository.deleteById(docsRequestId);
-
-        return InfoEditResDTO.builder()
-                .docsId(docs.getDocsId())
-                .docsName(docs.getDocsName())
-                .docsLocation(docs.getDocsLocation())
-                .docsContent(docs.getDocsContent())
-                .docsCategory(docs.getDocsCategory().getCategory())
-                .docsModifiedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
-                .build();
+        return InfoEditResDTO.of(docs);
     }
 
     public void rejectRequest(Long docsRequestId) {
-        // 요청 존재 확인
-        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId).orElseThrow(() -> new Exception404("존재하지 않는 요청입니다."));
+        DocsRequest docsRequest = docsRequestRepository.findById(docsRequestId)
+                .orElseThrow(() -> new Exception404("존재하지 않는 요청입니다."));
 
         docsRequestRepository.delete(docsRequest);
     }

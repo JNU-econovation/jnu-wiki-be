@@ -1,39 +1,25 @@
 package com.timcooki.jnuwiki.domain.docs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
-import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
-import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
+import com.timcooki.jnuwiki.testutil.DataJpaTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 
-@Import(ObjectMapper.class)
-@DataJpaTest
-public class DocsRepositoryTest {
+class DocsRepositoryTest extends DataJpaTestUtil {
     @Autowired
     private DocsRepository docsRepository;
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private EntityManager em;
-
-    @Autowired
-    private ObjectMapper om;
 
     @BeforeEach
     public void setUp(){

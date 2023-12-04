@@ -1,28 +1,17 @@
 package com.timcooki.jnuwiki.domain.scrap.repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.entity.ScrapId;
-import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
+import com.timcooki.jnuwiki.testutil.DataJpaTestUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@DataJpaTest
-@Import({
-        ObjectMapper.class
-})
-public class ScrapRepositoryTest {
-
-    @Autowired
-    private EntityManager em;
+class ScrapRepositoryTest extends DataJpaTestUtil {
 
     @Autowired
     private ScrapRepository scrapRepository;
