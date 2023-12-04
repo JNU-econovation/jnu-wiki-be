@@ -1,34 +1,24 @@
 package com.timcooki.jnuwiki.domain.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
+import com.timcooki.jnuwiki.testutil.DataJpaTestUtil;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import javax.persistence.EntityManager;
 import java.time.Instant;
 
-@Import(ObjectMapper.class)
-@DataJpaTest
-public class RefreshTokenRepositoryTest {
+class RefreshTokenRepositoryTest extends DataJpaTestUtil {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
     private MemberRepository memberRepository;
-    @Autowired
-    private EntityManager em;
-
-    @Autowired
-    private ObjectMapper om;
 
     @BeforeEach
     public void setUp() {
