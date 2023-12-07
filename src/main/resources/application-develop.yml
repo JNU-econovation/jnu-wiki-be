@@ -13,6 +13,7 @@ spring:
     logging.level:
       org.hibernate:
         SQL: debug
+        type: trace
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
