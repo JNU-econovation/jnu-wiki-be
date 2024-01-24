@@ -1,10 +1,14 @@
 package com.timcooki.jnuwiki.domain.member.DTO.request;
 
+import com.timcooki.jnuwiki.domain.member.valid.Nickname;
 import lombok.Builder;
-@Builder
+
 public record JoinReqDTO(
         String email,
-        String nickName,
+        @Nickname String nickName,
         String password
 ) {
+
+    @Builder
+    public JoinReqDTO{}
 }
