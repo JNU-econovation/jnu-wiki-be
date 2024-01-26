@@ -50,7 +50,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody JoinReqDTO joinReqDTO) {
+    public ResponseEntity<?> join(@RequestBody @Valid JoinReqDTO joinReqDTO) {
         memberWriteService.join(joinReqDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiUtils.success(null));
     }

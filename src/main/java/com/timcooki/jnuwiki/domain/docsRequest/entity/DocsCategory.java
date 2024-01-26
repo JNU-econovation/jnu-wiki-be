@@ -6,8 +6,9 @@ public enum DocsCategory {
     COPY("복사집"),
     CONV("편의점"),
     PHAR("약국"),
-    // TODO: 음식점 추가했지만, 사이드 이펙트 조심할 것
-    FOOD("음식점");
+    FOOD("음식점"),
+
+    EXERCISE_FACILITY("운동시설");
 
     private final String category;
 

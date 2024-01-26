@@ -6,8 +6,10 @@ import com.timcooki.jnuwiki.util.errors.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,10 +44,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.body(), e.status());
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> validationError(
+            MethodArgumentNotValidException e) {
+        log.error("[VALIDATION ERROR] {}", e.getMessage());
+        ApiResult<?> apiResult = ApiUtils.error("[VALIDATION ERROR]", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(apiResult);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> unknownServerError(Exception e){
         ApiResult<?> apiResult = ApiUtils.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         log.error("[UNKNOWN SERVER ERROR] {}", e.getMessage());
         return new ResponseEntity<>(apiResult, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+
 }
