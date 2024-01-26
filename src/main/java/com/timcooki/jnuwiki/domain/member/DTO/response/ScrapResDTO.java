@@ -9,7 +9,7 @@ public record ScrapResDTO(
         Long docsId,
         String docsName,
         String docsCategory,
-        DocsLocation docsRequestLocation,
+        DocsLocation docsLocation,
         String member
 ) {
     public static ScrapResDTO of(Docs docs, Member member) {
@@ -17,7 +17,7 @@ public record ScrapResDTO(
                 .docsId(docs.getDocsId())
                 .docsName(docs.getDocsName())
                 .docsCategory(docs.getDocsCategory().getCategory())
-                .docsRequestLocation(docs.getDocsLocation())
+                .docsLocation(docs.getDocsLocation())
                 .member(member.getNickName())
                 .build();
     }
