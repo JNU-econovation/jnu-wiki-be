@@ -58,7 +58,7 @@ public class DocsControllerTest extends CommonApiTest {
         // given
 
         // QueryParmas
-        MultiValueMap<String, String> map  = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("leftLng", "30.0");
         map.add("leftLat", "30.0");
         map.add("rightLng", "40.0");
@@ -80,7 +80,6 @@ public class DocsControllerTest extends CommonApiTest {
                 .docsList(oneOfListReadResDTOS)
                 .totalPages(1)
                 .build();
-
 
         Mockito.when(docsReadService.getDocsList(any(), any())).thenReturn(docsList);
 
@@ -118,7 +117,10 @@ public class DocsControllerTest extends CommonApiTest {
 
         // stub
         Mockito.when(docsReadService.getOneDocs(eq(docsId))).thenReturn(
-                new ReadResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), new DocsLocation(13.1, 34.3), "1nuu", member.getNickName(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),true)
+                new ReadResDTO(1L, "내용1", DocsCategory.CONV.getCategory(), new DocsLocation(13.1, 34.3), "1nuu",
+                        member.getNickName(),
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")), true)
         );
 
         // when
@@ -135,9 +137,9 @@ public class DocsControllerTest extends CommonApiTest {
     }
 
     @DisplayName("문서 수정")
-    @WithMockUser(username = "testUser@naver.com",roles = "USER")
+    @WithMockUser(username = "testUser@naver.com", roles = "USER")
     @Test
-    public void docs_update_test() throws Exception{
+    public void docs_update_test() throws Exception {
         // given
         Long docsId = 1L;
         String docsContent = "수정된 문서내용";
@@ -177,9 +179,9 @@ public class DocsControllerTest extends CommonApiTest {
     }
 
     @DisplayName("문서 검색")
-    @WithMockUser(username = "testUser@naver.com",roles = "USER")
+    @WithMockUser(username = "testUser@naver.com", roles = "USER")
     @Test
-    public void docs_search_test() throws Exception{
+    public void docs_search_test() throws Exception {
         // given
         String search = "검색";
         MultiValueMap<String, String> queryParam = new LinkedMultiValueMap<>();
@@ -196,7 +198,7 @@ public class DocsControllerTest extends CommonApiTest {
         Mockito.when(
                 docsReadService.searchLike(search)
         ).thenReturn(
-            dtoList
+                dtoList
         );
 
         // when
@@ -207,8 +209,6 @@ public class DocsControllerTest extends CommonApiTest {
                         .queryParams(queryParam)
                         .characterEncoding(StandardCharsets.UTF_8)
         );
-
-
 
         // then
         String res = resultActions.andReturn().getResponse().getContentAsString();
