@@ -1,11 +1,9 @@
 package com.timcooki.jnuwiki.domain.docs.entity;
 
-import lombok.AllArgsConstructor;
+import javax.persistence.Embeddable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import javax.persistence.*;
 
 @Getter
 @Embeddable
