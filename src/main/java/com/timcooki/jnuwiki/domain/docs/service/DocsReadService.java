@@ -43,7 +43,8 @@ public class DocsReadService {
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
-    private String getEmail(){
+
+    private String getEmail() {
         Authentication loggedInUser = getAuthentication();
         return loggedInUser.getName();
     }
@@ -60,9 +61,10 @@ public class DocsReadService {
         DocsLocation rightUp = new DocsLocation(findAllReqDTO.rightLat(), findAllReqDTO.rightLng());
         DocsLocation leftDown = new DocsLocation(findAllReqDTO.leftLat(), findAllReqDTO.leftLng());
 
-        Page<Docs> docsList = docsRepository.mfindAll(rightUp,leftDown, pageable);
+        Page<Docs> docsList = docsRepository.mfindAll(rightUp, leftDown, pageable);
         Optional<Member> member = memberRepository.findByEmail(getEmail());
-        List<Scrap> scrapList = member.isPresent() ? scrapRepository.findAllByMemberId(member.get().getMemberId()) : new ArrayList<>();
+        List<Scrap> scrapList =
+                member.isPresent() ? scrapRepository.findAllByMemberId(member.get().getMemberId()) : new ArrayList<>();
 
         List<OneOfListReadResDTO> result = docsList.getContent().stream()
                 .map(docs -> OneOfListReadResDTO.of(docs, scrapList))
@@ -75,7 +77,6 @@ public class DocsReadService {
     }
 
 
-
     public ReadResDTO getOneDocs(Long docsId) {
         boolean scrap = false;
         Docs docs = docsRepository.findById(docsId).orElseThrow(
@@ -85,19 +86,12 @@ public class DocsReadService {
         if (isAuthenticated()) {
             Member member = memberRepository.findByEmail(getEmail()).orElseThrow(
                     () -> new Exception404("존재하지 않는 회원입니다."));
-            if (scrapRepository.findById(new ScrapId(member.getMemberId(), docs.getDocsId())).isPresent()) scrap = true;
+            if (scrapRepository.findById(new ScrapId(member.getMemberId(), docs.getDocsId())).isPresent()) {
+                scrap = true;
+            }
         }
 
-        return new ReadResDTO(
-                docs.getDocsId(),
-                docs.getDocsName(),
-                docs.getDocsCategory().getCategory(),
-                docs.getDocsLocation(),
-                docs.getDocsContent(),
-                docs.getCreatedBy().getNickName(),
-                docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),
-                scrap
-        );
+        return ReadResDTO.of(docs, scrap);
     }
 
     public List<SearchReadResDTO> searchLike(String search) {
@@ -106,7 +100,8 @@ public class DocsReadService {
             DocsMapper mapper = Mappers.getMapper(DocsMapper.class);
 
             return docsList.stream()
-                    .map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(), docs.getDocsCategory().getCategory())))
+                    .map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(),
+                            docs.getDocsCategory().getCategory())))
                     .toList();
         } else {
             throw new Exception404("요청결과가 존재하지 않습니다.");
