@@ -1,33 +1,24 @@
 package com.timcooki.jnuwiki.domain.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
+import com.timcooki.jnuwiki.testutil.DataJpaTestUtil;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import javax.persistence.EntityManager;
 import java.time.Instant;
 
-@Import(ObjectMapper.class)
-@DataJpaTest
-public class RefreshTokenRepositoryTest {
+class RefreshTokenRepositoryTest extends DataJpaTestUtil {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
     @Autowired
     private MemberRepository memberRepository;
-    @Autowired
-    private EntityManager em;
-
-    @Autowired
-    private ObjectMapper om;
 
     @BeforeEach
     public void setUp() {
@@ -71,6 +62,14 @@ public class RefreshTokenRepositoryTest {
                         .build()
         );
 
+        RefreshToken refreshToken32 = refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .token("member 1의 만료되지 않은 토큰2")
+                        .expiredDate(Instant.ofEpochSecond(2_000_000_000))
+                        .member(member1)
+                        .build()
+        );
+
         RefreshToken refreshToken5 = refreshTokenRepository.save(
                 RefreshToken.builder()
                         .token("member 2의 만료되지 않은 토큰")
@@ -82,7 +81,7 @@ public class RefreshTokenRepositoryTest {
         refreshTokenRepository.save(refreshToken1);
         refreshTokenRepository.save(refreshToken2);
         refreshTokenRepository.save(refreshToken3);
-        refreshTokenRepository.save(refreshToken3);
+        refreshTokenRepository.save(refreshToken32);
         refreshTokenRepository.save(refreshToken5);
         em.flush();
         em.clear();
@@ -94,8 +93,8 @@ public class RefreshTokenRepositoryTest {
         // given
         Member member = memberRepository.findByEmail("minl741@naver.com").get();
         // when
-        RefreshToken token = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).get();
-        System.out.println(token.getExpiredDate() + " 시간이랑 멤버 " + token.getMember());
+        List<RefreshToken> tokens = refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now());
+        tokens.forEach(token -> System.out.println(token.getExpiredDate() + " 시간이랑 멤버 " + token.getToken()));
 
         // then
     }

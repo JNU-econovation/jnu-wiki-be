@@ -2,6 +2,7 @@ package com.timcooki.jnuwiki.domain.docs.entity;
 
 
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
+import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.util.auditing.BaseTimeEntity;
 import lombok.Builder;
@@ -51,13 +52,22 @@ public class Docs extends BaseTimeEntity {
         this.docsCategory = docsCategory;
     }
 
-    public void updateBasicInfo(String docsName, DocsLocation docsLocation, DocsCategory docsCategory) {
-        this.docsName = docsName;
-        this.docsLocation = docsLocation;
-        this.docsCategory = docsCategory;
+    public void updateBasicInfo(DocsRequest docsRequest) {
+        this.docsName = docsRequest.getDocsRequestName();
+        this.docsLocation = docsRequest.getDocsRequestLocation();
+        this.docsCategory = docsRequest.getDocsRequestCategory();
     }
 
     public void updateContent(String docsContent) {
         this.docsContent = docsContent;
+    }
+
+    public static Docs of(DocsRequest docsRequest) {
+        return Docs.builder()
+                .createdBy(docsRequest.getDocsRequestedBy())
+                .docsCategory(docsRequest.getDocsRequestCategory())
+                .docsLocation(docsRequest.getDocsRequestLocation())
+                .docsName(docsRequest.getDocsRequestName())
+                .build();
     }
 }

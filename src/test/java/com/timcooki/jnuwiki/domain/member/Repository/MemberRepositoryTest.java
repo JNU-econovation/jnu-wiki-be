@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
+import com.timcooki.jnuwiki.testutil.DataJpaTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(ObjectMapper.class)
 @DataJpaTest
-public class MemberRepositoryTest {
+class MemberRepositoryTest extends DataJpaTestUtil {
     @Autowired
     private MemberRepository memberRepository;
 

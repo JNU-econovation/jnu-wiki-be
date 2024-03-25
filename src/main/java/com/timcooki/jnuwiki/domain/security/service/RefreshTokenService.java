@@ -1,64 +1,61 @@
 package com.timcooki.jnuwiki.domain.security.service;
 
-import com.timcooki.jnuwiki.domain.member.DTO.response.JwtAndExpirationDTO;
+import static com.timcooki.jnuwiki.domain.security.config.JwtProvider.PREFIX;
+
+import com.timcooki.jnuwiki.domain.member.DTO.response.AccessTokenResDTO;
+import com.timcooki.jnuwiki.domain.member.DTO.response.admin.WrapAccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.security.entity.RefreshToken;
 import com.timcooki.jnuwiki.domain.security.repository.RefreshTokenRepository;
-import com.timcooki.jnuwiki.util.JwtUtil.JwtUtil;
+import com.timcooki.jnuwiki.domain.security.config.JwtProvider;
+import com.timcooki.jnuwiki.util.TimeFormatter;
 import com.timcooki.jnuwiki.util.errors.exception.Exception401;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Optional;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
-
-    @Autowired
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
-
-    public String renewToken(String refreshToken){
-        Member member = findByToken(refreshToken).map(this::verifyExpiration)
-                .map(RefreshToken::getMember)
+    public WrapAccessTokenResDTO renewAccessToken(String refreshToken) {
+        refreshToken = PREFIX + refreshToken;
+        RefreshToken existToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 
-        return JwtUtil.createJwt(member.getEmail(), member.getRole().toString(), secretKey);
+        verifyExpiration(existToken);
+        Member member = existToken.getMember();
+        String accessToken = JwtProvider.createAccessToken(member.getEmail(), member.getRole().toString());
+        Instant expiration = JwtProvider.getExpiration(accessToken);
+
+        return WrapAccessTokenResDTO.builder()
+                .accessToken(accessToken)
+                .accessTokenResDTO(AccessTokenResDTO.builder()
+                        .accessTokenExpiration(expiration.toEpochMilli())
+                        .accessTokenFormattedExpiration(TimeFormatter.format(expiration))
+                        .build())
+                .build();
     }
 
 
-    public RefreshToken createRefreshToken(Member member, String secretKey) {
-        JwtAndExpirationDTO jwtAndExpiration = JwtUtil.createRefreshToken(member.getEmail(), member.getRole().toString(), secretKey);
-        // 로그인을 이미 한 유저라면?
-        return refreshTokenRepository.findByMemberAndExpiredDateIsAfter(member, Instant.now()).orElse(
+    public RefreshToken createRefreshToken(Member member) {
+        String refreshToken = JwtProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
+        Instant expiration = JwtProvider.getExpiration(refreshToken);
+
+        return refreshTokenRepository.save(
                 RefreshToken.builder()
                         .member(member)
-                        .token(jwtAndExpiration.jwt())
-                        .expiredDate(jwtAndExpiration.Expiration())
-                        .build()
-        );
+                        .token(refreshToken)
+                        .expiredDate(expiration)
+                        .build());
     }
 
-
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
-    }
-
-
-    public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiredDate().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.delete(token);
-            throw new RuntimeException(token.getToken() + " Refresh token was expired. Please make a new signin request");
+    public void verifyExpiration(RefreshToken token) {
+        if (token.getExpiredDate().isBefore(Instant.now())) {
+            throw new Exception401("리프레시 토큰이 만료되었습니다. 재로그인을 해주세요.");
         }
-        return token;
     }
 }

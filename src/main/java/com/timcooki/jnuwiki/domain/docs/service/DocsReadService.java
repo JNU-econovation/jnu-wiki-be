@@ -1,7 +1,10 @@
 package com.timcooki.jnuwiki.domain.docs.service;
 
 import com.timcooki.jnuwiki.domain.docs.DTO.request.FindAllReqDTO;
-import com.timcooki.jnuwiki.domain.docs.DTO.response.*;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.ListReadResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.OneOfListReadResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.ReadResDTO;
+import com.timcooki.jnuwiki.domain.docs.DTO.response.SearchReadResDTO;
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.entity.DocsLocation;
 import com.timcooki.jnuwiki.domain.docs.mapper.DocsMapper;
@@ -12,6 +15,10 @@ import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.entity.ScrapId;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
 import com.timcooki.jnuwiki.util.errors.exception.Exception404;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -22,13 +29,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -43,7 +43,8 @@ public class DocsReadService {
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
-    private String getEmail(){
+
+    private String getEmail() {
         Authentication loggedInUser = getAuthentication();
         return loggedInUser.getName();
     }
@@ -57,45 +58,23 @@ public class DocsReadService {
     }
 
     public ListReadResDTO getDocsList(Pageable pageable, FindAllReqDTO findAllReqDTO) {
-        DocsLocation rightUp = DocsLocation.builder()
-                .lat(findAllReqDTO.rightLat())
-                .lng(findAllReqDTO.rightLng())
-                .build();
-        DocsLocation leftDown = DocsLocation.builder()
-                .lat(findAllReqDTO.leftLat())
-                .lng(findAllReqDTO.leftLng())
-                .build();
-        log.info("테스트7: {}", findAllReqDTO.rightLat());
-        log.info("테스트8: {}", findAllReqDTO.leftLat());
+        DocsLocation rightUp = new DocsLocation(findAllReqDTO.rightLat(), findAllReqDTO.rightLng());
+        DocsLocation leftDown = new DocsLocation(findAllReqDTO.leftLat(), findAllReqDTO.leftLng());
 
-        Page<Docs> docsList = docsRepository.mfindAll(rightUp,leftDown, pageable);
+        Page<Docs> docsList = docsRepository.mfindAll(rightUp, leftDown, pageable);
         Optional<Member> member = memberRepository.findByEmail(getEmail());
-        List<Scrap> scrapList = member.isPresent() ? scrapRepository.findAllByMemberId(member.get().getMemberId()) : new ArrayList<>();
-
-        int totalPages = docsList.getTotalPages();
-
+        List<Scrap> scrapList =
+                member.isPresent() ? scrapRepository.findAllByMemberId(member.get().getMemberId()) : new ArrayList<>();
 
         List<OneOfListReadResDTO> result = docsList.getContent().stream()
-                .map(d -> OneOfListReadResDTO.builder()
-                        .docsId(d.getDocsId())
-                                .docsName(d.getDocsName())
-                                .docsCategory(d.getDocsCategory().getCategory())
-                                .docsLocation(d.getDocsLocation())
-                                .scrap(!scrapList.isEmpty() && scrapList.stream()
-                                        .anyMatch(s -> Objects.equals(s.getDocsId(), d.getDocsId()))
-                                )
-                                .build()
-                        )
-                .collect(Collectors.toList());
-
-
+                .map(docs -> OneOfListReadResDTO.of(docs, scrapList))
+                .toList();
 
         return ListReadResDTO.builder()
                 .docsList(result)
-                .totalPages(totalPages)
+                .totalPages(docsList.getTotalPages())
                 .build();
     }
-
 
 
     public ReadResDTO getOneDocs(Long docsId) {
@@ -107,19 +86,12 @@ public class DocsReadService {
         if (isAuthenticated()) {
             Member member = memberRepository.findByEmail(getEmail()).orElseThrow(
                     () -> new Exception404("존재하지 않는 회원입니다."));
-            if (scrapRepository.findById(new ScrapId(member.getMemberId(), docs.getDocsId())).isPresent()) scrap = true;
+            if (scrapRepository.findById(new ScrapId(member.getMemberId(), docs.getDocsId())).isPresent()) {
+                scrap = true;
+            }
         }
 
-        return new ReadResDTO(
-                docs.getDocsId(),
-                docs.getDocsName(),
-                docs.getDocsCategory().getCategory(),
-                docs.getDocsLocation(),
-                docs.getDocsContent(),
-                docs.getCreatedBy().getNickName(),
-                docs.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")),
-                scrap
-        );
+        return ReadResDTO.of(docs, scrap);
     }
 
     public List<SearchReadResDTO> searchLike(String search) {
@@ -128,7 +100,8 @@ public class DocsReadService {
             DocsMapper mapper = Mappers.getMapper(DocsMapper.class);
 
             return docsList.stream()
-                    .map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(), docs.getDocsCategory().getCategory())))
+                    .map((docs -> mapper.entityToDTO(docs, docs.getCreatedBy().getNickName(),
+                            docs.getDocsCategory().getCategory())))
                     .toList();
         } else {
             throw new Exception404("요청결과가 존재하지 않습니다.");

@@ -11,21 +11,18 @@ import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.domain.scrap.entity.Scrap;
 import com.timcooki.jnuwiki.domain.scrap.repository.ScrapRepository;
+import com.timcooki.jnuwiki.testutil.DataJpaTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
 
-@Import(ObjectMapper.class)
-@DataJpaTest
-public class DocsRepositoryTest {
+class DocsRepositoryTest extends DataJpaTestUtil {
 
     @Autowired
     private DocsRepository docsRepository;
@@ -36,11 +33,6 @@ public class DocsRepositoryTest {
     @Autowired
     private ScrapRepository scrapRepository;
 
-    @Autowired
-    private EntityManager em;
-
-    @Autowired
-    private ObjectMapper om;
 
     @BeforeEach
     public void setUp(){
