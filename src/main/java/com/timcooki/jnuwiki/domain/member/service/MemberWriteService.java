@@ -55,7 +55,7 @@ public class MemberWriteService {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, accessToken);
 
-        CookieUtil.addCookie(response, "refresh-token", refreshToken, (int) refreshTokenExpiration.toEpochMilli());
+        CookieUtil.addCookie(response, "refresh-token", refreshToken.getToken(), (int) refreshTokenExpiration.toEpochMilli());
 
         return WrapLoginResDTO.builder()
                 .headers(httpHeaders)
