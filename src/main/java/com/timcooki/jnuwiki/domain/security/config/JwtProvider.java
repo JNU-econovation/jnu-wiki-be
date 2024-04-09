@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class JwtProvider {
     private static String secretKey;
     public static final String PREFIX = "Bearer ";
-    private static final Long HOUR = 1000L * 60 * 60;
+    private static final Long HOUR = 1000L * 60; // 1분으로 변경
     private static final Long ACCESS_TOKEN_EXP_MS = HOUR; // 1시간
     private static final Long REFRESH_TOKEN_EXP_MS = 24 * HOUR * 14; // 2주
 
