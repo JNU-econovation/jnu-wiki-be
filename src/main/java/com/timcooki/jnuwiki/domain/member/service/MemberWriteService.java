@@ -49,14 +49,13 @@ public class MemberWriteService {
 
         // header 생성
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
-        String cutRefreshToken = JwtProvider.cutTokenPrefix(refreshToken.getToken());
         Instant accessTokenExpiration = JwtProvider.getExpiration(accessToken);
         Instant refreshTokenExpiration = JwtProvider.getExpiration(refreshToken.getToken());
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, accessToken);
 
-        CookieUtil.addCookie(response, "refresh-token", cutRefreshToken, (int) refreshTokenExpiration.toEpochMilli());
+        CookieUtil.addCookie(response, "refresh-token", refreshToken.getToken(), (int) refreshTokenExpiration.toEpochMilli());
 
         return WrapLoginResDTO.builder()
                 .headers(httpHeaders)
