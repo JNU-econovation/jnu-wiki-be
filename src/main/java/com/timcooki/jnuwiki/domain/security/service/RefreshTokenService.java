@@ -1,7 +1,5 @@
 package com.timcooki.jnuwiki.domain.security.service;
 
-import static com.timcooki.jnuwiki.domain.security.config.JwtProvider.PREFIX;
-
 import com.timcooki.jnuwiki.domain.member.DTO.response.AccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.WrapAccessTokenResDTO;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
@@ -22,7 +20,6 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     public WrapAccessTokenResDTO renewAccessToken(String refreshToken) {
-        refreshToken = PREFIX + refreshToken;
         RefreshToken existToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new Exception401("인증되지 않은 토큰입니다."));
 

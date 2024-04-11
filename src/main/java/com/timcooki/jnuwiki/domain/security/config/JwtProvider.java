@@ -39,7 +39,7 @@ public class JwtProvider {
     }
 
     public static String createRefreshToken(String memberEmail, String memberRole) {
-        return PREFIX + Jwts.builder()
+        return Jwts.builder()
                 .setClaims(createClaim(memberEmail, memberRole))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXP_MS))
