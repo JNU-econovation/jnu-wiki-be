@@ -49,7 +49,7 @@ public class MemberWriteService {
 
         // header 생성
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(member);
-        Instant accessTokenExpiration = JwtProvider.getExpiration(accessToken);
+        Instant accessTokenExpiration = JwtProvider.getATExpiration(accessToken);
         Instant refreshTokenExpiration = JwtProvider.getExpiration(refreshToken.getToken());
 
         HttpHeaders httpHeaders = new HttpHeaders();
