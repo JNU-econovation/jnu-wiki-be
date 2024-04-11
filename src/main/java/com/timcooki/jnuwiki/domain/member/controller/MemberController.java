@@ -43,6 +43,7 @@ public class MemberController {
     // access token 재발급
     @PostMapping("/access-token")
     public ResponseEntity<ApiResult<AccessTokenResDTO>> refreshToken(@CookieValue(value = "refresh-token") String refreshToken) {
+        log.info("refresh-token : {}", refreshToken);
         WrapAccessTokenResDTO wrapAccessTokenResDTO = refreshTokenService.renewAccessToken(refreshToken);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, wrapAccessTokenResDTO.accessToken())
