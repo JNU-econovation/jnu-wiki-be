@@ -3,7 +3,6 @@ package com.timcooki.jnuwiki.domain.security.config;
 
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.entity.MemberRole;
-import com.timcooki.jnuwiki.util.TimeFormatter;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -41,8 +40,8 @@ public class JwtFilter extends BasicAuthenticationFilter {
         }
 
         try {
-            String email = (String) JwtProvider.getClaims(bearerToken).get("memberEmail");
-            MemberRole memberRole = MemberRole.valueOf((String) JwtProvider.getClaims(bearerToken).get("memberRole"));
+            String email = (String) JwtProvider.getATClaims(bearerToken).get("memberEmail");
+            MemberRole memberRole = MemberRole.valueOf((String) JwtProvider.getATClaims(bearerToken).get("memberRole"));
             log.info("email: {}, role: {}", email, memberRole);
 
             MemberDetails userDetails = new MemberDetails(
