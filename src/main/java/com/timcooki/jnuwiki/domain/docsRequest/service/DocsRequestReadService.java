@@ -1,9 +1,11 @@
 package com.timcooki.jnuwiki.domain.docsRequest.service;
 
+import com.timcooki.jnuwiki.domain.docsRequest.dto.response.GetDocsStatusResDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequestType;
 import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
+import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsStatusRepository;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditListReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.EditReadResDTO;
 import com.timcooki.jnuwiki.domain.member.DTO.response.admin.NewListReadResDTO;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class DocsRequestReadService {
 
     private final DocsRequestRepository docsRequestRepository;
+    private final DocsStatusRepository docsStatusRepository;
 
 
     // 기본정보 수정 요청 목록 조회
@@ -89,5 +92,13 @@ public class DocsRequestReadService {
 
         NewReadResDTO newReadResDTO = mapper.newEntityToDTO(docsRequest, docsRequest.getDocsRequestCategory().getCategory());
         return newReadResDTO;
+    }
+
+    public GetDocsStatusResDTO getDocsStatus(Long docsId){
+
+        return GetDocsStatusResDTO.builder()
+                .docsStatus(docsStatusRepository.existsByDocs_DocsId(docsId))
+                .build();
+
     }
 }
