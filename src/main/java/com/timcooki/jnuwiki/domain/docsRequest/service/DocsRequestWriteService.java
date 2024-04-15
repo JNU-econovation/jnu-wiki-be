@@ -2,12 +2,15 @@ package com.timcooki.jnuwiki.domain.docsRequest.service;
 
 import com.timcooki.jnuwiki.domain.docs.entity.Docs;
 import com.timcooki.jnuwiki.domain.docs.repository.DocsRepository;
+import com.timcooki.jnuwiki.domain.docsRequest.dto.DocsMessage;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.EditWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.dto.request.NewWriteReqDTO;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsCategory;
 import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsRequest;
+import com.timcooki.jnuwiki.domain.docsRequest.entity.DocsStatus;
 import com.timcooki.jnuwiki.domain.docsRequest.mapper.DocsRequestMapper;
 import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsRequestRepository;
+import com.timcooki.jnuwiki.domain.docsRequest.repository.DocsStatusRepository;
 import com.timcooki.jnuwiki.domain.member.entity.Member;
 import com.timcooki.jnuwiki.domain.member.repository.MemberRepository;
 import com.timcooki.jnuwiki.util.errors.exception.Exception400;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DocsRequestWriteService {
     private final DocsRequestRepository docsRequestRepository;
+    private final DocsStatusRepository docsStatusRepository;
     private final MemberRepository memberRepository;
     private final DocsRepository docsRepository;
 
@@ -61,5 +65,22 @@ public class DocsRequestWriteService {
                 .docsName(docsRequest.getDocsRequestName())
                 .build();
         docsRepository.save(docs);
+    }
+
+    @Transactional
+    public void createDocsStatus(DocsMessage docsMessage){
+
+        Docs docs = docsRepository.findById(docsMessage.docsId())
+                .orElseThrow(() -> new Exception400(Exception400.NOT_FOUND_DOCS));
+        Member member = memberRepository.findById(docsMessage.memberId())
+                .orElseThrow(() -> new Exception400(Exception400.NOT_FOUND_MEMBER));
+
+        if(!docsStatusRepository.existsByDocs(docs)){
+            DocsStatus docsStatus = DocsStatus.builder()
+                    .docs(docs)
+                    .member(member)
+                    .build();
+            docsStatusRepository.save(docsStatus);
+        }
     }
 }
