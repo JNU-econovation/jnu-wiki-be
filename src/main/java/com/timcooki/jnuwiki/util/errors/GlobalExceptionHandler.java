@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> validationError(
             MethodArgumentNotValidException e) {
         log.error("[VALIDATION ERROR] {}", e.getMessage());
-        ApiResult<?> apiResult = ApiUtils.error("[VALIDATION ERROR]", HttpStatus.BAD_REQUEST);
+        ApiResult<?> apiResult = ApiUtils.error(e.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.badRequest().body(apiResult);
     }
     @ExceptionHandler(Exception.class)

@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class Exception400 extends RuntimeException {
 
+    public static final String NOT_FOUND_MEMBER = "존재하지 않는 회원입니다.";
+    public static final String NOT_FOUND_DOCS = "존재하지 않는 문서입니다.";
+
     public Exception400(String message) {
         super(message);
     }
