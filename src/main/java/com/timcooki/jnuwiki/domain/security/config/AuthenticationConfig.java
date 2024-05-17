@@ -3,15 +3,12 @@ package com.timcooki.jnuwiki.domain.security.config;
 import com.timcooki.jnuwiki.domain.security.service.MemberSecurityService;
 import com.timcooki.jnuwiki.util.errors.exception.Exception401;
 import com.timcooki.jnuwiki.util.errors.exception.Exception403;
-import java.util.Arrays;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +29,7 @@ public class AuthenticationConfig {
 
     private final MemberSecurityService memberSecurityService;
 
-    public class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
+    public static class CustomSecurityFilterManager extends AbstractHttpConfigurer<CustomSecurityFilterManager, HttpSecurity> {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
@@ -72,7 +69,7 @@ public class AuthenticationConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/docs/**").permitAll()
 
-                .antMatchers("/members/join", "/members/login", "/members/access-token", "/members/check/**")
+                .antMatchers("/members/join", "/members/login", "/members/access-token", "/members/check/**", "/*", "/api/connect/*", "/api/connect")
                 .permitAll()
 
                 .antMatchers("/swagger-ui/**", "/v3/**")
