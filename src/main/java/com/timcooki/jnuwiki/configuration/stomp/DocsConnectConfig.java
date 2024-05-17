@@ -31,10 +31,10 @@ public class DocsConnectConfig implements WebSocketMessageBrokerConfigurer {
 //        registry.setErrorHandler(docsErrorHandler);
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration){
-        registration.interceptors(docsPreHandler);
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration){
+//        registration.interceptors(docsPreHandler);
+//    }
 
 
 
