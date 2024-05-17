@@ -25,6 +25,7 @@ public class DocsConnectConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/api/connect").setAllowedOriginPatterns("*");
         registry.addEndpoint("/api/connect")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
